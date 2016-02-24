@@ -1,0 +1,7 @@
+**/.idea/*
+**/target/*
+~*
+*.iml
+
+completable-future-live-coding/*
+quasar-archetype/*
