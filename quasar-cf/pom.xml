@@ -32,14 +32,14 @@
         </dependency>
 
         <dependency>
-            <groupId>zenika</groupId>
+            <groupId>cla</groupId>
             <artifactId>completable-future</artifactId>
             <version>1.0-SNAPSHOT</version>
             <classifier>tests</classifier>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>zenika</groupId>
+            <groupId>cla</groupId>
             <artifactId>completable-future</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
