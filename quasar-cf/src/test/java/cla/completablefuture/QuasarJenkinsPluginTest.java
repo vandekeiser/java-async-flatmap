@@ -3,7 +3,6 @@ package cla.completablefuture;
 import cla.completablefuture.jenkins.*;
 import cla.completablefuture.jira.*;
 import com.jasongoodwin.monads.Try;
-import org.assertj.core.api.Assertions;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 
@@ -41,7 +40,7 @@ public class QuasarJenkinsPluginTest {
     public void should_1_report_bundles_errors() {
         JiraServer jiraServer = mock(JiraServer.class);
         when(jiraServer.findBundlesByName(any())).thenThrow(new JiraServerException());
-        JenkinsPlugin sut = new JenkinsPlugin_GenericCollect_WithGenericAsyncifier(jiraServer, newCachedThreadPool());
+        JenkinsPlugin sut = new JenkinsPlugin_GenericCollect_Quasar(jiraServer, newCachedThreadPool());
         
         try {
             sut.findComponentsByBundleName("foo");
@@ -56,7 +55,7 @@ public class QuasarJenkinsPluginTest {
     @Test
     public void should_2_report_components_errors() {
         JiraServer jiraServer = mock(JiraServer.class);
-        JenkinsPlugin sut = new JenkinsPlugin_GenericCollect_WithGenericAsyncifier(jiraServer, newCachedThreadPool());
+        JenkinsPlugin sut = new JenkinsPlugin_GenericCollect_Quasar(jiraServer, newCachedThreadPool());
         when(jiraServer.findBundlesByName(any())).thenReturn(singleton(new JiraBundle()));
         when(jiraServer.findComponentsByBundle(any())).thenThrow(new JiraServerException());
         
@@ -78,7 +77,7 @@ public class QuasarJenkinsPluginTest {
             JenkinsPlugin_Collect::new,
             JenkinsPlugin_GenericCollect::new,
             JenkinsPlugin_FactorCollect::new,
-            JenkinsPlugin_GenericCollect_WithGenericAsyncifier::new
+            JenkinsPlugin_GenericCollect_Quasar::new
         );
        
         JiraServer srv = new JiraServerWithLatency(new FakeJiraServer());
@@ -96,7 +95,7 @@ public class QuasarJenkinsPluginTest {
     }
     
     @Test public void should_4_find_the_right_nunmber_of_jira_components() {
-        JenkinsPlugin sut = new JenkinsPlugin_GenericCollect_WithGenericAsyncifier(
+        JenkinsPlugin sut = new JenkinsPlugin_GenericCollect_Quasar(
                 new JiraServerWithLatency(new FakeJiraServer()),
                 newCachedThreadPool()
         );
@@ -110,7 +109,7 @@ public class QuasarJenkinsPluginTest {
     }
     
     @Test public void should_5_be_chainable() {
-        AsyncJenkinsPlugin sut = new JenkinsPlugin_GenericCollect_WithGenericAsyncifier(
+        AsyncJenkinsPlugin sut = new JenkinsPlugin_GenericCollect_Quasar(
             new JiraServerWithLatency(new FakeJiraServer()),
             newCachedThreadPool()
         );
@@ -141,7 +140,7 @@ public class QuasarJenkinsPluginTest {
     }
     
     @Test public void should_6_work_with_other_collections() {
-        JenkinsPlugin sut = new JenkinsPlugin_GenericCollect_WithGenericAsyncifier(
+        JenkinsPlugin sut = new JenkinsPlugin_GenericCollect_Quasar(
             new JiraServerWithLatency(new FakeJiraServer()),
             newCachedThreadPool()
         );

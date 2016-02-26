@@ -1,0 +1,8 @@
+Cores: 4, FJP size: 3
+cla.completablefuture.jenkins.JenkinsPlugin_SequentialStream@445b84c0  took PT3.212S (found 30) 
+cla.completablefuture.jenkins.JenkinsPlugin_ParallelStream@2b80d80f    took PT1.59S (found 30) 
+cla.completablefuture.jenkins.JenkinsPlugin_Reduce@1888ff2c            took PT3.967S (found 30) 
+cla.completablefuture.jenkins.JenkinsPlugin_Collect@357246de           took PT3.063S (found 30) 
+cla.completablefuture.jenkins.JenkinsPlugin_GenericCollect@d7b1517     took PT2.068S (found 30) 
+cla.completablefuture.jenkins.JenkinsPlugin_FactorCollect@1b40d5f0     took PT2.51S (found 30) 
+cla.jenkins.JenkinsPlugin_GenericCollect_Vertx@394e1a0f                took PT3.255S (found 30) 

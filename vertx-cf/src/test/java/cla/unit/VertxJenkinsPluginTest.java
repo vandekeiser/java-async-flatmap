@@ -1,11 +1,15 @@
 package cla.unit;
 
+import cla.completablefuture.DoublePrintStream;
 import cla.completablefuture.jenkins.*;
 import cla.completablefuture.jira.*;
+import cla.jenkins.JenkinsPlugin_GenericCollect_Vertx;
 import com.jasongoodwin.monads.Try;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
@@ -40,7 +44,7 @@ public class VertxJenkinsPluginTest {
     public void should_1_report_bundles_errors() {
         JiraServer jiraServer = mock(JiraServer.class);
         when(jiraServer.findBundlesByName(any())).thenThrow(new JiraServerException());
-        JenkinsPlugin sut = new JenkinsPlugin_GenericCollect(jiraServer, newCachedThreadPool());
+        JenkinsPlugin sut = new JenkinsPlugin_GenericCollect_Vertx(jiraServer, newCachedThreadPool());
         
         try {
             sut.findComponentsByBundleName("foo");
@@ -55,7 +59,7 @@ public class VertxJenkinsPluginTest {
     @Test
     public void should_2_report_components_errors() {
         JiraServer jiraServer = mock(JiraServer.class);
-        JenkinsPlugin sut = new JenkinsPlugin_GenericCollect(jiraServer, newCachedThreadPool());
+        JenkinsPlugin sut = new JenkinsPlugin_GenericCollect_Vertx(jiraServer, newCachedThreadPool());
         when(jiraServer.findBundlesByName(any())).thenReturn(singleton(new JiraBundle()));
         when(jiraServer.findComponentsByBundle(any())).thenThrow(new JiraServerException());
         
@@ -69,32 +73,35 @@ public class VertxJenkinsPluginTest {
         }
     }
     
-    @Test public void should_3_be_fast() {
+    @Test public void should_3_be_fast() throws FileNotFoundException {
         List<BiFunction<JiraServer, Executor, JenkinsPlugin>> plugins = Arrays.asList(
             JenkinsPlugin_SequentialStream::new,
             JenkinsPlugin_ParallelStream::new,
             JenkinsPlugin_Reduce::new,
             JenkinsPlugin_Collect::new,
             JenkinsPlugin_GenericCollect::new,
-            JenkinsPlugin_FactorCollect::new
+            JenkinsPlugin_FactorCollect::new,
+            JenkinsPlugin_GenericCollect_Vertx::new
         );
 
         JiraServer srv = new JiraServerWithLatency(new FakeJiraServer());
         //Executor pool = newCachedThreadPool();
         Executor pool = newFixedThreadPool(1);
         
-        out.printf("Cores: %d, FJP size: %d%n", getRuntime().availableProcessors(), commonPool().getParallelism());
-        plugins.stream()
-            .map(p -> p.apply(srv, pool))
-            .forEach(p -> {
-                Instant before = Instant.now();
-                Set<JiraComponent> answer = p.findComponentsByBundleName("toto59");
-                out.printf("%-70s took %s (found %d) %n", p, Duration.between(before, Instant.now()), answer.size());
-            });
+        try(PrintStream oout = new DoublePrintStream("comparaison-latences.txt")) {
+            oout.printf("Cores: %d, FJP size: %d%n", getRuntime().availableProcessors(), commonPool().getParallelism());
+            plugins.stream()
+                .map(p -> p.apply(srv, pool))
+                .forEach(p -> {
+                    Instant before = Instant.now();
+                    Set<JiraComponent> answer = p.findComponentsByBundleName("toto59");
+                    oout.printf("%-70s took %s (found %d) %n", p, Duration.between(before, Instant.now()), answer.size());
+                });    
+        } 
     }
     
     @Test public void should_4_find_the_right_nunmber_of_jira_components() {
-        JenkinsPlugin sut = new JenkinsPlugin_GenericCollect(
+        JenkinsPlugin sut = new JenkinsPlugin_GenericCollect_Vertx(
                 new JiraServerWithLatency(new FakeJiraServer()),
                 newCachedThreadPool()
         );
@@ -108,7 +115,7 @@ public class VertxJenkinsPluginTest {
     }
     
     @Test public void should_5_be_chainable() {
-        AsyncJenkinsPlugin sut = new JenkinsPlugin_GenericCollect(
+        AsyncJenkinsPlugin sut = new JenkinsPlugin_GenericCollect_Vertx(
             new JiraServerWithLatency(new FakeJiraServer()),
             newCachedThreadPool()
         );
@@ -139,7 +146,7 @@ public class VertxJenkinsPluginTest {
     }
     
     @Test public void should_6_work_with_other_collections() {
-        JenkinsPlugin sut = new JenkinsPlugin_GenericCollect(
+        JenkinsPlugin sut = new JenkinsPlugin_GenericCollect_Vertx(
             new JiraServerWithLatency(new FakeJiraServer()),
             newCachedThreadPool()
         );
