@@ -5,3 +5,5 @@
 
 completable-future-live-coding/*
 quasar-archetype/*
+vertx-examples
+vertx-examples/*
