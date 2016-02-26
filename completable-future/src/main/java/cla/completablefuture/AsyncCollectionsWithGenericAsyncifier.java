@@ -13,37 +13,34 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 
-import static cla.completablefuture.AsyncCollections.FlatteningCollector.flattening;
+import static cla.completablefuture.AsyncCollectionsWithGenericAsyncifier.FlatteningCollector.flattening;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.stream.Collector.Characteristics.CONCURRENT;
 import static java.util.stream.Collector.Characteristics.UNORDERED;
 import static java.util.stream.Collectors.toSet;
 
-/**
- * 
- */
-public final class AsyncCollections {
+public final class AsyncCollectionsWithGenericAsyncifier {
 
     public interface CollectionSupplier<E, Es extends Collection<E>> extends Supplier<Es> {}
     
     public static <E, F> CompletableFuture<Set<F>> flatMapSetAsync(
         Set<E> inputs,
         Function<E, Set<F>> mapper,
-        Executor parallelisationPool
+        Function<Supplier<Set<F>>, CompletableFuture<Set<F>>> asyncifier
     ) {
-        return flatMapCollectionAsync(inputs, mapper, parallelisationPool, Collections::emptySet, Sets::union);    
+        return flatMapCollectionAsync(inputs, mapper, asyncifier, Collections::emptySet, Sets::union);    
     }
     
     public static <E, Es extends Collection<E>, F, Fs extends Collection<F>> CompletableFuture<Fs> flatMapCollectionAsync(
         Es inputs,
         Function<E, Fs> mapper,
-        Executor parallelisationPool,
+        Function<Supplier<Fs>, CompletableFuture<Fs>> asyncifier,
         CollectionSupplier<F, Fs> collectionSupplier,
         BinaryOperator<Fs> collectionUnion
     ) {
         return inputs.stream()
-            .map(CompletableFutures.asyncify(mapper, parallelisationPool))
+            .map(CompletableFutures.asyncify(mapper, asyncifier))
             .collect(toSet())
             .stream()
             .collect(flattening(collectionSupplier, collectionUnion));    

@@ -24,6 +24,7 @@ import static java.lang.System.out;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 import static java.util.concurrent.Executors.newCachedThreadPool;
+import static java.util.concurrent.Executors.newFixedThreadPool;
 import static java.util.concurrent.ForkJoinPool.commonPool;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.StrictAssertions.failBecauseExceptionWasNotThrown;
@@ -32,6 +33,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+//Run with -ea -javaagent:"C:\Users\Claisse\.m2\repository\co\paralleluniverse\quasar-core\0.7.4\quasar-core-0.7.4-jdk8.jar"
 @FixMethodOrder(NAME_ASCENDING)
 public class QuasarJenkinsPluginTest {
 
@@ -39,14 +41,14 @@ public class QuasarJenkinsPluginTest {
     public void should_1_report_bundles_errors() {
         JiraServer jiraServer = mock(JiraServer.class);
         when(jiraServer.findBundlesByName(any())).thenThrow(new JiraServerException());
-        JenkinsPlugin sut = new JenkinsPlugin_GenericCollect(jiraServer, newCachedThreadPool());
+        JenkinsPlugin sut = new JenkinsPlugin_GenericCollect_WithGenericAsyncifier(jiraServer, newCachedThreadPool());
         
         try {
             sut.findComponentsByBundleName("foo");
             failBecauseExceptionWasNotThrown(JiraServerException.class);
         } catch (JiraServerException | CompletionException expected) {
             if(expected instanceof CompletionException) {
-                assertThat(expected.getCause() instanceof JiraServerException).isTrue();       
+                assertThat(expected.getCause().getCause() instanceof JiraServerException).isTrue();       
             }
         }
     }
@@ -54,7 +56,7 @@ public class QuasarJenkinsPluginTest {
     @Test
     public void should_2_report_components_errors() {
         JiraServer jiraServer = mock(JiraServer.class);
-        JenkinsPlugin sut = new JenkinsPlugin_GenericCollect(jiraServer, newCachedThreadPool());
+        JenkinsPlugin sut = new JenkinsPlugin_GenericCollect_WithGenericAsyncifier(jiraServer, newCachedThreadPool());
         when(jiraServer.findBundlesByName(any())).thenReturn(singleton(new JiraBundle()));
         when(jiraServer.findComponentsByBundle(any())).thenThrow(new JiraServerException());
         
@@ -63,7 +65,7 @@ public class QuasarJenkinsPluginTest {
             failBecauseExceptionWasNotThrown(JiraServerException.class);
         } catch (JiraServerException | CompletionException expected) {
             if(expected instanceof CompletionException) {
-                assertThat(expected.getCause() instanceof JiraServerException).isTrue();       
+                assertThat(expected.getCause().getCause() instanceof JiraServerException).isTrue();       
             }
         }
     }
@@ -75,12 +77,13 @@ public class QuasarJenkinsPluginTest {
             JenkinsPlugin_Reduce::new,
             JenkinsPlugin_Collect::new,
             JenkinsPlugin_GenericCollect::new,
-            JenkinsPlugin_FactorCollect::new
+            JenkinsPlugin_FactorCollect::new,
+            JenkinsPlugin_GenericCollect_WithGenericAsyncifier::new
         );
        
         JiraServer srv = new JiraServerWithLatency(new FakeJiraServer());
-        Executor pool = newCachedThreadPool();
-        //Executor pool = newFixedThreadPool(10);
+        //Executor pool = newCachedThreadPool();
+        Executor pool = newFixedThreadPool(1);
         
         out.printf("Cores: %d, FJP size: %d%n", getRuntime().availableProcessors(), commonPool().getParallelism());
         plugins.stream()
@@ -93,7 +96,7 @@ public class QuasarJenkinsPluginTest {
     }
     
     @Test public void should_4_find_the_right_nunmber_of_jira_components() {
-        JenkinsPlugin sut = new JenkinsPlugin_FactorCollect(
+        JenkinsPlugin sut = new JenkinsPlugin_GenericCollect_WithGenericAsyncifier(
                 new JiraServerWithLatency(new FakeJiraServer()),
                 newCachedThreadPool()
         );
@@ -107,7 +110,7 @@ public class QuasarJenkinsPluginTest {
     }
     
     @Test public void should_5_be_chainable() {
-        AsyncJenkinsPlugin sut = new JenkinsPlugin_GenericCollect(
+        AsyncJenkinsPlugin sut = new JenkinsPlugin_GenericCollect_WithGenericAsyncifier(
             new JiraServerWithLatency(new FakeJiraServer()),
             newCachedThreadPool()
         );
@@ -138,7 +141,7 @@ public class QuasarJenkinsPluginTest {
     }
     
     @Test public void should_6_work_with_other_collections() {
-        JenkinsPlugin sut = new JenkinsPlugin_GenericCollect(
+        JenkinsPlugin sut = new JenkinsPlugin_GenericCollect_WithGenericAsyncifier(
             new JiraServerWithLatency(new FakeJiraServer()),
             newCachedThreadPool()
         );
@@ -147,4 +150,5 @@ public class QuasarJenkinsPluginTest {
             sut.findComponentsByBundleName("toto59")
         ).hasSize(NB_OF_BUNDLES_PER_NAME * NB_OF_COMPONENTS_PER_BUNDLE);
     }
+    
 }
