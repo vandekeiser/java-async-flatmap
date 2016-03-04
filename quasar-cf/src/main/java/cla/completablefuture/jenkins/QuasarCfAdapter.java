@@ -1,6 +1,7 @@
 package cla.completablefuture.jenkins;
 
 import co.paralleluniverse.fibers.Fiber;
+import co.paralleluniverse.fibers.FiberAsync;
 import co.paralleluniverse.fibers.SuspendExecution;
 
 import java.util.concurrent.CompletableFuture;
@@ -52,5 +53,7 @@ public class QuasarCfAdapter {
         };
     }
 
-    
+    private static <T> FiberAsync<T, CompletionException> quasarify(CompletableFuture<T> cf) {
+        return new CfFiberAsync(cf);
+    }
 }

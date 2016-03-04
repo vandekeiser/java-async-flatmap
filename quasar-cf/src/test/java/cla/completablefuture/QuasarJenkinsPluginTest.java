@@ -6,6 +6,8 @@ import com.jasongoodwin.monads.Try;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
@@ -32,7 +34,8 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-//Run with -ea -javaagent:"C:\Users\Claisse\.m2\repository\co\paralleluniverse\quasar-core\0.7.4\quasar-core-0.7.4-jdk8.jar"
+//Run with 
+// -javaagent:"C:\Users\Claisse\.m2\repository\co\paralleluniverse\quasar-core\0.7.4\quasar-core-0.7.4-jdk8.jar" -Dco.paralleluniverse.fibers.verifyInstrumentation=false
 @FixMethodOrder(NAME_ASCENDING)
 public class QuasarJenkinsPluginTest {
 
@@ -69,7 +72,7 @@ public class QuasarJenkinsPluginTest {
         }
     }
     
-    @Test public void should_3_be_fast() {
+    @Test public void should_3_be_fast() throws FileNotFoundException {
         List<BiFunction<JiraServer, Executor, JenkinsPlugin>> plugins = Arrays.asList(
             JenkinsPlugin_SequentialStream::new,
             JenkinsPlugin_ParallelStream::new,
@@ -82,16 +85,20 @@ public class QuasarJenkinsPluginTest {
        
         JiraServer srv = new JiraServerWithLatency(new FakeJiraServer());
         //Executor pool = newCachedThreadPool();
-        Executor pool = newFixedThreadPool(1);
+        Executor pool = newFixedThreadPool(commonPool().getParallelism());
         
-        out.printf("Cores: %d, FJP size: %d%n", getRuntime().availableProcessors(), commonPool().getParallelism());
-        plugins.stream()
-            .map(p -> p.apply(srv, pool))
-            .forEach(p -> {
-                Instant before = Instant.now();
-                Set<JiraComponent> answer = p.findComponentsByBundleName("toto59");
-                out.printf("%-70s took %s (found %d) %n", p, Duration.between(before, Instant.now()), answer.size());
-            });
+        try(PrintStream oout = new DoublePrintStream("comparaison-latences.txt")) {
+            oout.printf("Cores: %d, FJP size: %d%n", getRuntime().availableProcessors(), commonPool().getParallelism());
+            plugins.stream()
+                .map(p -> p.apply(srv, pool))
+                .forEach(p -> {
+                    Instant before = Instant.now();
+                    Set<JiraComponent> answer = p.findComponentsByBundleName("toto59");
+                    oout.printf("%-70s took %s (found %d) %n", p, Duration.between(before, Instant.now()), answer.size());
+                });
+        }
+
+        
     }
     
     @Test public void should_4_find_the_right_nunmber_of_jira_components() {
