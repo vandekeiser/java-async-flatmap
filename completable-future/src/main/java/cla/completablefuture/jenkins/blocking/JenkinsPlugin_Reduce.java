@@ -1,10 +1,11 @@
-package cla.completablefuture.jenkins;
+package cla.completablefuture.jenkins.blocking;
 
-import cla.completablefuture.AsyncSets_Reduce;
-import cla.completablefuture.CompletableFutures;
+import cla.completablefuture.blocking.AsyncSets_Reduce;
+import cla.completablefuture.blocking.CompletableFutures;
+import cla.completablefuture.jenkins.AsyncJenkinsPlugin;
 import cla.completablefuture.jira.JiraBundle;
 import cla.completablefuture.jira.JiraComponent;
-import cla.completablefuture.jira.JiraServer;
+import cla.completablefuture.jira.blocking.JiraServer;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;

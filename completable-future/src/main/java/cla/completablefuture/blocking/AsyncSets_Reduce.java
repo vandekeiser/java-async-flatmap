@@ -1,4 +1,6 @@
-package cla.completablefuture;
+package cla.completablefuture.blocking;
+
+import cla.completablefuture.Sets;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;

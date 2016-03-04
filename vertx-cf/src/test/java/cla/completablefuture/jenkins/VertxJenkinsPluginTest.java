@@ -1,8 +1,11 @@
 package cla.completablefuture.jenkins;
 
-import cla.completablefuture.DoublePrintStream;
-import cla.completablefuture.jenkins.*;
+import cla.completablefuture.ConsolePlusFile;
+import cla.completablefuture.jenkins.blocking.*;
 import cla.completablefuture.jira.*;
+import cla.completablefuture.jira.blocking.FakeJiraServer;
+import cla.completablefuture.jira.blocking.JiraServer;
+import cla.completablefuture.jira.blocking.JiraServerWithLatency;
 import cla.jenkins.JenkinsPlugin_GenericCollect_Vertx;
 import com.jasongoodwin.monads.Try;
 import org.junit.FixMethodOrder;
@@ -20,8 +23,8 @@ import java.util.concurrent.*;
 import java.util.function.BiFunction;
 import java.util.stream.IntStream;
 
-import static cla.completablefuture.jira.FakeJiraServer.NB_OF_BUNDLES_PER_NAME;
-import static cla.completablefuture.jira.FakeJiraServer.NB_OF_COMPONENTS_PER_BUNDLE;
+import static cla.completablefuture.jira.blocking.FakeJiraServer.NB_OF_BUNDLES_PER_NAME;
+import static cla.completablefuture.jira.blocking.FakeJiraServer.NB_OF_COMPONENTS_PER_BUNDLE;
 import static java.lang.Runtime.getRuntime;
 import static java.lang.System.out;
 import static java.util.Collections.emptySet;
@@ -88,14 +91,14 @@ public class VertxJenkinsPluginTest {
         //Executor pool = newCachedThreadPool();
         Executor pool = newFixedThreadPool(1);
         
-        try(PrintStream oout = new DoublePrintStream("comparaison-latences.txt")) {
+        try(PrintStream oout = new ConsolePlusFile("comparaison-latences.txt")) {
             oout.printf("Cores: %d, FJP size: %d%n", getRuntime().availableProcessors(), commonPool().getParallelism());
             plugins.stream()
                 .map(p -> p.apply(srv, pool))
                 .forEach(p -> {
                     Instant before = Instant.now();
                     Set<JiraComponent> answer = p.findComponentsByBundleName("toto59");
-                    oout.printf("%-70s took %s (found %d) %n", p, Duration.between(before, Instant.now()), answer.size());
+                    oout.printf("%-80s took %s (found %d) %n", p, Duration.between(before, Instant.now()), answer.size());
                 });    
         } 
     }

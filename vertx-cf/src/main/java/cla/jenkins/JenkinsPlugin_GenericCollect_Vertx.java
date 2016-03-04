@@ -1,12 +1,12 @@
 package cla.jenkins;
 
-import cla.completablefuture.AsyncCollectionsWithGenericAsyncifier;
-import cla.completablefuture.CompletableFutures;
+import cla.completablefuture.blocking.AsyncCollectionsWithGenericAsyncifier;
+import cla.completablefuture.blocking.CompletableFutures;
 import cla.completablefuture.Sets;
 import cla.completablefuture.jenkins.AsyncJenkinsPlugin;
 import cla.completablefuture.jira.JiraBundle;
 import cla.completablefuture.jira.JiraComponent;
-import cla.completablefuture.jira.JiraServer;
+import cla.completablefuture.jira.blocking.JiraServer;
 
 import java.util.Collections;
 import java.util.Set;

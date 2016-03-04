@@ -1,4 +1,8 @@
-package cla.completablefuture.jira;
+package cla.completablefuture.jira.blocking;
+
+import cla.completablefuture.jira.JiraBundle;
+import cla.completablefuture.jira.JiraComponent;
+import cla.completablefuture.jira.blocking.JiraServer;
 
 import java.util.Set;
 import java.util.stream.IntStream;

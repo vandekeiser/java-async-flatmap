@@ -1,24 +1,25 @@
-package cla.completablefuture.jenkins;
+package cla.completablefuture.jenkins.blocking;
 
+import cla.completablefuture.jenkins.JenkinsPlugin;
+import cla.completablefuture.jira.blocking.JiraServer;
 import cla.completablefuture.jira.JiraComponent;
-import cla.completablefuture.jira.JiraServer;
 
 import java.util.Set;
 import java.util.concurrent.Executor;
 
 import static java.util.stream.Collectors.toSet;
 
-public class JenkinsPlugin_ParallelStream implements JenkinsPlugin {
+public class JenkinsPlugin_SequentialStream implements JenkinsPlugin {
 
     private final JiraServer srv;
 
-    public JenkinsPlugin_ParallelStream(JiraServer srv, Executor dedicatedPool) {
+    public JenkinsPlugin_SequentialStream(JiraServer srv, Executor dedicatedPool) {
         this.srv = srv;
     }
 
     public Set<JiraComponent> findComponentsByBundleName(String bundleName) {
         return srv.findBundlesByName(bundleName)
-            .stream().parallel()
+            .stream()
             .flatMap(b -> srv.findComponentsByBundle(b).stream())
             .collect(toSet());
     }

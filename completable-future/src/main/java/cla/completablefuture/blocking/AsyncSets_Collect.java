@@ -1,4 +1,6 @@
-package cla.completablefuture;
+package cla.completablefuture.blocking;
+
+import cla.completablefuture.Sets;
 
 import java.util.EnumSet;
 import java.util.Set;
@@ -11,7 +13,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 
-import static cla.completablefuture.AsyncSets_Collect.FlatteningCollector.flattening;
+import static cla.completablefuture.blocking.AsyncSets_Collect.FlatteningCollector.flattening;
 import static java.util.Collections.emptySet;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.stream.Collector.Characteristics.CONCURRENT;

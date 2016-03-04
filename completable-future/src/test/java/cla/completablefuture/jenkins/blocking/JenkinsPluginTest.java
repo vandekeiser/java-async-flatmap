@@ -1,6 +1,12 @@
-package cla.completablefuture.jenkins;
+package cla.completablefuture.jenkins.blocking;
 
+import cla.completablefuture.jenkins.AsyncJenkinsPlugin;
+import cla.completablefuture.jenkins.JenkinsPlugin;
+import cla.completablefuture.jenkins.blocking.*;
 import cla.completablefuture.jira.*;
+import cla.completablefuture.jira.blocking.FakeJiraServer;
+import cla.completablefuture.jira.blocking.JiraServer;
+import cla.completablefuture.jira.blocking.JiraServerWithLatency;
 import com.jasongoodwin.monads.Try;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -84,7 +90,7 @@ public class JenkinsPluginTest {
             .forEach(p -> {
                 Instant before = Instant.now();
                 Set<JiraComponent> answer = p.findComponentsByBundleName("toto59");
-                out.printf("%-70s took %s (found %d) %n", p, Duration.between(before, Instant.now()), answer.size());
+                out.printf("%-80s took %s (found %d) %n", p, Duration.between(before, Instant.now()), answer.size());
             });
     }
     

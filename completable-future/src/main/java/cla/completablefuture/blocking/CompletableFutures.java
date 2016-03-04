@@ -1,4 +1,4 @@
-package cla.completablefuture;
+package cla.completablefuture.blocking;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;

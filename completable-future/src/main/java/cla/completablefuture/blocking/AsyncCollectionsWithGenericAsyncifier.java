@@ -1,11 +1,12 @@
-package cla.completablefuture;
+package cla.completablefuture.blocking;
+
+import cla.completablefuture.Sets;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.function.BinaryOperator;
@@ -13,7 +14,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 
-import static cla.completablefuture.AsyncCollectionsWithGenericAsyncifier.FlatteningCollector.flattening;
+import static cla.completablefuture.blocking.AsyncCollectionsWithGenericAsyncifier.FlatteningCollector.flattening;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.stream.Collector.Characteristics.CONCURRENT;

@@ -1,7 +1,5 @@
-package cla.completablefuture;
+package cla.completablefuture.blocking;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -12,80 +10,77 @@ import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
+import java.util.stream.Stream;
 
-import static cla.completablefuture.AsyncCollections.FlatteningCollector.flattening;
+import static cla.completablefuture.blocking.AsyncStreams.FlatteningAsyncColectionCollector.flattening;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.stream.Collector.Characteristics.CONCURRENT;
 import static java.util.stream.Collector.Characteristics.UNORDERED;
 import static java.util.stream.Collectors.toSet;
 
-/**
- * 
- */
-public final class AsyncCollections {
+public final class AsyncStreams {
 
-    public interface CollectionSupplier<E, Es extends Collection<E>> extends Supplier<Es> {}
+    public interface StreamSupplier<E, Es extends Stream<E>> extends Supplier<Es> {}
     
-    public static <E, F> CompletableFuture<Set<F>> flatMapSetAsync(
-        Set<E> inputs,
-        Function<E, Set<F>> mapper,
+    public static <E, F> CompletableFuture<Stream<F>> flatMapAsync(
+        Stream<E> inputs,
+        Function<E, Stream<F>> mapper,
         Executor parallelisationPool
     ) {
-        return flatMapCollectionAsync(inputs, mapper, parallelisationPool, Collections::emptySet, Sets::union);    
+        return AsyncStreams.flatMapAsync(inputs, mapper, parallelisationPool, Stream::empty, Stream::concat);
     }
     
-    public static <E, Es extends Collection<E>, F, Fs extends Collection<F>> CompletableFuture<Fs> flatMapCollectionAsync(
+    public static <E, Es extends Stream<E>, F, Fs extends Stream<F>> CompletableFuture<Fs> flatMapAsync(
         Es inputs,
         Function<E, Fs> mapper,
         Executor parallelisationPool,
-        CollectionSupplier<F, Fs> collectionSupplier,
-        BinaryOperator<Fs> collectionUnion
+        StreamSupplier<F, Fs> streamSupplier,
+        BinaryOperator<Fs> streamUnion
     ) {
-        return inputs.stream()
+        return inputs
             .map(CompletableFutures.asyncify(mapper, parallelisationPool))
             .collect(toSet())
             .stream()
-            .collect(flattening(collectionSupplier, collectionUnion));    
+            .collect(flattening(streamSupplier, streamUnion));    
     }
     
-    static class FlatteningCollector<F, Fs extends Collection<F>> implements Collector<
+    static class FlatteningAsyncColectionCollector<F, Fs extends Stream<F>> implements Collector<
         CompletableFuture<Fs>,
         AtomicReference<CompletableFuture<Fs>>, 
         CompletableFuture<Fs>
     > {
-        private final CollectionSupplier<F, Fs> collectionSupplier;
-        private final BinaryOperator<Fs> collectionUnion;
+        private final StreamSupplier<F, Fs> streamSupplier;
+        private final BinaryOperator<Fs> streamUnion;
 
-        private FlatteningCollector(CollectionSupplier<F, Fs> collectionSupplier, BinaryOperator<Fs> collectionUnion) {
-            this.collectionSupplier = requireNonNull(collectionSupplier);
-            this.collectionUnion = requireNonNull(collectionUnion);
+        private FlatteningAsyncColectionCollector(StreamSupplier<F, Fs> streamSupplier, BinaryOperator<Fs> streamUnion) {
+            this.streamSupplier = requireNonNull(streamSupplier);
+            this.streamUnion = requireNonNull(streamUnion);
         }
 
-        static <F, Fs extends Collection<F>> 
-        Collector<CompletableFuture<Fs>, ?, CompletableFuture<Fs>> flattening(
-                CollectionSupplier<F, Fs> collectionSupplier,
-                BinaryOperator<Fs> collectionUnion
+        static <F, Fs extends Stream<F>> Collector<CompletableFuture<Fs>, ?, CompletableFuture<Fs>> flattening(
+            StreamSupplier<F, Fs> streamSupplier, 
+            BinaryOperator<Fs> streamUnion
         ) {
-            return new FlatteningCollector<>(collectionSupplier, collectionUnion);
+            return new FlatteningAsyncColectionCollector<>(streamSupplier, streamUnion);
         }
         
         @Override 
         public Supplier<AtomicReference<CompletableFuture<Fs>>> supplier() {
-            return () -> new AtomicReference<>(completedFuture(collectionSupplier.get()));
+            return () -> new AtomicReference<>(completedFuture(streamSupplier.get()));
         }
     
         @Override
         public BiConsumer<AtomicReference<CompletableFuture<Fs>>, CompletableFuture<Fs>> accumulator() {
             return (acc, curr) -> acc.accumulateAndGet(curr,
-                (cf1, cf2) -> cf1.thenCombine(cf2, collectionUnion)   
+                (cf1, cf2) -> cf1.thenCombine(cf2, streamUnion)   
             );
         }
     
         @Override
         public BinaryOperator<AtomicReference<CompletableFuture<Fs>>> combiner() {
             return (acc1, acc2) -> new AtomicReference<>(
-                acc1.get().thenCombine(acc2.get(), collectionUnion)    
+                acc1.get().thenCombine(acc2.get(), streamUnion)    
             );
         }
     

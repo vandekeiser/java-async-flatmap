@@ -1,4 +1,8 @@
-package cla.completablefuture.jira;
+package cla.completablefuture.jira.blocking;
+
+import cla.completablefuture.jira.JiraBundle;
+import cla.completablefuture.jira.JiraComponent;
+import cla.completablefuture.jira.blocking.JiraServer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,4 +50,5 @@ public class JiraServerWithLatency implements JiraServer {
             Thread.currentThread().interrupt();
         }
     }
+    
 }

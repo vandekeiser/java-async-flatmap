@@ -3,9 +3,9 @@ package cla.completablefuture;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
-public class DoublePrintStream extends PrintStream {
+public class ConsolePlusFile extends PrintStream {
 
-    public DoublePrintStream(String fileName) throws FileNotFoundException {
+    public ConsolePlusFile(String fileName) throws FileNotFoundException {
         super(fileName);
     }
     
