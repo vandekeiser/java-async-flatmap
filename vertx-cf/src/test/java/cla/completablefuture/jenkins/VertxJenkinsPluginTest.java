@@ -106,7 +106,7 @@ public class VertxJenkinsPluginTest {
                 newCachedThreadPool()
         );
         
-        IntStream.rangeClosed(1, 20).forEach(i -> {
+        IntStream.rangeClosed(1, 1).forEach(i -> {
             out.println("i: " + i);
             assertThat(
                     sut.findComponentsByBundleName("toto59")
