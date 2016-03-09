@@ -1,16 +1,15 @@
 package cla.completablefuture.nonblocking;
 
 import cla.completablefuture.Sets;
+import cla.completablefuture.blocking.*;
 
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.BiConsumer;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
@@ -25,11 +24,29 @@ public final class AsyncSets_Collect {
 
     public static <E, F> CompletableFuture<Set<F>> flatMapAsync(
         Set<E> inputs,
-        Function<E, CompletableFuture<Set<F>>> mapper,
+        Function<E, CompletionStage<Set<F>>> mapper,
         Executor parallelisationPool
     ) {
         return inputs.stream()
-            .map(mapper)//pool?
+          //  .map(mapper)//pool?
+            .map(CompletableFutures.asyncify(mapper, parallelisationPool))
+            .collect(toSet())
+            .stream()
+            .collect(flattening());    
+    }
+    
+    public static <E, F> CompletableFuture<Set<F>> flatMapAsync(
+        Set<E> inputs,
+        Function<E, CompletionStage<Set<F>>> mapper,
+        Function<
+                Function<E, ? extends CompletionStage<Set<F>>>, 
+                Function<E, CompletableFuture<Set<F>>>
+        > asyncifier
+    ) {
+        
+                
+        return inputs.stream()
+            .map(asyncifier.apply(mapper))
             .collect(toSet())
             .stream()
             .collect(flattening());    

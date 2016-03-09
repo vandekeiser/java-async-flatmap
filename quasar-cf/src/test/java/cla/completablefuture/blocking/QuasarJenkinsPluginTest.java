@@ -1,5 +1,6 @@
-package cla.completablefuture;
+package cla.completablefuture.blocking;
 
+import cla.completablefuture.ConsolePlusFile;
 import cla.completablefuture.jenkins.*;
 import cla.completablefuture.jenkins.blocking.*;
 import cla.completablefuture.jira.*;

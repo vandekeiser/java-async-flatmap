@@ -4,12 +4,12 @@ import cla.completablefuture.jira.JiraBundle;
 import cla.completablefuture.jira.JiraComponent;
 
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 
 public interface JiraServer {
     
-    CompletableFuture<Set<JiraBundle>> findBundlesByName(String bundleName);
+    CompletionStage<Set<JiraBundle>> findBundlesByName(String bundleName);
     
-    CompletableFuture<Set<JiraComponent>> findComponentsByBundle(JiraBundle bundle);
+    CompletionStage<Set<JiraComponent>> findComponentsByBundle(JiraBundle bundle);
     
 }

@@ -135,7 +135,6 @@ public class JenkinsPluginTest {
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             e.printStackTrace();
         } 
-
     }
     
     @Test public void should_6_work_with_other_collections() {

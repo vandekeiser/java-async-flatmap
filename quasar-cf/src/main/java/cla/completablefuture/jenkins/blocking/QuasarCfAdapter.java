@@ -1,4 +1,4 @@
-package cla.completablefuture.jenkins;
+package cla.completablefuture.jenkins.blocking;
 
 import co.paralleluniverse.fibers.Fiber;
 import co.paralleluniverse.fibers.FiberAsync;
