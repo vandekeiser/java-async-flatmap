@@ -13,7 +13,7 @@ public class QuasarCfAdapter {
     public static <T, U> Function<
         Function<T, CompletionStage<U>>,
         Function<T, CompletableFuture<U>>
-    > supplyQuasar2(Executor dedicatedPool) {
+    > supplyQuasar(Executor dedicatedPool) {
         return blocking -> t -> callInFiber(blocking, t, dedicatedPool);
     }
 

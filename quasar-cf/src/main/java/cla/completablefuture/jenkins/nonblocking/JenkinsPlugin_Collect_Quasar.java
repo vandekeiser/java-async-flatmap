@@ -9,7 +9,6 @@ import cla.completablefuture.jira.JiraBundle;
 import cla.completablefuture.jira.JiraComponent;
 import cla.completablefuture.jira.nonblocking.JiraServer;
 import cla.completablefuture.nonblocking.AsyncSets_Collect;
-import cla.completablefuture.nonblocking.CompletableFutures;
 
 public class JenkinsPlugin_Collect_Quasar implements AsyncJenkinsPlugin {
     
@@ -17,7 +16,8 @@ public class JenkinsPlugin_Collect_Quasar implements AsyncJenkinsPlugin {
 
     public JenkinsPlugin_Collect_Quasar(JiraServer srv, Executor dedicatedPool) {
         Function<String, CompletableFuture<Set<JiraBundle>>> findBundlesByNameAsync =
-            CompletableFutures.asyncify(srv::findBundlesByName, cla.completablefuture.jenkins.nonblocking.QuasarCfAdapter.supplyQuasar2(dedicatedPool));
+            QuasarCfAdapter.<String, Set<JiraBundle>>supplyQuasar(dedicatedPool)
+            .apply(srv::findBundlesByName);
 
         Function<Set<JiraBundle>, CompletableFuture<Set<JiraComponent>>> findComponentsByBundlesAsync =
                     bundles -> AsyncSets_Collect.flatMapAsync(bundles, srv::findComponentsByBundle, dedicatedPool);

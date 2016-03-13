@@ -25,15 +25,4 @@ public final class CompletableFutures {
         };
     }
 
-    public static <S, T> Function<S, CompletableFuture<T>>
-    asyncify(
-        Function<S, CompletionStage<T>> mapper,
-        Function<
-                Function<S, CompletionStage<T>>,
-                Function<S, CompletableFuture<T>>
-        > asyncifier
-    ) {
-        return asyncifier.apply(mapper);
-    }
-
 }
