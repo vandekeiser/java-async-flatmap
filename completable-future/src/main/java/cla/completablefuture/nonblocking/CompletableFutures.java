@@ -25,17 +25,15 @@ public final class CompletableFutures {
         };
     }
 
-    private static Executor xxx = Executors.newSingleThreadExecutor();
-    private static Executor sameThreadExecutor() {
-        return Executors.newSingleThreadExecutor(r -> currentThread());
-    }
-
     public static <S, T> Function<S, CompletableFuture<T>>
-    asyncify(Function<S, CompletionStage<T>> mapper, UnaryOperator<Function<S, CompletionStage<T>>> asyncifier) {
-        return asyncify(
-                asyncifier.apply(mapper),
-                sameThreadExecutor()
-        );
+    asyncify(
+            Function<S, CompletionStage<T>> mapper,
+            Function<
+                    Function<S, CompletionStage<T>>,
+                    Function<S, CompletableFuture<T>>
+            > asyncifier
+    ) {
+        return asyncifier.apply(mapper);
     }
 
 }

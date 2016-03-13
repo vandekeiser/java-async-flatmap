@@ -20,6 +20,8 @@ import java.util.concurrent.*;
 import java.util.function.BiFunction;
 import java.util.stream.IntStream;
 
+import static cla.completablefuture.jira.nonblocking.FakeJiraServer.NB_OF_BUNDLES_PER_NAME;
+import static cla.completablefuture.jira.nonblocking.FakeJiraServer.NB_OF_COMPONENTS_PER_BUNDLE;
 import static java.lang.Runtime.getRuntime;
 import static java.lang.System.out;
 import static java.util.Collections.emptySet;
@@ -95,7 +97,7 @@ public class JenkinsPluginTest {
             out.println("i: " + i);
             assertThat(
                     sut.findComponentsByBundleName("toto59")
-            ).hasSize(FakeJiraServer.NB_OF_BUNDLES_PER_NAME * FakeJiraServer.NB_OF_COMPONENTS_PER_BUNDLE);
+            ).hasSize(NB_OF_BUNDLES_PER_NAME * NB_OF_COMPONENTS_PER_BUNDLE);
         });
     }
     
@@ -137,7 +139,7 @@ public class JenkinsPluginTest {
      
         assertThat(
             sut.findComponentsByBundleName("toto59")
-        ).hasSize(FakeJiraServer.NB_OF_BUNDLES_PER_NAME * FakeJiraServer.NB_OF_COMPONENTS_PER_BUNDLE);
+        ).hasSize(NB_OF_BUNDLES_PER_NAME * NB_OF_COMPONENTS_PER_BUNDLE);
     }
 
     private List<? extends JenkinsPlugin> allPlugins() {

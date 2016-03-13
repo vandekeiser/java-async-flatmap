@@ -19,10 +19,13 @@ import com.jasongoodwin.monads.Try;
 import org.junit.FixMethodOrder;
 import org.junit.Ignore;
 import org.junit.Test;
+import static cla.completablefuture.jira.nonblocking.FakeJiraServer.NB_OF_BUNDLES_PER_NAME;
+import static cla.completablefuture.jira.nonblocking.FakeJiraServer.NB_OF_COMPONENTS_PER_BUNDLE;
 import static java.lang.Runtime.getRuntime;
 import static java.lang.System.out;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
+import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.Executors.newCachedThreadPool;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 import static java.util.concurrent.ForkJoinPool.commonPool;
@@ -62,7 +65,7 @@ public class QuasarJenkinsPluginTest {
         JiraServer jiraServer = mock(JiraServer.class);
         JenkinsPlugin sut = new JenkinsPlugin_Collect_Quasar(jiraServer, newCachedThreadPool());
         when(jiraServer.findBundlesByName(any())).thenReturn(
-                CompletableFuture.completedFuture(singleton(new JiraBundle()))
+            completedFuture(singleton(new JiraBundle()))
         );
         when(jiraServer.findComponentsByBundle(any())).thenThrow(new JiraServerException());
         
@@ -77,28 +80,27 @@ public class QuasarJenkinsPluginTest {
     }
     
     @Test public void should_3_be_fast() {
-        List<? extends JenkinsPlugin> allPlugins = allPlugins();
+        List<JenkinsPlugin> allPlugins = allPlugins();
         
         out.printf("Cores: %d, FJP size: %d%n", getRuntime().availableProcessors(), commonPool().getParallelism());
-        allPlugins.stream()
-            .forEach(p -> {
-                Instant before = Instant.now();
-                Set<JiraComponent> answer = p.findComponentsByBundleName("toto59");
-                out.printf("%-80s took %s (found %d) %n", p, Duration.between(before, Instant.now()), answer.size());
-            });
+        allPlugins.stream().forEach(p -> {
+            Instant before = Instant.now();
+            Set<JiraComponent> answer = p.findComponentsByBundleName("toto59");
+            out.printf("%-80s took %s (found %d) %n", p, Duration.between(before, Instant.now()), answer.size());
+        });
     }
 
     @Test public void should_4_find_the_right_nunmber_of_jira_components() {
         JenkinsPlugin sut = new JenkinsPlugin_Collect_Quasar(
-                new JiraServerWithLatency(new FakeJiraServer()),
-                newCachedThreadPool()
+            new JiraServerWithLatency(new FakeJiraServer()),
+            newCachedThreadPool()
         );
         
-        IntStream.rangeClosed(1, 1).forEach(i -> {
+        IntStream.rangeClosed(1, 10).forEach(i -> {
             out.println("i: " + i);
             assertThat(
                     sut.findComponentsByBundleName("toto59")
-            ).hasSize(FakeJiraServer.NB_OF_BUNDLES_PER_NAME * FakeJiraServer.NB_OF_COMPONENTS_PER_BUNDLE);
+            ).hasSize(NB_OF_BUNDLES_PER_NAME * NB_OF_COMPONENTS_PER_BUNDLE);
         });
     }
     
@@ -132,17 +134,6 @@ public class QuasarJenkinsPluginTest {
         } 
     }
     
-    @Test public void should_6_work_with_other_collections() {
-        JenkinsPlugin sut = new JenkinsPlugin_Collect_Quasar(
-            new JiraServerWithLatency(new FakeJiraServer()),
-            newCachedThreadPool()
-        );
-     
-        assertThat(
-            sut.findComponentsByBundleName("toto59")
-        ).hasSize(FakeJiraServer.NB_OF_BUNDLES_PER_NAME * FakeJiraServer.NB_OF_COMPONENTS_PER_BUNDLE);
-    }
-
     private List<JenkinsPlugin> allPlugins() {
         List<BiFunction<cla.completablefuture.jira.blocking.JiraServer, Executor, JenkinsPlugin>> blockingPlugins = Arrays.asList(
             cla.completablefuture.jenkins.blocking.JenkinsPlugin_SequentialStream::new,
