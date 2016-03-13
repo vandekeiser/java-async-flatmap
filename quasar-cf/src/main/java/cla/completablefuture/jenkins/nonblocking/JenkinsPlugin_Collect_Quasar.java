@@ -16,7 +16,7 @@ public class JenkinsPlugin_Collect_Quasar implements AsyncJenkinsPlugin {
 
     public JenkinsPlugin_Collect_Quasar(JiraServer srv, Executor dedicatedPool) {
         Function<String, CompletableFuture<Set<JiraBundle>>> findBundlesByNameAsync =
-            QuasarCfAdapter.<String, Set<JiraBundle>>supplyQuasar(dedicatedPool)
+            Quasarify.<String, Set<JiraBundle>>usingPool(dedicatedPool)
             .apply(srv::findBundlesByName);
 
         Function<Set<JiraBundle>, CompletableFuture<Set<JiraComponent>>> findComponentsByBundlesAsync =

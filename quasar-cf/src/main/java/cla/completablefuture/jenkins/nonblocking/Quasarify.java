@@ -8,12 +8,12 @@ import co.paralleluniverse.fibers.Fiber;
 import co.paralleluniverse.fibers.FiberExecutorScheduler;
 import co.paralleluniverse.fibers.FiberScheduler;
 
-public class QuasarCfAdapter {
+public class Quasarify {
 
     public static <T, U> Function<
         Function<T, CompletionStage<U>>,
         Function<T, CompletableFuture<U>>
-    > supplyQuasar(Executor dedicatedPool) {
+    > usingPool(Executor dedicatedPool) {
         return blocking -> input -> callInFiber(blocking, input, dedicatedPool);
     }
 
