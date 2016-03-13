@@ -20,6 +20,7 @@ public class JenkinsPlugin_Collect_Quasar implements AsyncJenkinsPlugin {
             .apply(srv::findBundlesByName);
 
         Function<Set<JiraBundle>, CompletableFuture<Set<JiraComponent>>> findComponentsByBundlesAsync =
+            //TODO: utiliser quasar ici aussi
             bundles -> AsyncSets_Collect.flatMapAsync(bundles, srv::findComponentsByBundle, dedicatedPool);
 
         this.findComponentsByBundleNameAsync = findBundlesByNameAsync.andThen(

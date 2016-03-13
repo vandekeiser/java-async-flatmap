@@ -14,7 +14,7 @@ public class QuasarCfAdapter {
         Function<T, CompletionStage<U>>,
         Function<T, CompletableFuture<U>>
     > supplyQuasar(Executor dedicatedPool) {
-        return blocking -> t -> callInFiber(blocking, t, dedicatedPool);
+        return blocking -> input -> callInFiber(blocking, input, dedicatedPool);
     }
 
     private static <T, U> CompletableFuture<U> callInFiber(
@@ -22,17 +22,17 @@ public class QuasarCfAdapter {
         T input,
         Executor dedicatedPool
     ) {
-        FiberScheduler scheduler = new FiberExecutorScheduler("quasar", dedicatedPool);
-        CompletableFuture<U> ret = new CompletableFuture<>();
+        FiberScheduler scheduler = new FiberExecutorScheduler("callInFiber scheduler", dedicatedPool);
+        CompletableFuture<U> fiberCf = new CompletableFuture<>();
 
         new Fiber<>(scheduler, () -> {
             blocking.apply(input).whenComplete((t, x) -> {
-                if (x != null) ret.completeExceptionally(x);
-                else ret.complete(t);
+                if (x != null) fiberCf.completeExceptionally(x);
+                else fiberCf.complete(t);
             });
         }).start();
 
-        return ret;
+        return fiberCf;
     }
 
 }
