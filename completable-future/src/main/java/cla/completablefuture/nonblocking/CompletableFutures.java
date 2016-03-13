@@ -11,7 +11,7 @@ import static java.lang.Thread.currentThread;
 public final class CompletableFutures {
 
     public static <S, T> Function<S, CompletableFuture<T>> 
-    asyncify(Function<S, CompletionStage<T>> mapper, Executor pool) {
+    asyncifyUsingPool(Function<S, CompletionStage<T>> mapper, Executor pool) {
         return e -> {
             CompletableFuture<T> result = new CompletableFuture<>(); 
             mapper.apply(e).whenCompleteAsync(

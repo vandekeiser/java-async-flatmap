@@ -43,7 +43,6 @@ public class QuasarCfAdapter {
                 return task.get();
             }
         }.start();
-
         return () -> {
             try {
                 return quasarFiber.get();
@@ -53,7 +52,4 @@ public class QuasarCfAdapter {
         };
     }
 
-    private static <T> FiberAsync<T, CompletionException> quasarify(CompletableFuture<T> cf) {
-        return new CfFiberAsync(cf);
-    }
 }

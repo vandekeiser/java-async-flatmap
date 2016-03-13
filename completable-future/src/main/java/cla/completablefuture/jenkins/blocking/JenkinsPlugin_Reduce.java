@@ -18,7 +18,7 @@ public class JenkinsPlugin_Reduce implements AsyncJenkinsPlugin {
 
     public JenkinsPlugin_Reduce(JiraServer srv, Executor dedicatedPool) {
         Function<String, CompletableFuture<Set<JiraBundle>>> findBundlesByNameAsync = 
-            CompletableFutures.asyncify(srv::findBundlesByName, dedicatedPool);
+            CompletableFutures.asyncifyWithPool(srv::findBundlesByName, dedicatedPool);
         
         Function<Set<JiraBundle>, CompletableFuture<Set<JiraComponent>>> findComponentsByBundlesAsync = 
             bundles -> AsyncSets_Reduce.flatMapAsync(bundles, srv::findComponentsByBundle, dedicatedPool);

@@ -76,7 +76,7 @@ public final class AsyncContainersOfMany {
             //Can do this because ContainerOfMany defines stream()
             .stream()
             //Call the 1->N operation asynchronously    
-            .map(CompletableFutures.asyncify(mapper, parallelisationPool))
+            .map(CompletableFutures.asyncifyWithPool(mapper, parallelisationPool))
             //This Stream terminal operation ensures that 
             // the 1->N mapping operation is launched before returning 
             // (this is required since Stream intermediate operations are lazy)

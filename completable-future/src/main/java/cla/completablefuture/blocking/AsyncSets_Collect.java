@@ -28,7 +28,7 @@ public final class AsyncSets_Collect {
         Executor parallelisationPool
     ) {
         return inputs.stream()
-            .map(CompletableFutures.asyncify(mapper, parallelisationPool))
+            .map(CompletableFutures.asyncifyWithPool(mapper, parallelisationPool))
             .collect(toSet())
             .stream()
             .collect(flattening());    

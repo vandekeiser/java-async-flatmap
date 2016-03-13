@@ -28,30 +28,11 @@ public final class AsyncSets_Collect {
         Executor parallelisationPool
     ) {
         return inputs.stream()
-          //  .map(mapper)//pool?
-            .map(CompletableFutures.asyncify(mapper, parallelisationPool))
+            .map(CompletableFutures.asyncifyUsingPool(mapper, parallelisationPool))
             .collect(toSet())
             .stream()
             .collect(flattening());    
     }
-    
-    public static <E, F> CompletableFuture<Set<F>> flatMapAsync(
-        Set<E> inputs,
-        Function<E, CompletionStage<Set<F>>> mapper,
-        Function<
-                Function<E, ? extends CompletionStage<Set<F>>>, 
-                Function<E, CompletableFuture<Set<F>>>
-        > asyncifier
-    ) {
-        
-                
-        return inputs.stream()
-            .map(asyncifier.apply(mapper))
-            .collect(toSet())
-            .stream()
-            .collect(flattening());    
-    }
-
     
     static class FlatteningCollector<F> implements Collector<
         CompletableFuture<Set<F>>,

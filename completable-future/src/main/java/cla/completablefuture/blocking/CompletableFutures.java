@@ -13,9 +13,9 @@ public final class CompletableFutures {
         return s -> CompletableFuture.supplyAsync(s, parallelisationPool);
     }
     
-    public static <T, U> Function<T, CompletableFuture<U>> asyncify(
-        Function<T, U> f,
-        Executor parallelisationPool
+    public static <T, U> Function<T, CompletableFuture<U>> asyncifyWithPool(
+            Function<T, U> f,
+            Executor parallelisationPool
     ) {
         return asyncify(f, jdkAsyncifier(parallelisationPool));
     }

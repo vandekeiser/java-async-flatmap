@@ -20,7 +20,7 @@ public class JenkinsPlugin_GenericCollect implements AsyncJenkinsPlugin {
 
     public JenkinsPlugin_GenericCollect(JiraServer srv, Executor dedicatedPool) {
         Function<String, CompletableFuture<Set<JiraBundle>>> findBundlesByNameAsync = 
-            CompletableFutures.asyncify(srv::findBundlesByName, dedicatedPool);
+            CompletableFutures.asyncifyWithPool(srv::findBundlesByName, dedicatedPool);
         
         Function<Set<JiraBundle>, CompletableFuture<Set<JiraComponent>>> findComponentsByBundlesAsync = 
             bundles -> AsyncCollections.flatMapCollectionAsync(

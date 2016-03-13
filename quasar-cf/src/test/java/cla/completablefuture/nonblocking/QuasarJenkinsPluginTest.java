@@ -49,7 +49,7 @@ public class QuasarJenkinsPluginTest {
         JiraServer jiraServer = mock(JiraServer.class);
         when(jiraServer.findBundlesByName(any())).thenThrow(new JiraServerException());
         JenkinsPlugin sut = new JenkinsPlugin_Collect_Quasar(jiraServer, newCachedThreadPool());
-        
+
         try {
             sut.findComponentsByBundleName("foo");
             failBecauseExceptionWasNotThrown(JiraServerException.class);

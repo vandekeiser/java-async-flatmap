@@ -32,7 +32,7 @@ public class QuasarCfAdapter {
 
         CompletableFuture<U> ret = new CompletableFuture<>();
 
-        final Fiber fiber = new Fiber(scheduler, new SuspendableRunnable() {
+        final Fiber<?> fiber = new Fiber<>(scheduler, new SuspendableRunnable() {
             @Override
             public void run() throws SuspendExecution, InterruptedException {
                 blocking.apply(input).whenComplete((t, x) -> {
@@ -41,14 +41,6 @@ public class QuasarCfAdapter {
                 });
             }
         }).start();
-
-//        try {
-//            fiber.join();
-//        } catch (InterruptedException | ExecutionException e) {
-//            CompletableFuture<U> failed = new CompletableFuture<>();
-//            failed.completeExceptionally(e);
-//            return failed;
-//        }
 
         return ret;
     }

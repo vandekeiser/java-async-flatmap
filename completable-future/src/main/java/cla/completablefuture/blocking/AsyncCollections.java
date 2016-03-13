@@ -45,7 +45,7 @@ public final class AsyncCollections {
         BinaryOperator<Fs> collectionUnion
     ) {
         return inputs.stream()
-            .map(CompletableFutures.asyncify(mapper, parallelisationPool))
+            .map(CompletableFutures.asyncifyWithPool(mapper, parallelisationPool))
             .collect(toSet())
             .stream()
             .collect(flattening(collectionSupplier, collectionUnion));    

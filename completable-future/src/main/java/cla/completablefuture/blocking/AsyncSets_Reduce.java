@@ -22,7 +22,7 @@ public final class AsyncSets_Reduce {
         Function<E, Set<F>> _mapper = requireNonNull(mapper);
         
         return inputs.stream()
-            .map(CompletableFutures.asyncify(_mapper, parallelisationPool))
+            .map(CompletableFutures.asyncifyWithPool(_mapper, parallelisationPool))
             .collect(toSet())
             .stream()
             .reduce(

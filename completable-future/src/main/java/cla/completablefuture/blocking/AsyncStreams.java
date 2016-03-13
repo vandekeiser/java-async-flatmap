@@ -39,7 +39,7 @@ public final class AsyncStreams {
         BinaryOperator<Fs> streamUnion
     ) {
         return inputs
-            .map(CompletableFutures.asyncify(mapper, parallelisationPool))
+            .map(CompletableFutures.asyncifyWithPool(mapper, parallelisationPool))
             .collect(toSet())
             .stream()
             .collect(flattening(streamSupplier, streamUnion));    
