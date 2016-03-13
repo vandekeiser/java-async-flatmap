@@ -12,7 +12,7 @@ import static java.util.stream.Collectors.toSet;
 
 public class FakeJiraServer implements JiraServer {
     public static final int 
-            NB_OF_BUNDLES_PER_NAME = 10,
+            NB_OF_BUNDLES_PER_NAME = 100,
             NB_OF_COMPONENTS_PER_BUNDLE = 3;
 
     @Override

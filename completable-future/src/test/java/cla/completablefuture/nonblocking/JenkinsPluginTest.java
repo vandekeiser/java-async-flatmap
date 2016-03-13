@@ -2,7 +2,6 @@ package cla.completablefuture.nonblocking;
 
 import cla.completablefuture.jenkins.AsyncJenkinsPlugin;
 import cla.completablefuture.jenkins.JenkinsPlugin;
-import cla.completablefuture.jenkins.blocking.JenkinsPlugin_SequentialStream;
 import cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_Collect;
 import cla.completablefuture.jira.JiraBundle;
 import cla.completablefuture.jira.JiraComponent;
@@ -16,24 +15,19 @@ import org.junit.Test;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import static java.lang.Runtime.getRuntime;
 import static java.lang.System.out;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 import static java.util.concurrent.Executors.newCachedThreadPool;
+import static java.util.concurrent.Executors.newFixedThreadPool;
 import static java.util.concurrent.ForkJoinPool.commonPool;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.StrictAssertions.failBecauseExceptionWasNotThrown;
 import static org.junit.runners.MethodSorters.NAME_ASCENDING;
@@ -80,40 +74,17 @@ public class JenkinsPluginTest {
     }
     
     @Test public void should_3_be_fast() {
-        List<BiFunction<cla.completablefuture.jira.blocking.JiraServer, Executor, JenkinsPlugin>> blockingPlugins = Arrays.asList(
-            cla.completablefuture.jenkins.blocking.JenkinsPlugin_ParallelStream::new,
-            cla.completablefuture.jenkins.blocking.JenkinsPlugin_Reduce::new,
-            cla.completablefuture.jenkins.blocking.JenkinsPlugin_Collect::new,
-            cla.completablefuture.jenkins.blocking.JenkinsPlugin_GenericCollect::new
-        );
-        List<BiFunction<cla.completablefuture.jira.nonblocking.JiraServer, Executor, JenkinsPlugin>> nonBlockingPlugins = Arrays.asList(
-                //TODO?
-                //cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_Reduce::new,
-                cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_Collect::new
-                //TODO?
-                //cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_GenericCollect::new,
-        );
-        
-        cla.completablefuture.jira.blocking.JiraServer blockingSrv = new cla.completablefuture.jira.blocking.JiraServerWithLatency(new cla.completablefuture.jira.blocking.FakeJiraServer());
-        cla.completablefuture.jira.nonblocking.JiraServer nonBlockingSrv = new cla.completablefuture.jira.nonblocking.JiraServerWithLatency(new cla.completablefuture.jira.nonblocking.FakeJiraServer());
-        Executor pool = newCachedThreadPool();
-        //Executor pool = newFixedThreadPool(10);
-        
-        List<JenkinsPlugin> allPlugins = Stream.concat(
-            blockingPlugins.stream().map(p -> p.apply(blockingSrv, pool)),
-            nonBlockingPlugins.stream().map(p -> p.apply(nonBlockingSrv, pool)
-        ).collect(toList());
+        List<? extends JenkinsPlugin> allPlugins = allPlugins();
         
         out.printf("Cores: %d, FJP size: %d%n", getRuntime().availableProcessors(), commonPool().getParallelism());
-        nonBlockingPlugins.stream()
-            .map(p -> p.apply(nonBlockingSrv, pool))
+        allPlugins.stream()
             .forEach(p -> {
                 Instant before = Instant.now();
                 Set<JiraComponent> answer = p.findComponentsByBundleName("toto59");
                 out.printf("%-80s took %s (found %d) %n", p, Duration.between(before, Instant.now()), answer.size());
             });
     }
-    
+
     @Test public void should_4_find_the_right_nunmber_of_jira_components() {
         JenkinsPlugin sut = new JenkinsPlugin_Collect(
                 new JiraServerWithLatency(new FakeJiraServer()),
@@ -168,4 +139,35 @@ public class JenkinsPluginTest {
             sut.findComponentsByBundleName("toto59")
         ).hasSize(FakeJiraServer.NB_OF_BUNDLES_PER_NAME * FakeJiraServer.NB_OF_COMPONENTS_PER_BUNDLE);
     }
+
+    private List<? extends JenkinsPlugin> allPlugins() {
+        List<BiFunction<cla.completablefuture.jira.blocking.JiraServer, Executor, JenkinsPlugin>> blockingPlugins = Arrays.asList(
+            cla.completablefuture.jenkins.blocking.JenkinsPlugin_ParallelStream::new,
+            cla.completablefuture.jenkins.blocking.JenkinsPlugin_Reduce::new,
+            cla.completablefuture.jenkins.blocking.JenkinsPlugin_Collect::new,
+            cla.completablefuture.jenkins.blocking.JenkinsPlugin_GenericCollect::new
+        );
+        List<BiFunction<cla.completablefuture.jira.nonblocking.JiraServer, Executor, JenkinsPlugin>> nonBlockingPlugins = Arrays.asList(
+            //TODO?
+            //cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_Reduce::new,
+            cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_Collect::new
+            //TODO?
+            //cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_GenericCollect::new,
+        );
+
+        cla.completablefuture.jira.blocking.JiraServer blockingSrv = new cla.completablefuture.jira.blocking.JiraServerWithLatency(new cla.completablefuture.jira.blocking.FakeJiraServer());
+        cla.completablefuture.jira.nonblocking.JiraServer nonBlockingSrv = new cla.completablefuture.jira.nonblocking.JiraServerWithLatency(new cla.completablefuture.jira.nonblocking.FakeJiraServer());
+        //Executor pool = newCachedThreadPool();
+        Executor pool = newFixedThreadPool(1);
+
+        List<JenkinsPlugin> allPlugins = new ArrayList<>();
+        allPlugins.addAll(
+            blockingPlugins.stream().map(p -> p.apply(blockingSrv, pool)
+        ).collect(toList()));
+        allPlugins.addAll(
+            nonBlockingPlugins.stream().map(p -> p.apply(nonBlockingSrv, pool)
+        ).collect(toList()));
+        return allPlugins;
+    }
+
 }
