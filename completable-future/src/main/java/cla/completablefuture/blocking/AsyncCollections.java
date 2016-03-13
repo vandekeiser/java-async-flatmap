@@ -22,9 +22,6 @@ import static java.util.stream.Collector.Characteristics.CONCURRENT;
 import static java.util.stream.Collector.Characteristics.UNORDERED;
 import static java.util.stream.Collectors.toSet;
 
-/**
- * 
- */
 public final class AsyncCollections {
 
     public interface CollectionSupplier<E, Es extends Collection<E>> extends Supplier<Es> {}
