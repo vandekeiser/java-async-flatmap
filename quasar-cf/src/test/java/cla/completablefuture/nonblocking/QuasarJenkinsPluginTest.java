@@ -1,11 +1,14 @@
 package cla.completablefuture.nonblocking;
 
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.BiFunction;
 import java.util.stream.IntStream;
+import cla.completablefuture.ConsolePlusFile;
 import cla.completablefuture.jenkins.AsyncJenkinsPlugin;
 import cla.completablefuture.jenkins.JenkinsPlugin;
 import cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_Collect_Quasar;
@@ -91,15 +94,17 @@ public class QuasarJenkinsPluginTest {
         }
     }
     
-    @Test public void should_3_be_fast() {
+    @Test public void should_3_be_fast() throws FileNotFoundException {
         List<JenkinsPlugin> allPlugins = allPlugins();
-        
-        out.printf("Cores: %d, FJP size: %d%n", getRuntime().availableProcessors(), commonPool().getParallelism());
-        allPlugins.stream().forEach(p -> {
-            Instant before = Instant.now();
-            Set<JiraComponent> answer = p.findComponentsByBundleName("toto59");
-            out.printf("%-80s took %s (found %d) %n", p, Duration.between(before, Instant.now()), answer.size());
-        });
+
+        try(PrintStream oout = new ConsolePlusFile("comparaison-latences.txt")) {
+            oout.printf("Cores: %d, FJP size: %d%n", getRuntime().availableProcessors(), commonPool().getParallelism());
+            allPlugins.stream().forEach(p -> {
+                Instant before = Instant.now();
+                Set<JiraComponent> answer = p.findComponentsByBundleName("toto59");
+                oout.printf("%-80s took %s (found %d) %n", p, Duration.between(before, Instant.now()), answer.size());
+            });
+        }
     }
 
     @Test public void should_4_find_the_right_nunmber_of_jira_components() {
@@ -150,9 +155,8 @@ public class QuasarJenkinsPluginTest {
         List<BiFunction<cla.completablefuture.jira.blocking.JiraServer, Executor, JenkinsPlugin>> blockingPlugins = Arrays.asList(
             cla.completablefuture.jenkins.blocking.JenkinsPlugin_SequentialStream::new,
             cla.completablefuture.jenkins.blocking.JenkinsPlugin_ParallelStream::new,
-            cla.completablefuture.jenkins.blocking.JenkinsPlugin_Reduce::new,
             cla.completablefuture.jenkins.blocking.JenkinsPlugin_Collect::new,
-            cla.completablefuture.jenkins.blocking.JenkinsPlugin_GenericCollect::new
+            cla.completablefuture.jenkins.blocking.JenkinsPlugin_GenericCollect_Quasar::new
         );
         List<BiFunction<JiraServer, Executor, JenkinsPlugin>> nonBlockingPlugins = Arrays.asList(
             //TODO?
