@@ -3,7 +3,10 @@ package cla.completablefuture.nonblocking;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
+import static java.lang.Thread.currentThread;
 
 public final class CompletableFutures {
 
@@ -21,5 +24,18 @@ public final class CompletableFutures {
             return result;
         };
     }
-    
+
+    private static Executor xxx = Executors.newSingleThreadExecutor();
+    private static Executor sameThreadExecutor() {
+        return Executors.newSingleThreadExecutor(r -> currentThread());
+    }
+
+    public static <S, T> Function<S, CompletableFuture<T>>
+    asyncify(Function<S, CompletionStage<T>> mapper, UnaryOperator<Function<S, CompletionStage<T>>> asyncifier) {
+        return asyncify(
+                asyncifier.apply(mapper),
+                sameThreadExecutor()
+        );
+    }
+
 }
