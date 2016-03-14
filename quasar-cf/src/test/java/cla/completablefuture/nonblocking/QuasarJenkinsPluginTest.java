@@ -48,17 +48,8 @@ import static org.mockito.Mockito.when;
 @Ignore
 @FixMethodOrder(NAME_ASCENDING)
 public class QuasarJenkinsPluginTest {
-
-
-    //TODO: faire passer
-    //Au pire faire comme dans  quasar/quasar-core/src/test/java/co/paralleluniverse/fibers/FiberTest.java:
-    //Fiber.setDefaultUncaughtExceptionHandler(new Strand.UncaughtExceptionHandler() {
-//                @Override
-//                public void uncaughtException(Strand s, Throwable e) {
-//                    Exceptions.rethrow(e);
-//                }
-//            });
-    @Ignore @Test
+    
+    @Test
     public void should_1_report_bundles_errors() {
         JiraServer jiraServer = mock(JiraServer.class);
         when(jiraServer.findBundlesByName(any())).thenThrow(new JiraServerException());
@@ -74,8 +65,7 @@ public class QuasarJenkinsPluginTest {
         }
     }
     
-    //TODO: faire passer
-    @Ignore @Test
+    @Test
     public void should_2_report_components_errors() {
         JiraServer jiraServer = mock(JiraServer.class);
         JenkinsPlugin sut = new JenkinsPlugin_Collect_Quasar(jiraServer, newCachedThreadPool());
