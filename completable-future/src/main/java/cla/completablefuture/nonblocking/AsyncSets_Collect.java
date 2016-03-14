@@ -2,6 +2,7 @@ package cla.completablefuture.nonblocking;
 
 import cla.completablefuture.Sets;
 import cla.completablefuture.blocking.*;
+import cla.completablefuture.jira.nonblocking.callback.Callback;
 
 import java.util.EnumSet;
 import java.util.Set;
@@ -39,6 +40,21 @@ public final class AsyncSets_Collect {
         Function<E, CompletionStage<Set<F>>> mapper,
         Function<
             Function<E, CompletionStage<Set<F>>>,
+            Function<E, CompletableFuture<Set<F>>>
+        > asyncifier
+    ) {
+        return inputs.stream()
+            .map(asyncifier.apply(mapper))
+            .collect(toSet())
+            .stream()
+            .collect(flattening());    
+    }
+    
+    public static <E, F> CompletableFuture<Set<F>> flatMapCallbackAsync(
+        Set<E> inputs,
+        Function<E, Callback<Set<F>>> mapper,
+        Function<
+            Function<E, Callback<Set<F>>>,
             Function<E, CompletableFuture<Set<F>>>
         > asyncifier
     ) {

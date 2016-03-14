@@ -34,6 +34,7 @@ public class JiraServerWithLatency implements JiraServer {
 
     @Override
     public CompletableFuture<Set<JiraComponent>> findComponentsByBundle(JiraBundle bundle) {
+        //TODO attention les run async de pas les faire ds le FJP!!
         return CompletableFuture.runAsync(
             () -> sleepRandomlyForRequest(bundle)        
         ).thenCompose(

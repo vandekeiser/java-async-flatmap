@@ -11,5 +11,5 @@ public interface JiraServer {
     CompletionStage<Set<JiraBundle>> findBundlesByName(String bundleName);
     
     CompletionStage<Set<JiraComponent>> findComponentsByBundle(JiraBundle bundle);
-
+ 
 }

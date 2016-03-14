@@ -1,24 +1,25 @@
-package cla.completablefuture.jenkins.nonblocking;
+package cla.completablefuture.jenkins.nonblocking.callback;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
-import java.util.concurrent.Executor;
-import java.util.function.Function;
+import cla.completablefuture.jira.nonblocking.callback.Callback;
 import co.paralleluniverse.fibers.Fiber;
 import co.paralleluniverse.fibers.FiberExecutorScheduler;
 import co.paralleluniverse.fibers.FiberScheduler;
 
-public class Quasarify {
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.function.Function;
+
+public class QuasarifyCallback {
 
     public static <T, U> Function<
-        Function<T, CompletionStage<U>>,
+        Function<T, Callback<U>>,
         Function<T, CompletableFuture<U>>
     > usingPool(Executor dedicatedPool) {
-        return blocking -> input -> callInFiber(blocking, input, dedicatedPool);
+        return callback -> input -> startWaitingForCallbackInFiber(callback, input, dedicatedPool);
     }
 
-    private static <T, U> CompletableFuture<U> callInFiber(
-        Function<T, CompletionStage<U>> blocking,
+    private static <T, U> CompletableFuture<U> startWaitingForCallbackInFiber(
+        Function<T, Callback<U>> callback,
         T input,
         Executor dedicatedPool
     ) {
@@ -27,10 +28,10 @@ public class Quasarify {
 
         new Fiber<>(scheduler, () -> {
             try {
-                blocking.apply(input).whenComplete((res, x) -> {
-                    if (x != null) fiberCf.completeExceptionally(x);
-                    else fiberCf.complete(res);
-                });    
+                callback.apply(input).handle(
+                    res -> fiberCf.complete(res),
+                    x -> fiberCf.completeExceptionally(x)
+                );
             } catch (Throwable x) {
                 fiberCf.completeExceptionally(x);
             } 

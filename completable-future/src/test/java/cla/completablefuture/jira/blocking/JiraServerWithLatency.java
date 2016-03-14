@@ -40,7 +40,6 @@ public class JiraServerWithLatency implements JiraServer {
                 request,
                 k -> ThreadLocalRandom.current().nextLong(MIN_SLEEP, MAX_SLEEP)
         ));
-        //sleep(ThreadLocalRandom.current().nextLong(MIN_SLEEP, MAX_SLEEP));
     }
 
     private void sleep(long sleepInMillis) {
