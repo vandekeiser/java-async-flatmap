@@ -48,13 +48,13 @@ import static org.mockito.Mockito.when;
 @Ignore
 @FixMethodOrder(NAME_ASCENDING)
 public class QuasarJenkinsPluginTest {
-    
+
     @Test
     public void should_1_report_bundles_errors() {
         JiraServer jiraServer = mock(JiraServer.class);
         //attention probablement pas correct!!! plutot then return completed (failure),
         // ce qui expliquerait la necessite du catch degueu en plus du onfail
-        when(jiraServer.findBundlesByName(any())).thenThrow(new JiraServerException());
+        when(jiraServer.findBundlesByName(any())).thenReturn(failure());
         JenkinsPlugin sut = new JenkinsPlugin_Collect_Quasar(jiraServer, newCachedThreadPool());
 
         try {
@@ -74,7 +74,7 @@ public class QuasarJenkinsPluginTest {
         when(jiraServer.findBundlesByName(any())).thenReturn(
             completedFuture(singleton(new JiraBundle()))
         );
-        when(jiraServer.findComponentsByBundle(any())).thenThrow(new JiraServerException());
+        when(jiraServer.findComponentsByBundle(any())).thenReturn(failure());
         
         try {
             sut.findComponentsByBundleName("foo");    
@@ -151,12 +151,12 @@ public class QuasarJenkinsPluginTest {
             cla.completablefuture.jenkins.blocking.JenkinsPlugin_GenericCollect_Quasar::new
         );
         List<BiFunction<JiraServer, Executor, JenkinsPlugin>> nonBlockingPlugins = Arrays.asList(
-            //TODO?
-            //cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_Reduce::new,
-            cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_Collect::new,
-            //TODO?
-            //cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_GenericCollect::new,
-            cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_Collect_Quasar::new
+                //TODO?
+                //cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_Reduce::new,
+                cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_Collect::new,
+                //TODO?
+                //cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_GenericCollect::new,
+                cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_Collect_Quasar::new
         );
 
         cla.completablefuture.jira.blocking.JiraServer blockingSrv = new cla.completablefuture.jira.blocking.JiraServerWithLatency(new cla.completablefuture.jira.blocking.FakeJiraServer());
@@ -172,6 +172,12 @@ public class QuasarJenkinsPluginTest {
             nonBlockingPlugins.stream().map(p -> p.apply(nonBlockingSrv, pool)
         ).collect(toList()));
         return allPlugins;
+    }
+
+    private static <T> CompletionStage<T> failure() {
+        CompletableFuture<T> failed = new CompletableFuture<>();
+        failed.completeExceptionally(new JiraServerException());
+        return failed;
     }
 
 }

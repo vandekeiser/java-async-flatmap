@@ -26,14 +26,10 @@ public class Quasarify {
         CompletableFuture<U> fiberCf = new CompletableFuture<>();
 
         new Fiber<>(scheduler, () -> {
-            try {
-                blocking.apply(input).whenComplete((res, x) -> {
-                    if (x != null) fiberCf.completeExceptionally(x);
-                    else fiberCf.complete(res);
-                });    
-            } catch (Throwable x) {
-                fiberCf.completeExceptionally(x);
-            } 
+            blocking.apply(input).whenComplete((res, x) -> {
+                if (x != null) fiberCf.completeExceptionally(x);
+                else fiberCf.complete(res);
+            });
         }).start();
 
         return fiberCf;
