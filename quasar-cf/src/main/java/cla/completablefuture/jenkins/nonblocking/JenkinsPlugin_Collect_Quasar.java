@@ -2,6 +2,7 @@ package cla.completablefuture.jenkins.nonblocking;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 import cla.completablefuture.jenkins.AsyncJenkinsPlugin;
@@ -19,9 +20,13 @@ public class JenkinsPlugin_Collect_Quasar implements AsyncJenkinsPlugin {
             Quasarify.<String, Set<JiraBundle>>usingPool(dedicatedPool)
             .apply(srv::findBundlesByName);
 
-        Function<Set<JiraBundle>, CompletableFuture<Set<JiraComponent>>> findComponentsByBundlesAsync =
-            //TODO: utiliser quasar ici aussi
-            bundles -> AsyncSets_Collect.flatMapAsync(bundles, srv::findComponentsByBundle, dedicatedPool);
+        //bundles -> AsyncSets_Collect.flatMapAsync(bundles, srv::findComponentsByBundle, dedicatedPool);
+        Function<Set<JiraBundle>, CompletableFuture<Set<JiraComponent>>> 
+        findComponentsByBundlesAsync = bundles -> AsyncSets_Collect.flatMapAsync(
+            bundles, 
+            srv::findComponentsByBundle, 
+            Quasarify.usingPool(dedicatedPool)
+        );
 
         this.findComponentsByBundleNameAsync = findBundlesByNameAsync.andThen(
             bundlesFuture -> bundlesFuture.thenCompose(findComponentsByBundlesAsync)

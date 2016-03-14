@@ -1,13 +1,5 @@
 package cla.completablefuture.nonblocking;
 
-import java.io.FileNotFoundException;
-import java.io.PrintStream;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.function.BiFunction;
-import java.util.stream.IntStream;
 import cla.completablefuture.ConsolePlusFile;
 import cla.completablefuture.jenkins.AsyncJenkinsPlugin;
 import cla.completablefuture.jenkins.JenkinsPlugin;
@@ -18,12 +10,20 @@ import cla.completablefuture.jira.JiraServerException;
 import cla.completablefuture.jira.nonblocking.FakeJiraServer;
 import cla.completablefuture.jira.nonblocking.JiraServer;
 import cla.completablefuture.jira.nonblocking.JiraServerWithLatency;
-import co.paralleluniverse.common.util.Exceptions;
-import co.paralleluniverse.strands.Strand;
 import com.jasongoodwin.monads.Try;
 import org.junit.FixMethodOrder;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.BiFunction;
+import java.util.stream.IntStream;
+
 import static cla.completablefuture.jira.nonblocking.FakeJiraServer.NB_OF_BUNDLES_PER_NAME;
 import static cla.completablefuture.jira.nonblocking.FakeJiraServer.NB_OF_COMPONENTS_PER_BUNDLE;
 import static java.lang.Runtime.getRuntime;
