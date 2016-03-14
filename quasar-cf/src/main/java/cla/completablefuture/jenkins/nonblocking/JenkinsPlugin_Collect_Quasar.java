@@ -20,8 +20,8 @@ public class JenkinsPlugin_Collect_Quasar implements AsyncJenkinsPlugin {
             Quasarify.<String, Set<JiraBundle>>usingPool(dedicatedPool)
             .apply(srv::findBundlesByName);
 
-        //bundles -> AsyncSets_Collect.flatMapAsync(bundles, srv::findComponentsByBundle, dedicatedPool);
         Function<Set<JiraBundle>, CompletableFuture<Set<JiraComponent>>> 
+        //findComponentsByBundlesAsync = bundles -> AsyncSets_Collect.flatMapAsyncUsingPool(bundles, srv::findComponentsByBundle, dedicatedPool);
         findComponentsByBundlesAsync = bundles -> AsyncSets_Collect.flatMapAsync(
             bundles, 
             srv::findComponentsByBundle, 
