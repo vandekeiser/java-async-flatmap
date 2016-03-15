@@ -2,7 +2,7 @@ package cla.completablefuture.nonblocking.callback;
 
 import cla.completablefuture.jira.JiraBundle;
 import cla.completablefuture.jira.JiraComponent;
-import cla.completablefuture.jira.nonblocking.JiraServer;
+import cla.completablefuture.jira.nonblocking.callback.BasicCompletableCallback;
 import cla.completablefuture.jira.nonblocking.callback.Callback;
 import cla.completablefuture.jira.nonblocking.callback.CallbackJiraServer;
 import co.paralleluniverse.fibers.Fiber;
@@ -13,9 +13,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class CallbackJiraServerWithLatency implements CallbackJiraServer {
     //private static final long MIN_SLEEP = 1000, MAX_SLEEP = 10_000;
@@ -32,31 +32,32 @@ public class CallbackJiraServerWithLatency implements CallbackJiraServer {
 
     @Override
     public Callback<Set<JiraBundle>> findBundlesByName(String bundleName) {
-        Callback<Set<JiraBundle>> instant = jira.findBundlesByName(bundleName);
-        
-        return (onSuccess, onFailure) -> instant.handle(
-            delayedSuccess(bundleName, onSuccess),
-            onFailure
-        );
+        Function<String, Callback<Set<JiraBundle>>> instantCallbackProducer = jira::findBundlesByName;
+        Function<String, Callback<Set<JiraBundle>>> delayedCallbackProducer = delay(instantCallbackProducer, bundleName);
+        return delayedCallbackProducer.apply(bundleName);
     }
 
     @Override
     public Callback<Set<JiraComponent>> findComponentsByBundle(JiraBundle bundle) {
-        Callback<Set<JiraComponent>> instant = jira.findComponentsByBundle(bundle);
-
-        return (onSuccess, onFailure) -> instant.handle(
-            delayedSuccess(bundle, onSuccess),
-            onFailure
-        );
+        Function<JiraBundle, Callback<Set<JiraComponent>>> instantCallbackProducer = jira::findComponentsByBundle;
+        Function<JiraBundle, Callback<Set<JiraComponent>>> delayedCallbackProducer = delay(instantCallbackProducer, bundle);
+        return delayedCallbackProducer.apply(bundle);
     }
 
-    private <S, T> Consumer<T> delayedSuccess(S input, Consumer<T> instantConsumer) {
-        return r -> {
-            sleepRandomlyForRequest(input);
-            instantConsumer.accept(r);
+    private <I, O> Function<I, Callback<O>> delay(Function<I, Callback<O>> instant, Object input) {
+        return i -> {
+            BasicCompletableCallback<O> delayed = new BasicCompletableCallback<>();
+            instant.apply(i).whenComplete(
+                r -> {
+                    sleepRandomlyForRequest(input);
+                    delayed.complete(r);
+                },
+                x -> {delayed.completeExceptionnally(x);}
+            );
+            return delayed;
         };
     }
-    
+
     private void sleepRandomlyForRequest(Object request) {
         sleep(sleeps.computeIfAbsent(
             request,

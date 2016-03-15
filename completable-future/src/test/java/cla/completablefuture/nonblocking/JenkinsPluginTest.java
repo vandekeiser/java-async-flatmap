@@ -70,7 +70,7 @@ public class JenkinsPluginTest {
             failBecauseExceptionWasNotThrown(JiraServerException.class);
         } catch (JiraServerException | CompletionException expected) {
             if(expected instanceof CompletionException) {
-                assertThat(expected.getCause() instanceof JiraServerException).isTrue();       
+                assertThat(expected.getCause()).isInstanceOf(JiraServerException.class);
             }
         }
     }

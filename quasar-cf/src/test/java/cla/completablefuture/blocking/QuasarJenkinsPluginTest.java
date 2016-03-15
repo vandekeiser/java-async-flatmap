@@ -55,7 +55,7 @@ public class QuasarJenkinsPluginTest {
             failBecauseExceptionWasNotThrown(JiraServerException.class);
         } catch (JiraServerException | CompletionException expected) {
             if(expected instanceof CompletionException) {
-                assertThat(expected.getCause().getCause() instanceof JiraServerException).isTrue();       
+                assertThat(expected.getCause().getCause()).isInstanceOf(JiraServerException.class);
             }
         }
     }
@@ -72,7 +72,7 @@ public class QuasarJenkinsPluginTest {
             failBecauseExceptionWasNotThrown(JiraServerException.class);
         } catch (JiraServerException | CompletionException expected) {
             if(expected instanceof CompletionException) {
-                assertThat(expected.getCause().getCause() instanceof JiraServerException).isTrue();       
+                assertThat(expected.getCause().getCause()).isInstanceOf(JiraServerException.class);
             }
         }
     }

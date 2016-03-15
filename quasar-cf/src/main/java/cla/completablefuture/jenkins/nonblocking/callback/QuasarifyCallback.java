@@ -28,9 +28,9 @@ public class QuasarifyCallback {
 
         new Fiber<>(scheduler, () -> {
             try {
-                callback.apply(input).handle(
-                    res -> fiberCf.complete(res),
-                    x -> fiberCf.completeExceptionally(x)
+                callback.apply(input).whenComplete(
+                        res -> fiberCf.complete(res),
+                        x -> fiberCf.completeExceptionally(x)
                 );
             } catch (Throwable x) {
                 fiberCf.completeExceptionally(x);
