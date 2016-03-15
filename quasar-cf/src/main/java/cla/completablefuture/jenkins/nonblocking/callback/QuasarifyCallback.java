@@ -26,16 +26,10 @@ public class QuasarifyCallback {
         FiberScheduler scheduler = new FiberExecutorScheduler("callInFiber scheduler", dedicatedPool);
         CompletableFuture<U> fiberCf = new CompletableFuture<>();
 
-        new Fiber<>(scheduler, () -> {
-            try {
-                callback.apply(input).whenComplete(
-                        res -> fiberCf.complete(res),
-                        x -> fiberCf.completeExceptionally(x)
-                );
-            } catch (Throwable x) {
-                fiberCf.completeExceptionally(x);
-            } 
-        }).start();
+        new Fiber<>(scheduler, () -> callback.apply(input).whenComplete(
+            res -> fiberCf.complete(res),
+            x -> fiberCf.completeExceptionally(x)
+        )).start();
 
         return fiberCf;
     }
