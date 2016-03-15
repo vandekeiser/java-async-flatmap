@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
@@ -23,6 +24,7 @@ public class CallbackJiraServerWithLatency implements CallbackJiraServer {
     //private static final long MIN_SLEEP = 0, MAX_SLEEP = 500;
     private static final long MIN_SLEEP = 10, MAX_SLEEP = 500;
     //private static final long MIN_SLEEP = 0, MAX_SLEEP = 1;
+    private static final Executor delayExecutor = Executors.newFixedThreadPool(1);
     private final CallbackJiraServer jira;
     private final Map<Object, Long> sleeps = new HashMap<>();
 
@@ -47,13 +49,16 @@ public class CallbackJiraServerWithLatency implements CallbackJiraServer {
     private <I, O> Function<I, Callback<O>> delay(Function<I, Callback<O>> instant, Object input) {
         return i -> {
             BasicCompletableCallback<O> delayed = new BasicCompletableCallback<>();
+
             instant.apply(i).whenComplete(
-                r -> {
-                    sleepRandomlyForRequest(input);
-                    delayed.complete(r);
-                },
-                x -> {delayed.completeExceptionnally(x);}
+                r -> CompletableFuture.runAsync(
+                    () -> sleepRandomlyForRequest(input),
+                    delayExecutor
+                ).thenRun(() -> delayed.complete(r)),
+
+                x -> delayed.completeExceptionnally(x)
             );
+
             return delayed;
         };
     }
@@ -65,12 +70,19 @@ public class CallbackJiraServerWithLatency implements CallbackJiraServer {
         ));
     }
 
+//    private void sleep(long sleepInMillis) {
+//        try {
+//            //Strand.currentStrand().sleep(sleepInMillis);
+//            Fiber.sleep(sleepInMillis);
+//        } catch (SuspendExecution | InterruptedException e) {
+//            Strand.currentStrand().interrupt();
+//        }
+//    }
     private void sleep(long sleepInMillis) {
         try {
-            //Strand.currentStrand().sleep(sleepInMillis);
-            Fiber.sleep(sleepInMillis);
-        } catch (SuspendExecution | InterruptedException e) {
-            Strand.currentStrand().interrupt();
+            Thread.sleep(sleepInMillis);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
     

@@ -92,7 +92,6 @@ public class QuasarCallbackJenkinsPluginTest {
         }
     }
 
-    @Ignore //TODO make pass
     @Test public void should_3_be_fast() throws FileNotFoundException {
         List<JenkinsPlugin> allPlugins = allPlugins();
 
@@ -106,7 +105,6 @@ public class QuasarCallbackJenkinsPluginTest {
         }
     }
 
-    @Ignore //TODO make pass
     @Test public void should_4_find_the_right_nunmber_of_jira_components() {
         JenkinsPlugin sut = new JenkinsPlugin_CallbackCollect_Quasar(
             new CallbackJiraServerWithLatency(new FakeCallbackJiraServer()),
