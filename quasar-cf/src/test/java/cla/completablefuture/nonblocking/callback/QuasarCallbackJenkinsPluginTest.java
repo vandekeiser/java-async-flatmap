@@ -3,6 +3,7 @@ package cla.completablefuture.nonblocking.callback;
 import cla.completablefuture.ConsolePlusFile;
 import cla.completablefuture.jenkins.AsyncJenkinsPlugin;
 import cla.completablefuture.jenkins.JenkinsPlugin;
+import cla.completablefuture.jenkins.blocking.JenkinsPlugin_Collect;
 import cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_Collect_Quasar;
 import cla.completablefuture.jenkins.nonblocking.callback.JenkinsPlugin_CallbackCollect_Quasar;
 import cla.completablefuture.jira.JiraBundle;
@@ -26,6 +27,8 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 import static cla.completablefuture.jira.nonblocking.FakeJiraServer.NB_OF_BUNDLES_PER_NAME;
@@ -49,6 +52,11 @@ import static org.mockito.Mockito.when;
 //Run with
 // -javaagent:"C:\Users\Claisse\.m2\repository\co\paralleluniverse\quasar-core\0.7.4\quasar-core-0.7.4-jdk8.jar" -Dco.paralleluniverse.fibers.verifyInstrumentation=false
 // -javaagent:"C:\Users\User\.m2\repository\co\paralleluniverse\quasar-core\0.7.4\quasar-core-0.7.4-jdk8.jar" -Dco.paralleluniverse.fibers.verifyInstrumentation=false
+
+//TODO:
+// -tester scalabilite JMH
+// -latence: prendre un nouveau pool pour chaque plugin? pqoi ca gene de reutiliser le mm??
+// -pqoi la version callback est-elle bcp plus lente que si l'api est CF??
 @Ignore
 @FixMethodOrder(NAME_ASCENDING)
 public class QuasarCallbackJenkinsPluginTest {
@@ -92,15 +100,22 @@ public class QuasarCallbackJenkinsPluginTest {
         }
     }
 
+    private static final Supplier<ExecutorService> poolSupplier = () -> newFixedThreadPool(1);
     @Test public void should_3_be_fast() throws FileNotFoundException {
-        List<JenkinsPlugin> allPlugins = allPlugins();
+        List<Function<Executor,JenkinsPlugin>> allPlugins = allPlugins();
 
         try(PrintStream oout = new ConsolePlusFile("comparaison-latences.txt")) {
             oout.printf("Cores: %d, FJP size: %d%n", getRuntime().availableProcessors(), commonPool().getParallelism());
-            allPlugins.stream().forEach(p -> {
-                Instant before = Instant.now();
-                Set<JiraComponent> answer = p.findComponentsByBundleName("toto59");
-                oout.printf("%-80s took %s (found %d) %n", p, Duration.between(before, Instant.now()), answer.size());
+            allPlugins.stream().forEach(pluginBuilder -> {
+                ExecutorService pool = poolSupplier.get();
+                try {
+                    JenkinsPlugin plugin = pluginBuilder.apply(pool);
+                    Instant before = Instant.now();
+                    Set<JiraComponent> answer = plugin.findComponentsByBundleName("toto59");
+                    oout.printf("%-80s took %s (found %d) %n", plugin, Duration.between(before, Instant.now()), answer.size());
+                } finally {
+                    pool.shutdownNow();
+                }
             });
         }
     }
@@ -149,7 +164,7 @@ public class QuasarCallbackJenkinsPluginTest {
         } 
     }
     
-    private List<JenkinsPlugin> allPlugins() {
+    private List<Function<Executor,JenkinsPlugin>> allPlugins() {
         List<BiFunction<cla.completablefuture.jira.blocking.JiraServer, Executor, JenkinsPlugin>> blockingPlugins = Arrays.asList(
             cla.completablefuture.jenkins.blocking.JenkinsPlugin_SequentialStream::new,
             cla.completablefuture.jenkins.blocking.JenkinsPlugin_ParallelStream::new,
@@ -171,19 +186,20 @@ public class QuasarCallbackJenkinsPluginTest {
         cla.completablefuture.jira.blocking.JiraServer blockingSrv = new cla.completablefuture.jira.blocking.JiraServerWithLatency(new cla.completablefuture.jira.blocking.FakeJiraServer());
         JiraServer nonBlockingSrv = new JiraServerWithLatency(new FakeJiraServer());
         CallbackJiraServer callbackNonBlockingSrv = new CallbackJiraServerWithLatency(new FakeCallbackJiraServer());
-        //Executor pool = newCachedThreadPool();
-        Executor pool = newFixedThreadPool(1);
 
-        List<JenkinsPlugin> allPlugins = new ArrayList<>();
-        allPlugins.addAll(
-            blockingPlugins.stream().map(p -> p.apply(blockingSrv, pool)
-        ).collect(toList()));
-        allPlugins.addAll(
-            nonBlockingPlugins.stream().map(p -> p.apply(nonBlockingSrv, pool)
-        ).collect(toList()));
-        allPlugins.addAll(
-            callbackNonBlockingPlugins.stream().map(p -> p.apply(callbackNonBlockingSrv, pool)
-        ).collect(toList()));
+        List<Function<Executor,JenkinsPlugin>> allPlugins = new ArrayList<>();
+        allPlugins.addAll(blockingPlugins.stream().map(pluginPrototype -> {
+            Function<Executor, JenkinsPlugin> pool2Plugin = pool -> pluginPrototype.apply(blockingSrv, pool);
+            return pool2Plugin;
+        }).collect(toList()));
+        allPlugins.addAll(nonBlockingPlugins.stream().map(pluginPrototype -> {
+            Function<Executor, JenkinsPlugin> pool2Plugin = pool -> pluginPrototype.apply(nonBlockingSrv, pool);
+            return pool2Plugin;
+        }).collect(toList()));
+        allPlugins.addAll(callbackNonBlockingPlugins.stream().map(pluginPrototype -> {
+            Function<Executor, JenkinsPlugin> pool2Plugin = pool -> pluginPrototype.apply(callbackNonBlockingSrv, pool);
+            return pool2Plugin;
+        }).collect(toList()));
         return allPlugins;
     }
 
