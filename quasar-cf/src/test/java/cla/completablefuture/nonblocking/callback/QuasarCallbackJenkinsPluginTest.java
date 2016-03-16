@@ -103,22 +103,18 @@ public class QuasarCallbackJenkinsPluginTest {
         }
     }
 
-    private static final Supplier<ExecutorService> poolSupplier = () -> newFixedThreadPool(1);
+    //private static final Supplier<ExecutorService> poolSupplier = () -> newFixedThreadPool(1);
+    private static final Executor pool = newFixedThreadPool(1);
     @Test public void should_3_be_fast() throws FileNotFoundException {
         List<Function<Executor,JenkinsPlugin>> allPlugins = allPlugins();
 
         try(PrintStream oout = new ConsolePlusFile("comparaison-latences.txt")) {
             oout.printf("Cores: %d, FJP size: %d%n", getRuntime().availableProcessors(), commonPool().getParallelism());
             allPlugins.stream().forEach(pluginBuilder -> {
-                ExecutorService pool = poolSupplier.get();
-                try {
-                    JenkinsPlugin plugin = pluginBuilder.apply(pool);
-                    Instant before = Instant.now();
-                    Set<JiraComponent> answer = plugin.findComponentsByBundleName("toto59");
-                    oout.printf("%-80s took %s (found %d) %n", plugin, Duration.between(before, Instant.now()), answer.size());
-                } finally {
-                    pool.shutdownNow();
-                }
+                JenkinsPlugin plugin = pluginBuilder.apply(pool);
+                Instant before = Instant.now();
+                Set<JiraComponent> answer = plugin.findComponentsByBundleName("toto59");
+                oout.printf("%-80s took %s (found %d) %n", pretty(plugin), Duration.between(before, Instant.now()), answer.size());
             });
         }
     }
@@ -175,15 +171,15 @@ public class QuasarCallbackJenkinsPluginTest {
             BlockingJenkinsPlugin_GenericCollect_Quasar::new
         );
         List<BiFunction<NonBlockingJiraServer, Executor, JenkinsPlugin>> nonBlockingPlugins = Arrays.asList(
-            //TODO?
-            //cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_Reduce::new,
-            NonBlockingJenkinsPlugin_Collect::new,
-            //TODO?
-            //cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_GenericCollect::new,
-            NonBlockingJenkinsPlugin_Collect_Quasar::new
+                //TODO?
+                //cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_Reduce::new,
+                NonBlockingJenkinsPlugin_Collect::new,
+                //TODO?
+                //cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_GenericCollect::new,
+                NonBlockingJenkinsPlugin_Collect_Quasar::new
         );
         List<BiFunction<CallbackJiraServer, Executor, JenkinsPlugin>> callbackNonBlockingPlugins = Arrays.asList(
-            cla.completablefuture.jenkins.nonblocking.callback.JenkinsPlugin_CallbackCollect_Quasar::new
+                cla.completablefuture.jenkins.nonblocking.callback.JenkinsPlugin_CallbackCollect_Quasar::new
         );
 
         BlockingJiraServer blockingSrv = new BlockingJiraServerWithLatency(new FakeBlockingJiraServer());
@@ -197,4 +193,7 @@ public class QuasarCallbackJenkinsPluginTest {
         return allPlugins;
     }
 
+    private static String pretty(JenkinsPlugin plugin) {
+        return plugin.getClass().getName().replace("cla.completablefuture.jenkins", "");
+    }
 }
