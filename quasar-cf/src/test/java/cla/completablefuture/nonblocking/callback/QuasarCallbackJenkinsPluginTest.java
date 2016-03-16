@@ -177,7 +177,7 @@ public class QuasarCallbackJenkinsPluginTest {
             cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_Collect_Quasar::new
         );
         List<BiFunction<CallbackJiraServer, Executor, JenkinsPlugin>> callbackNonBlockingPlugins = Arrays.asList(
-                cla.completablefuture.jenkins.nonblocking.callback.JenkinsPlugin_CallbackCollect_Quasar::new
+            cla.completablefuture.jenkins.nonblocking.callback.JenkinsPlugin_CallbackCollect_Quasar::new
         );
 
         cla.completablefuture.jira.blocking.JiraServer blockingSrv = new cla.completablefuture.jira.blocking.JiraServerWithLatency(new cla.completablefuture.jira.blocking.FakeJiraServer());
