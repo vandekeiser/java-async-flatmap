@@ -1,19 +1,13 @@
 package cla.completablefuture.nonblocking.callback;
 
+import java.util.Set;
+import java.util.stream.IntStream;
 import cla.completablefuture.jira.JiraBundle;
 import cla.completablefuture.jira.JiraComponent;
-import cla.completablefuture.jira.nonblocking.JiraServer;
 import cla.completablefuture.jira.nonblocking.callback.BasicCompletableCallback;
 import cla.completablefuture.jira.nonblocking.callback.Callback;
 import cla.completablefuture.jira.nonblocking.callback.CallbackJiraServer;
 import cla.completablefuture.jira.nonblocking.callback.CompletableCallback;
-
-import java.util.Set;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
-import java.util.stream.IntStream;
-
-import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.stream.Collectors.toSet;
 
 public class FakeCallbackJiraServer implements CallbackJiraServer {

@@ -1,4 +1,4 @@
-package cla.completablefuture.jenkins.nonblocking.callback;
+package cla.completablefuture.jenkins.nonblocking;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -7,24 +7,20 @@ import java.util.function.Function;
 import cla.completablefuture.jenkins.AsyncJenkinsPlugin;
 import cla.completablefuture.jira.JiraBundle;
 import cla.completablefuture.jira.JiraComponent;
-import cla.completablefuture.jira.nonblocking.callback.CallbackJiraServer;
+import cla.completablefuture.jira.nonblocking.NonBlockingJiraServer;
 import cla.completablefuture.nonblocking.NonBlockingAsyncSets_Collect;
+import cla.completablefuture.nonblocking.NonBlockingCompletableFutures;
 
-public class JenkinsPlugin_CallbackCollect_Quasar implements AsyncJenkinsPlugin {
+public class NonBlockingJenkinsPlugin_Collect implements AsyncJenkinsPlugin {
     
     private final Function<String, CompletableFuture<Set<JiraComponent>>> findComponentsByBundleNameAsync;
 
-    public JenkinsPlugin_CallbackCollect_Quasar(CallbackJiraServer srv, Executor dedicatedPool) {
-        Function<String, CompletableFuture<Set<JiraBundle>>> findBundlesByNameAsync =
-            QuasarifyCallback.<String, Set<JiraBundle>>usingPool(dedicatedPool)
-            .apply(srv::findBundlesByName);
-
-        Function<Set<JiraBundle>, CompletableFuture<Set<JiraComponent>>> 
-        findComponentsByBundlesAsync = bundles -> NonBlockingAsyncSets_Collect.flatMapCallbackAsync(
-                bundles,
-                srv::findComponentsByBundle,
-                QuasarifyCallback.usingPool(dedicatedPool)
-        );
+    public NonBlockingJenkinsPlugin_Collect(NonBlockingJiraServer srv, Executor dedicatedPool) {
+        Function<String, CompletableFuture<Set<JiraBundle>>> 
+                findBundlesByNameAsync = NonBlockingCompletableFutures.asyncifyUsingPool(srv::findBundlesByName, dedicatedPool);
+        
+        Function<Set<JiraBundle>, CompletableFuture<Set<JiraComponent>>> findComponentsByBundlesAsync = 
+            bundles -> NonBlockingAsyncSets_Collect.flatMapAsyncUsingPool(bundles, srv::findComponentsByBundle, dedicatedPool);
 
         this.findComponentsByBundleNameAsync = findBundlesByNameAsync.andThen(
             bundlesFuture -> bundlesFuture.thenCompose(findComponentsByBundlesAsync)

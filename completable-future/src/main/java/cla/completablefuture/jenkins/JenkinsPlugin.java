@@ -1,8 +1,7 @@
 package cla.completablefuture.jenkins;
 
-import cla.completablefuture.jira.JiraComponent;
-
 import java.util.Set;
+import cla.completablefuture.jira.JiraComponent;
 
 public interface JenkinsPlugin {
     

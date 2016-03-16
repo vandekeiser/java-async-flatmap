@@ -1,13 +1,12 @@
 package cla.completablefuture.jenkins.nonblocking.callback;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.function.Function;
 import cla.completablefuture.jira.nonblocking.callback.Callback;
 import co.paralleluniverse.fibers.Fiber;
 import co.paralleluniverse.fibers.FiberExecutorScheduler;
 import co.paralleluniverse.fibers.FiberScheduler;
-
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-import java.util.function.Function;
 
 public class QuasarifyCallback {
 
@@ -23,10 +22,10 @@ public class QuasarifyCallback {
         T input,
         Executor dedicatedPool
     ) {
-        FiberScheduler scheduler = new FiberExecutorScheduler("callInFiber scheduler", dedicatedPool);
+        FiberScheduler dedicatedScheduler = new FiberExecutorScheduler("callInFiber scheduler", dedicatedPool);
         CompletableFuture<U> fiberCf = new CompletableFuture<>();
 
-        new Fiber<>(scheduler, () -> callback.apply(input).whenComplete(
+        new Fiber<>(dedicatedScheduler, () -> callback.apply(input).whenComplete(
             res -> fiberCf.complete(res),
             x -> fiberCf.completeExceptionally(x)
         )).start();

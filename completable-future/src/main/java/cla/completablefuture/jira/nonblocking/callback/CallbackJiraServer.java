@@ -1,9 +1,8 @@
 package cla.completablefuture.jira.nonblocking.callback;
 
+import java.util.Set;
 import cla.completablefuture.jira.JiraBundle;
 import cla.completablefuture.jira.JiraComponent;
-
-import java.util.Set;
 
 public interface CallbackJiraServer {
     

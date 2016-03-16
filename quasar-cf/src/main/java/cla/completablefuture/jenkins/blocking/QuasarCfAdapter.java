@@ -1,14 +1,12 @@
 package cla.completablefuture.jenkins.blocking;
 
-import co.paralleluniverse.fibers.Fiber;
-import co.paralleluniverse.fibers.FiberAsync;
-import co.paralleluniverse.fibers.SuspendExecution;
-
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import co.paralleluniverse.fibers.Fiber;
+import co.paralleluniverse.fibers.SuspendExecution;
 
 /**
  * http://docs.paralleluniverse.co/quasar/
