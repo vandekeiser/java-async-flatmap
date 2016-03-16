@@ -24,7 +24,7 @@ public class CallbackJiraServerWithLatency implements CallbackJiraServer {
     //private static final long MIN_SLEEP = 0, MAX_SLEEP = 500;
     private static final long MIN_SLEEP = 10, MAX_SLEEP = 500;
     //private static final long MIN_SLEEP = 0, MAX_SLEEP = 1;
-    private static final Executor delayExecutor = Executors.newFixedThreadPool(1);
+    private static final Executor delayExecutor = Executors.newCachedThreadPool();
     private final CallbackJiraServer jira;
     private final Map<Object, Long> sleeps = new HashMap<>();
 
