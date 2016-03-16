@@ -6,6 +6,8 @@ import cla.completablefuture.jira.nonblocking.callback.BasicCompletableCallback;
 import cla.completablefuture.jira.nonblocking.callback.Callback;
 import cla.completablefuture.jira.nonblocking.callback.CallbackJiraServer;
 import co.paralleluniverse.fibers.Fiber;
+import co.paralleluniverse.fibers.FiberExecutorScheduler;
+import co.paralleluniverse.fibers.FiberScheduler;
 import co.paralleluniverse.fibers.SuspendExecution;
 import co.paralleluniverse.strands.Strand;
 
@@ -24,7 +26,7 @@ public class CallbackJiraServerWithLatency implements CallbackJiraServer {
     //private static final long MIN_SLEEP = 0, MAX_SLEEP = 500;
     private static final long MIN_SLEEP = 10, MAX_SLEEP = 500;
     //private static final long MIN_SLEEP = 0, MAX_SLEEP = 1;
-    private static final Executor delayExecutor = Executors.newCachedThreadPool();
+
     private final CallbackJiraServer jira;
     private final Map<Object, Long> sleeps = new HashMap<>();
 
@@ -46,15 +48,17 @@ public class CallbackJiraServerWithLatency implements CallbackJiraServer {
         return delayedCallbackProducer.apply(bundle);
     }
 
+    private static final Executor delayExecutor = Executors.newCachedThreadPool();
+    private static final FiberScheduler scheduler = new FiberExecutorScheduler("delay scheduler", delayExecutor);
     private <I, O> Function<I, Callback<O>> delay(Function<I, Callback<O>> instant, Object input) {
         return i -> {
             BasicCompletableCallback<O> delayed = new BasicCompletableCallback<>();
 
             instant.apply(i).whenComplete(
-                r -> CompletableFuture.runAsync(
-                    () -> sleepRandomlyForRequest(input),
-                    delayExecutor
-                ).thenRun(() -> delayed.complete(r)),
+                r -> new Fiber<Void>(scheduler, () -> {
+                    sleepRandomlyForRequest(input);
+                    delayed.complete(r);
+                }).start(),
 
                 x -> delayed.completeExceptionnally(x)
             );
@@ -63,27 +67,19 @@ public class CallbackJiraServerWithLatency implements CallbackJiraServer {
         };
     }
 
-    private void sleepRandomlyForRequest(Object request) {
+    private void sleepRandomlyForRequest(Object request) throws SuspendExecution {
         sleep(sleeps.computeIfAbsent(
             request,
             k -> ThreadLocalRandom.current().nextLong(MIN_SLEEP, MAX_SLEEP)
         ));
     }
 
-//    private void sleep(long sleepInMillis) {
-//        try {
-//            //Strand.currentStrand().sleep(sleepInMillis);
-//            Fiber.sleep(sleepInMillis);
-//        } catch (SuspendExecution | InterruptedException e) {
-//            Strand.currentStrand().interrupt();
-//        }
-//    }
-    private void sleep(long sleepInMillis) {
+    private void sleep(long sleepInMillis) throws SuspendExecution {
         try {
-            Thread.sleep(sleepInMillis);
+            Fiber.sleep(sleepInMillis);
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+            Strand.currentStrand().interrupt();
         }
     }
-    
+
 }
