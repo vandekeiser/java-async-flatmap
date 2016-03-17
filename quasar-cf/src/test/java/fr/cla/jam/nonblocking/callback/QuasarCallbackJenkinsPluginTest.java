@@ -1,6 +1,7 @@
 package fr.cla.jam.nonblocking.callback;
 
 import fr.cla.jam.ConsolePlusFile;
+import fr.cla.jam.MeasuringTest;
 import fr.cla.jam.exampledomain.*;
 import fr.cla.jam.nonblocking.callback.exampledomain.CallbackJiraServer;
 import fr.cla.jam.nonblocking.callback.exampledomain.JenkinsPlugin_CallbackCollect_Quasar;
@@ -31,6 +32,7 @@ import static java.lang.System.out;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 import static java.util.concurrent.Executors.newCachedThreadPool;
+import static java.util.concurrent.Executors.newFixedThreadPool;
 import static java.util.concurrent.ForkJoinPool.commonPool;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,7 +50,7 @@ import static org.mockito.Mockito.when;
 // -tester scalabilite JMH
 @Ignore
 @FixMethodOrder(NAME_ASCENDING)
-public class QuasarCallbackJenkinsPluginTest {
+public class QuasarCallbackJenkinsPluginTest extends MeasuringTest {
     
     @Test
     public void should_1_report_bundles_errors() {
@@ -93,14 +95,13 @@ public class QuasarCallbackJenkinsPluginTest {
     private static final Executor pool = newCachedThreadPool();
     @Test public void should_3_be_fast() throws FileNotFoundException {
         List<Function<Executor,JenkinsPlugin>> allPlugins = allPlugins();
-
         try(PrintStream oout = new ConsolePlusFile("comparaison-latences.txt")) {
-            oout.printf("Cores: %d, FJP size: %d%n", getRuntime().availableProcessors(), commonPool().getParallelism());
+            printEnv(oout, pool);
             allPlugins.stream().forEach(pluginBuilder -> {
                 JenkinsPlugin plugin = pluginBuilder.apply(pool);
                 Instant before = Instant.now();
-                Set<JiraComponent> answer = plugin.findComponentsByBundleName("toto59");
-                oout.printf("%-70s took %s (found %d) %n", plugin, Duration.between(before, Instant.now()), answer.size());
+                Set<JiraComponent> answers = plugin.findComponentsByBundleName("toto59");
+                printResult(oout, plugin, before, answers);
             });
         }
     }

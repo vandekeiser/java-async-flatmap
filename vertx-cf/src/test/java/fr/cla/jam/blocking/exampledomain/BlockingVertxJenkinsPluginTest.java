@@ -2,6 +2,7 @@ package fr.cla.jam.blocking.exampledomain;
 
 import fr.cla.jam.ConsolePlusFile;
 import com.jasongoodwin.monads.Try;
+import fr.cla.jam.MeasuringTest;
 import fr.cla.jam.exampledomain.*;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -35,7 +36,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @FixMethodOrder(NAME_ASCENDING)
-public class BlockingVertxJenkinsPluginTest {
+public class BlockingVertxJenkinsPluginTest extends MeasuringTest {
 
     @Test
     public void should_1_report_bundles_errors() {
@@ -86,13 +87,13 @@ public class BlockingVertxJenkinsPluginTest {
         Executor pool = newFixedThreadPool(1);
         
         try(PrintStream oout = new ConsolePlusFile("comparaison-latences.txt")) {
-            oout.printf("Cores: %d, FJP size: %d%n", getRuntime().availableProcessors(), commonPool().getParallelism());
+            printEnv(oout, pool);
             plugins.stream()
                 .map(p -> p.apply(srv, pool))
                 .forEach(p -> {
                     Instant before = Instant.now();
-                    Set<JiraComponent> answer = p.findComponentsByBundleName("toto59");
-                    oout.printf("%-80s took %s (found %d) %n", p, Duration.between(before, Instant.now()), answer.size());
+                    Set<JiraComponent> answers = p.findComponentsByBundleName("toto59");
+                    printResult(oout, p, before, answers);
                 });    
         } 
     }

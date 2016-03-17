@@ -1,6 +1,7 @@
 package fr.cla.jam.nonblocking;
 
 import fr.cla.jam.ConsolePlusFile;
+import fr.cla.jam.MeasuringTest;
 import fr.cla.jam.blocking.exampledomain.*;
 import fr.cla.jam.exampledomain.*;
 import fr.cla.jam.nonblocking.completionstage.NonBlockingJiraServer;
@@ -45,7 +46,7 @@ import static org.mockito.Mockito.when;
 // -javaagent:"C:\Users\User\.m2\repository\co\paralleluniverse\quasar-core\0.7.4\quasar-core-0.7.4-jdk8.jar" -Dco.paralleluniverse.fibers.verifyInstrumentation=false
 @Ignore
 @FixMethodOrder(NAME_ASCENDING)
-public class NonBlockingQuasarJenkinsPluginTest {
+public class NonBlockingQuasarJenkinsPluginTest extends MeasuringTest {
 
     @Test
     public void should_1_report_bundles_errors() {
@@ -83,16 +84,18 @@ public class NonBlockingQuasarJenkinsPluginTest {
             }
         }
     }
-    
+
+    //Executor pool = newCachedThreadPool();
+    Executor pool = newFixedThreadPool(1);
     @Test public void should_3_be_fast() throws FileNotFoundException {
         List<JenkinsPlugin> allPlugins = allPlugins();
 
         try(PrintStream oout = new ConsolePlusFile("comparaison-latences.txt")) {
-            oout.printf("Cores: %d, FJP size: %d%n", getRuntime().availableProcessors(), commonPool().getParallelism());
+            printEnv(oout, pool);
             allPlugins.stream().forEach(p -> {
                 Instant before = Instant.now();
-                Set<JiraComponent> answer = p.findComponentsByBundleName("toto59");
-                oout.printf("%-80s took %s (found %d) %n", p, Duration.between(before, Instant.now()), answer.size());
+                Set<JiraComponent> answers = p.findComponentsByBundleName("toto59");
+                printResult(out, p, before, answers);
             });
         }
     }
@@ -159,8 +162,6 @@ public class NonBlockingQuasarJenkinsPluginTest {
 
         BlockingJiraServer blockingSrv = new BlockingJiraServerWithLatency(new FakeBlockingJiraServer());
         NonBlockingJiraServer nonBlockingSrv = new NonBlockingJiraServerWithLatency(new FakeNonBlockingJiraServer());
-        //Executor pool = newCachedThreadPool();
-        Executor pool = newFixedThreadPool(1);
 
         List<JenkinsPlugin> allPlugins = new ArrayList<>();
         allPlugins.addAll(

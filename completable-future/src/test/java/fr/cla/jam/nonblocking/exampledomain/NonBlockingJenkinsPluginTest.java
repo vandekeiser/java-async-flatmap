@@ -7,6 +7,7 @@ import java.util.concurrent.*;
 import java.util.function.BiFunction;
 import java.util.stream.IntStream;
 
+import fr.cla.jam.MeasuringTest;
 import fr.cla.jam.blocking.exampledomain.*;
 import fr.cla.jam.exampledomain.*;
 import fr.cla.jam.nonblocking.completionstage.NonBlockingJiraServer;
@@ -32,7 +33,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @FixMethodOrder(NAME_ASCENDING)
-public class NonBlockingJenkinsPluginTest {
+public class NonBlockingJenkinsPluginTest extends MeasuringTest {
 
     @Test
     public void should_1_report_bundles_errors() {
@@ -68,16 +69,18 @@ public class NonBlockingJenkinsPluginTest {
             }
         }
     }
-    
+
+    //Executor pool = newCachedThreadPool();
+    Executor pool = newFixedThreadPool(1);
     @Test public void should_3_be_fast() {
         List<? extends JenkinsPlugin> allPlugins = allPlugins();
-        
-        out.printf("Cores: %d, FJP size: %d%n", getRuntime().availableProcessors(), commonPool().getParallelism());
+
+        printEnv(out, pool);
         allPlugins.stream()
             .forEach(p -> {
                 Instant before = Instant.now();
-                Set<JiraComponent> answer = p.findComponentsByBundleName("toto59");
-                out.printf("%-80s took %s (found %d) %n", p, Duration.between(before, Instant.now()), answer.size());
+                Set<JiraComponent> answers = p.findComponentsByBundleName("toto59");
+                printResult(out, p, before, answers);
             });
     }
 
@@ -154,8 +157,6 @@ public class NonBlockingJenkinsPluginTest {
 
         BlockingJiraServer blockingSrv = new BlockingJiraServerWithLatency(new FakeBlockingJiraServer());
         NonBlockingJiraServer nonBlockingSrv = new NonBlockingJiraServerWithLatency(new FakeNonBlockingJiraServer());
-        //Executor pool = newCachedThreadPool();
-        Executor pool = newFixedThreadPool(1);
 
         List<JenkinsPlugin> allPlugins = new ArrayList<>();
         allPlugins.addAll(

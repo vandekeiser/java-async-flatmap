@@ -2,6 +2,7 @@ package fr.cla.jam.blocking;
 
 import fr.cla.jam.ConsolePlusFile;
 import com.jasongoodwin.monads.Try;
+import fr.cla.jam.MeasuringTest;
 import fr.cla.jam.blocking.exampledomain.*;
 import fr.cla.jam.exampledomain.*;
 import org.junit.FixMethodOrder;
@@ -36,7 +37,7 @@ import static org.mockito.Mockito.when;
 //Run with 
 // -javaagent:"C:\Users\Claisse\.m2\repository\co\paralleluniverse\quasar-core\0.7.4\quasar-core-0.7.4-jdk8.jar" -Dco.paralleluniverse.fibers.verifyInstrumentation=false
 @FixMethodOrder(NAME_ASCENDING)
-public class BlockingQuasarJenkinsPluginTest {
+public class BlockingQuasarJenkinsPluginTest extends MeasuringTest {
 
     @Test
     public void should_1_report_bundles_errors() {
@@ -87,13 +88,13 @@ public class BlockingQuasarJenkinsPluginTest {
         Executor pool = newFixedThreadPool(commonPool().getParallelism());
         
         try(PrintStream oout = new ConsolePlusFile("comparaison-latences.txt")) {
-            oout.printf("Cores: %d, FJP size: %d%n", getRuntime().availableProcessors(), commonPool().getParallelism());
+            printEnv(oout, pool);
             plugins.stream()
                 .map(p -> p.apply(srv, pool))
                 .forEach(p -> {
                     Instant before = Instant.now();
-                    Set<JiraComponent> answer = p.findComponentsByBundleName("toto59");
-                    oout.printf("%-80s took %s (found %d) %n", p, Duration.between(before, Instant.now()), answer.size());
+                    Set<JiraComponent> answers = p.findComponentsByBundleName("toto59");
+                    printResult(oout, p, before, answers);
                 });
         }
 

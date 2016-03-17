@@ -11,6 +11,7 @@ import java.util.function.BiFunction;
 import java.util.stream.IntStream;
 
 import com.jasongoodwin.monads.Try;
+import fr.cla.jam.MeasuringTest;
 import fr.cla.jam.exampledomain.*;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -29,7 +30,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @FixMethodOrder(NAME_ASCENDING)
-public class BlockingJenkinsPluginTest {
+public class BlockingJenkinsPluginTest extends MeasuringTest {
 
     @Test
     public void should_1_report_bundles_errors() {
@@ -77,14 +78,14 @@ public class BlockingJenkinsPluginTest {
         BlockingJiraServer srv = new BlockingJiraServerWithLatency(new FakeBlockingJiraServer());
         Executor pool = newCachedThreadPool();
         //Executor pool = newFixedThreadPool(10);
-        
-        out.printf("Cores: %d, FJP size: %d%n", getRuntime().availableProcessors(), commonPool().getParallelism());
+
+        printEnv(out, pool);
         plugins.stream()
             .map(p -> p.apply(srv, pool))
             .forEach(p -> {
                 Instant before = Instant.now();
-                Set<JiraComponent> answer = p.findComponentsByBundleName("toto59");
-                out.printf("%-80s took %s (found %d) %n", p, Duration.between(before, Instant.now()), answer.size());
+                Set<JiraComponent> answers = p.findComponentsByBundleName("toto59");
+                printResult(out, p, before, answers);
             });
     }
     
