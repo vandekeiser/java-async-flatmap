@@ -166,7 +166,7 @@
                         <classpath/>
 
                         <!-- Main class -->
-                        <argument>cla.completablefuture.QuasarIncreasingEchoApp</argument>
+                        <argument>fr.cla.jam.QuasarIncreasingEchoApp</argument>
                     </arguments>
                 </configuration>
             </plugin>
