@@ -95,7 +95,7 @@ public class NonBlockingQuasarJenkinsPluginTest extends MeasuringTest {
             allPlugins.stream().forEach(p -> {
                 Instant before = Instant.now();
                 Set<JiraComponent> answers = p.findComponentsByBundleName("toto59");
-                printResult(out, p, before, answers);
+                printResult(oout, p, before, answers);
             });
         }
     }
