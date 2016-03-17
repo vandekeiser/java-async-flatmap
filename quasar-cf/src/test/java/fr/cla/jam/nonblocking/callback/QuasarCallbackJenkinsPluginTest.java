@@ -102,7 +102,7 @@ public class QuasarCallbackJenkinsPluginTest {
                 JenkinsPlugin plugin = pluginBuilder.apply(pool);
                 Instant before = Instant.now();
                 Set<JiraComponent> answer = plugin.findComponentsByBundleName("toto59");
-                oout.printf("%-70s took %s (found %d) %n", pretty(plugin), Duration.between(before, Instant.now()), answer.size());
+                oout.printf("%-70s took %s (found %d) %n", plugin, Duration.between(before, Instant.now()), answer.size());
             });
         }
     }
@@ -181,7 +181,4 @@ public class QuasarCallbackJenkinsPluginTest {
         return allPlugins;
     }
 
-    private static String pretty(JenkinsPlugin plugin) {
-        return plugin.getClass().getName().replace("cla.completablefuture.jenkins.", "");
-    }
 }

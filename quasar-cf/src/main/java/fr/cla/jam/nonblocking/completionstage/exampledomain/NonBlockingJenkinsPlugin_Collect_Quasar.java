@@ -1,5 +1,6 @@
 package fr.cla.jam.nonblocking.completionstage.exampledomain;
 
+import fr.cla.jam.exampledomain.AbstractJenkinsPlugin;
 import fr.cla.jam.exampledomain.AsyncJenkinsPlugin;
 import fr.cla.jam.exampledomain.JiraBundle;
 import fr.cla.jam.exampledomain.JiraComponent;
@@ -12,7 +13,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 
-public class NonBlockingJenkinsPlugin_Collect_Quasar implements AsyncJenkinsPlugin {
+public class NonBlockingJenkinsPlugin_Collect_Quasar extends AbstractJenkinsPlugin implements AsyncJenkinsPlugin {
     
     private final Function<String, CompletableFuture<Set<JiraComponent>>> findComponentsByBundleNameAsync;
 
