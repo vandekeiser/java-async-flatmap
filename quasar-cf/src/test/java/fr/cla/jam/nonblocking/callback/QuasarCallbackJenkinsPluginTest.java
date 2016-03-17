@@ -46,8 +46,6 @@ import static org.mockito.Mockito.when;
 
 //TODO:
 // -tester scalabilite JMH
-// -latence: prendre un nouveau pool pour chaque plugin? pqoi ca gene de reutiliser le mm??
-// -pqoi la version callback est-elle bcp plus lente que si l'api est CF??
 @Ignore
 @FixMethodOrder(NAME_ASCENDING)
 public class QuasarCallbackJenkinsPluginTest {
