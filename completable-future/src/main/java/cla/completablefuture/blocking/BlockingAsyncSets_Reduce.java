@@ -1,10 +1,12 @@
 package cla.completablefuture.blocking;
 
+import cla.completablefuture.Sets;
+
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
-import cla.completablefuture.Sets;
+
 import static java.util.Collections.emptySet;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.CompletableFuture.completedFuture;

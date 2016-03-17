@@ -1,5 +1,7 @@
 package cla.completablefuture.blocking;
 
+import cla.completablefuture.Sets;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -11,7 +13,7 @@ import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
-import cla.completablefuture.Sets;
+
 import static cla.completablefuture.blocking.BlockingAsyncCollectionsWithGenericAsyncifier.FlatteningCollector.flattening;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.CompletableFuture.completedFuture;

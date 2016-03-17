@@ -1,5 +1,7 @@
 package cla.completablefuture.blocking;
 
+import cla.completablefuture.Sets;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -9,7 +11,7 @@ import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
-import cla.completablefuture.Sets;
+
 import static java.util.Objects.requireNonNull;
 
 public final class BlockingAsyncCollections_Factor {

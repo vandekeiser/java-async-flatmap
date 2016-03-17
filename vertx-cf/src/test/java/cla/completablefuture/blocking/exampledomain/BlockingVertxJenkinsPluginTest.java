@@ -1,7 +1,6 @@
-package cla.completablefuture.blocking;
+package cla.completablefuture.blocking.exampledomain;
 
 import cla.completablefuture.ConsolePlusFile;
-import cla.completablefuture.blocking.exampledomain.*;
 import cla.completablefuture.exampledomain.*;
 import com.jasongoodwin.monads.Try;
 import org.junit.FixMethodOrder;
@@ -35,23 +34,21 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-//Run with 
-// -javaagent:"C:\Users\Claisse\.m2\repository\co\paralleluniverse\quasar-core\0.7.4\quasar-core-0.7.4-jdk8.jar" -Dco.paralleluniverse.fibers.verifyInstrumentation=false
 @FixMethodOrder(NAME_ASCENDING)
-public class BlockingQuasarJenkinsPluginTest {
+public class BlockingVertxJenkinsPluginTest {
 
     @Test
     public void should_1_report_bundles_errors() {
         BlockingJiraServer jiraServer = mock(BlockingJiraServer.class);
         when(jiraServer.findBundlesByName(any())).thenThrow(new JiraServerException());
-        JenkinsPlugin sut = new BlockingJenkinsPlugin_GenericCollect_Quasar(jiraServer, newCachedThreadPool());
+        JenkinsPlugin sut = new BlockingJenkinsPlugin_GenericCollect_Vertx(jiraServer, newCachedThreadPool());
         
         try {
             sut.findComponentsByBundleName("foo");
             failBecauseExceptionWasNotThrown(JiraServerException.class);
         } catch (JiraServerException | CompletionException expected) {
             if(expected instanceof CompletionException) {
-                assertThat(expected.getCause().getCause()).isInstanceOf(JiraServerException.class);
+                assertThat(expected.getCause()).isInstanceOf(JiraServerException.class);
             }
         }
     }
@@ -59,7 +56,7 @@ public class BlockingQuasarJenkinsPluginTest {
     @Test
     public void should_2_report_components_errors() {
         BlockingJiraServer jiraServer = mock(BlockingJiraServer.class);
-        JenkinsPlugin sut = new BlockingJenkinsPlugin_GenericCollect_Quasar(jiraServer, newCachedThreadPool());
+        JenkinsPlugin sut = new BlockingJenkinsPlugin_GenericCollect_Vertx(jiraServer, newCachedThreadPool());
         when(jiraServer.findBundlesByName(any())).thenReturn(singleton(new JiraBundle()));
         when(jiraServer.findComponentsByBundle(any())).thenThrow(new JiraServerException());
         
@@ -68,7 +65,7 @@ public class BlockingQuasarJenkinsPluginTest {
             failBecauseExceptionWasNotThrown(JiraServerException.class);
         } catch (JiraServerException | CompletionException expected) {
             if(expected instanceof CompletionException) {
-                assertThat(expected.getCause().getCause()).isInstanceOf(JiraServerException.class);
+                assertThat(expected.getCause()).isInstanceOf(JiraServerException.class);
             }
         }
     }
@@ -81,12 +78,12 @@ public class BlockingQuasarJenkinsPluginTest {
             BlockingJenkinsPlugin_Collect::new,
             BlockingJenkinsPlugin_GenericCollect::new,
             BlockingJenkinsPlugin_FactorCollect::new,
-            BlockingJenkinsPlugin_GenericCollect_Quasar::new
+            BlockingJenkinsPlugin_GenericCollect_Vertx::new
         );
-       
+
         BlockingJiraServer srv = new BlockingJiraServerWithLatency(new FakeBlockingJiraServer());
         //Executor pool = newCachedThreadPool();
-        Executor pool = newFixedThreadPool(commonPool().getParallelism());
+        Executor pool = newFixedThreadPool(1);
         
         try(PrintStream oout = new ConsolePlusFile("comparaison-latences.txt")) {
             oout.printf("Cores: %d, FJP size: %d%n", getRuntime().availableProcessors(), commonPool().getParallelism());
@@ -96,14 +93,12 @@ public class BlockingQuasarJenkinsPluginTest {
                     Instant before = Instant.now();
                     Set<JiraComponent> answer = p.findComponentsByBundleName("toto59");
                     oout.printf("%-80s took %s (found %d) %n", p, Duration.between(before, Instant.now()), answer.size());
-                });
-        }
-
-        
+                });    
+        } 
     }
     
     @Test public void should_4_find_the_right_nunmber_of_jira_components() {
-        JenkinsPlugin sut = new BlockingJenkinsPlugin_GenericCollect_Quasar(
+        JenkinsPlugin sut = new BlockingJenkinsPlugin_GenericCollect_Vertx(
                 new BlockingJiraServerWithLatency(new FakeBlockingJiraServer()),
                 newCachedThreadPool()
         );
@@ -117,7 +112,7 @@ public class BlockingQuasarJenkinsPluginTest {
     }
     
     @Test public void should_5_be_chainable() {
-        AsyncJenkinsPlugin sut = new BlockingJenkinsPlugin_GenericCollect_Quasar(
+        AsyncJenkinsPlugin sut = new BlockingJenkinsPlugin_GenericCollect_Vertx(
             new BlockingJiraServerWithLatency(new FakeBlockingJiraServer()),
             newCachedThreadPool()
         );
@@ -148,7 +143,7 @@ public class BlockingQuasarJenkinsPluginTest {
     }
     
     @Test public void should_6_work_with_other_collections() {
-        JenkinsPlugin sut = new BlockingJenkinsPlugin_GenericCollect_Quasar(
+        JenkinsPlugin sut = new BlockingJenkinsPlugin_GenericCollect_Vertx(
             new BlockingJiraServerWithLatency(new FakeBlockingJiraServer()),
             newCachedThreadPool()
         );

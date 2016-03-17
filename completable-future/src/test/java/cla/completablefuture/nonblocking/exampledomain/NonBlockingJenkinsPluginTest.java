@@ -1,34 +1,24 @@
-package cla.completablefuture.nonblocking;
+package cla.completablefuture.nonblocking.exampledomain;
 
-import cla.completablefuture.ConsolePlusFile;
-import cla.completablefuture.blocking.exampledomain.*;
-import cla.completablefuture.exampledomain.*;
-import cla.completablefuture.nonblocking.completionstage.NonBlockingJiraServer;
-import cla.completablefuture.nonblocking.completionstage.exampledomain.NonBlockingJenkinsPlugin_Collect;
-import cla.completablefuture.nonblocking.completionstage.exampledomain.NonBlockingJenkinsPlugin_Collect_Quasar;
-import cla.completablefuture.nonblocking.exampledomain.FakeNonBlockingJiraServer;
-import cla.completablefuture.nonblocking.exampledomain.NonBlockingJiraServerWithLatency;
-import com.jasongoodwin.monads.Try;
-import org.junit.FixMethodOrder;
-import org.junit.Ignore;
-import org.junit.Test;
-
-import java.io.FileNotFoundException;
-import java.io.PrintStream;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.BiFunction;
 import java.util.stream.IntStream;
-
+import cla.completablefuture.blocking.exampledomain.*;
+import cla.completablefuture.exampledomain.*;
+import cla.completablefuture.nonblocking.completionstage.NonBlockingJiraServer;
+import cla.completablefuture.nonblocking.completionstage.exampledomain.NonBlockingJenkinsPlugin_Collect;
+import com.jasongoodwin.monads.Try;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
 import static cla.completablefuture.nonblocking.exampledomain.FakeNonBlockingJiraServer.NB_OF_BUNDLES_PER_NAME;
 import static cla.completablefuture.nonblocking.exampledomain.FakeNonBlockingJiraServer.NB_OF_COMPONENTS_PER_BUNDLE;
 import static java.lang.Runtime.getRuntime;
 import static java.lang.System.out;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
-import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.Executors.newCachedThreadPool;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 import static java.util.concurrent.ForkJoinPool.commonPool;
@@ -40,27 +30,21 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-//Run with
-// -javaagent:"C:\Users\Claisse\.m2\repository\co\paralleluniverse\quasar-core\0.7.4\quasar-core-0.7.4-jdk8.jar" -Dco.paralleluniverse.fibers.verifyInstrumentation=false
-// -javaagent:"C:\Users\User\.m2\repository\co\paralleluniverse\quasar-core\0.7.4\quasar-core-0.7.4-jdk8.jar" -Dco.paralleluniverse.fibers.verifyInstrumentation=false
-@Ignore
 @FixMethodOrder(NAME_ASCENDING)
-public class NonBlockingQuasarJenkinsPluginTest {
+public class NonBlockingJenkinsPluginTest {
 
     @Test
     public void should_1_report_bundles_errors() {
         NonBlockingJiraServer jiraServer = mock(NonBlockingJiraServer.class);
-        //attention probablement pas correct!!! plutot then return completed (failure),
-        // ce qui expliquerait la necessite du catch degueu en plus du onfail
-        when(jiraServer.findBundlesByName(any())).thenReturn(failure());
-        JenkinsPlugin sut = new NonBlockingJenkinsPlugin_Collect_Quasar(jiraServer, newCachedThreadPool());
-
+        when(jiraServer.findBundlesByName(any())).thenThrow(new JiraServerException());
+        JenkinsPlugin sut = new NonBlockingJenkinsPlugin_Collect(jiraServer, newCachedThreadPool());
+        
         try {
             sut.findComponentsByBundleName("foo");
             failBecauseExceptionWasNotThrown(JiraServerException.class);
         } catch (JiraServerException | CompletionException expected) {
             if(expected instanceof CompletionException) {
-                assertThat(expected.getCause()).isInstanceOf(JiraServerException.class);
+                assertThat(expected.getCause() instanceof JiraServerException).isTrue();       
             }
         }
     }
@@ -68,11 +52,11 @@ public class NonBlockingQuasarJenkinsPluginTest {
     @Test
     public void should_2_report_components_errors() {
         NonBlockingJiraServer jiraServer = mock(NonBlockingJiraServer.class);
-        JenkinsPlugin sut = new NonBlockingJenkinsPlugin_Collect_Quasar(jiraServer, newCachedThreadPool());
+        JenkinsPlugin sut = new NonBlockingJenkinsPlugin_Collect(jiraServer, newCachedThreadPool());
         when(jiraServer.findBundlesByName(any())).thenReturn(
-            completedFuture(singleton(new JiraBundle()))
+                CompletableFuture.completedFuture(singleton(new JiraBundle()))
         );
-        when(jiraServer.findComponentsByBundle(any())).thenReturn(failure());
+        when(jiraServer.findComponentsByBundle(any())).thenThrow(new JiraServerException());
         
         try {
             sut.findComponentsByBundleName("foo");    
@@ -84,26 +68,25 @@ public class NonBlockingQuasarJenkinsPluginTest {
         }
     }
     
-    @Test public void should_3_be_fast() throws FileNotFoundException {
-        List<JenkinsPlugin> allPlugins = allPlugins();
-
-        try(PrintStream oout = new ConsolePlusFile("comparaison-latences.txt")) {
-            oout.printf("Cores: %d, FJP size: %d%n", getRuntime().availableProcessors(), commonPool().getParallelism());
-            allPlugins.stream().forEach(p -> {
+    @Test public void should_3_be_fast() {
+        List<? extends JenkinsPlugin> allPlugins = allPlugins();
+        
+        out.printf("Cores: %d, FJP size: %d%n", getRuntime().availableProcessors(), commonPool().getParallelism());
+        allPlugins.stream()
+            .forEach(p -> {
                 Instant before = Instant.now();
                 Set<JiraComponent> answer = p.findComponentsByBundleName("toto59");
-                oout.printf("%-80s took %s (found %d) %n", p, Duration.between(before, Instant.now()), answer.size());
+                out.printf("%-80s took %s (found %d) %n", p, Duration.between(before, Instant.now()), answer.size());
             });
-        }
     }
 
     @Test public void should_4_find_the_right_nunmber_of_jira_components() {
-        JenkinsPlugin sut = new NonBlockingJenkinsPlugin_Collect_Quasar(
-            new NonBlockingJiraServerWithLatency(new FakeNonBlockingJiraServer()),
-            newCachedThreadPool()
+        JenkinsPlugin sut = new NonBlockingJenkinsPlugin_Collect(
+                new NonBlockingJiraServerWithLatency(new FakeNonBlockingJiraServer()),
+                newCachedThreadPool()
         );
         
-        IntStream.rangeClosed(1, 10).forEach(i -> {
+        IntStream.rangeClosed(1, 1).forEach(i -> {
             out.println("i: " + i);
             assertThat(
                     sut.findComponentsByBundleName("toto59")
@@ -112,7 +95,7 @@ public class NonBlockingQuasarJenkinsPluginTest {
     }
     
     @Test public void should_5_be_chainable() {
-        AsyncJenkinsPlugin sut = new NonBlockingJenkinsPlugin_Collect_Quasar(
+        AsyncJenkinsPlugin sut = new NonBlockingJenkinsPlugin_Collect(
             new NonBlockingJiraServerWithLatency(new FakeNonBlockingJiraServer()),
             newCachedThreadPool()
         );
@@ -141,20 +124,31 @@ public class NonBlockingQuasarJenkinsPluginTest {
         } 
     }
     
-    private List<JenkinsPlugin> allPlugins() {
+    @Test public void should_6_work_with_other_collections() {
+        JenkinsPlugin sut = new NonBlockingJenkinsPlugin_Collect(
+            new NonBlockingJiraServerWithLatency(new FakeNonBlockingJiraServer()),
+            newCachedThreadPool()
+        );
+     
+        assertThat(
+            sut.findComponentsByBundleName("toto59")
+        ).hasSize(NB_OF_BUNDLES_PER_NAME * NB_OF_COMPONENTS_PER_BUNDLE);
+    }
+
+    private List<? extends JenkinsPlugin> allPlugins() {
         List<BiFunction<BlockingJiraServer, Executor, JenkinsPlugin>> blockingPlugins = Arrays.asList(
             BlockingJenkinsPlugin_SequentialStream::new,
             BlockingJenkinsPlugin_ParallelStream::new,
+            BlockingJenkinsPlugin_Reduce::new,
             BlockingJenkinsPlugin_Collect::new,
-            BlockingJenkinsPlugin_GenericCollect_Quasar::new
+            BlockingJenkinsPlugin_GenericCollect::new
         );
         List<BiFunction<NonBlockingJiraServer, Executor, JenkinsPlugin>> nonBlockingPlugins = Arrays.asList(
-                //TODO?
-                //cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_Reduce::new,
-                NonBlockingJenkinsPlugin_Collect::new,
-                //TODO?
-                //cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_GenericCollect::new,
-                NonBlockingJenkinsPlugin_Collect_Quasar::new
+            //TODO?
+            //cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_Reduce::new,
+            NonBlockingJenkinsPlugin_Collect::new
+            //TODO?
+            //cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_GenericCollect::new,
         );
 
         BlockingJiraServer blockingSrv = new BlockingJiraServerWithLatency(new FakeBlockingJiraServer());
@@ -170,12 +164,6 @@ public class NonBlockingQuasarJenkinsPluginTest {
             nonBlockingPlugins.stream().map(p -> p.apply(nonBlockingSrv, pool)
         ).collect(toList()));
         return allPlugins;
-    }
-
-    private static <T> CompletionStage<T> failure() {
-        CompletableFuture<T> failed = new CompletableFuture<>();
-        failed.completeExceptionally(new JiraServerException());
-        return failed;
     }
 
 }

@@ -4,6 +4,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 import java.util.function.Supplier;
+
 import static java.util.Objects.requireNonNull;
 
 public final class BlockingCompletableFutures {

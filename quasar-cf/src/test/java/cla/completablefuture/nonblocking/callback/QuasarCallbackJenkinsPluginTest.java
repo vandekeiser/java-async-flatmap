@@ -1,5 +1,20 @@
 package cla.completablefuture.nonblocking.callback;
 
+import cla.completablefuture.ConsolePlusFile;
+import cla.completablefuture.blocking.exampledomain.*;
+import cla.completablefuture.exampledomain.*;
+import cla.completablefuture.nonblocking.callback.exampledomain.CallbackJiraServer;
+import cla.completablefuture.nonblocking.callback.exampledomain.JenkinsPlugin_CallbackCollect_Quasar;
+import cla.completablefuture.nonblocking.completionstage.NonBlockingJiraServer;
+import cla.completablefuture.nonblocking.completionstage.exampledomain.NonBlockingJenkinsPlugin_Collect;
+import cla.completablefuture.nonblocking.completionstage.exampledomain.NonBlockingJenkinsPlugin_Collect_Quasar;
+import cla.completablefuture.nonblocking.exampledomain.FakeNonBlockingJiraServer;
+import cla.completablefuture.nonblocking.exampledomain.NonBlockingJiraServerWithLatency;
+import com.jasongoodwin.monads.Try;
+import org.junit.FixMethodOrder;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.time.Duration;
@@ -8,41 +23,16 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.IntStream;
-import cla.completablefuture.ConsolePlusFile;
-import cla.completablefuture.jenkins.AsyncJenkinsPlugin;
-import cla.completablefuture.jenkins.JenkinsPlugin;
-import cla.completablefuture.jenkins.blocking.BlockingJenkinsPlugin_Collect;
-import cla.completablefuture.jenkins.blocking.BlockingJenkinsPlugin_GenericCollect_Quasar;
-import cla.completablefuture.jenkins.blocking.BlockingJenkinsPlugin_ParallelStream;
-import cla.completablefuture.jenkins.blocking.BlockingJenkinsPlugin_SequentialStream;
-import cla.completablefuture.jenkins.nonblocking.NonBlockingJenkinsPlugin_Collect;
-import cla.completablefuture.jenkins.nonblocking.NonBlockingJenkinsPlugin_Collect_Quasar;
-import cla.completablefuture.jenkins.nonblocking.callback.JenkinsPlugin_CallbackCollect_Quasar;
-import cla.completablefuture.jira.JiraBundle;
-import cla.completablefuture.jira.JiraComponent;
-import cla.completablefuture.jira.JiraServerException;
-import cla.completablefuture.jira.blocking.BlockingJiraServer;
-import cla.completablefuture.jira.blocking.BlockingJiraServerWithLatency;
-import cla.completablefuture.jira.blocking.FakeBlockingJiraServer;
-import cla.completablefuture.jira.nonblocking.FakeNonBlockingJiraServer;
-import cla.completablefuture.jira.nonblocking.NonBlockingJiraServer;
-import cla.completablefuture.jira.nonblocking.NonBlockingJiraServerWithLatency;
-import cla.completablefuture.jira.nonblocking.callback.CallbackJiraServer;
-import com.jasongoodwin.monads.Try;
-import org.junit.FixMethodOrder;
-import org.junit.Ignore;
-import org.junit.Test;
+
 import static cla.completablefuture.Functions.curry;
-import static cla.completablefuture.jira.nonblocking.FakeNonBlockingJiraServer.NB_OF_BUNDLES_PER_NAME;
-import static cla.completablefuture.jira.nonblocking.FakeNonBlockingJiraServer.NB_OF_COMPONENTS_PER_BUNDLE;
+import static cla.completablefuture.nonblocking.exampledomain.FakeNonBlockingJiraServer.NB_OF_BUNDLES_PER_NAME;
+import static cla.completablefuture.nonblocking.exampledomain.FakeNonBlockingJiraServer.NB_OF_COMPONENTS_PER_BUNDLE;
 import static java.lang.Runtime.getRuntime;
 import static java.lang.System.out;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 import static java.util.concurrent.Executors.newCachedThreadPool;
-import static java.util.concurrent.Executors.newFixedThreadPool;
 import static java.util.concurrent.ForkJoinPool.commonPool;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -103,8 +93,8 @@ public class QuasarCallbackJenkinsPluginTest {
         }
     }
 
-    //private static final Supplier<ExecutorService> poolSupplier = () -> newFixedThreadPool(1);
-    private static final Executor pool = newFixedThreadPool(1);
+    //private static final Executor pool = newFixedThreadPool(1);
+    private static final Executor pool = newCachedThreadPool();
     @Test public void should_3_be_fast() throws FileNotFoundException {
         List<Function<Executor,JenkinsPlugin>> allPlugins = allPlugins();
 
@@ -179,7 +169,7 @@ public class QuasarCallbackJenkinsPluginTest {
                 NonBlockingJenkinsPlugin_Collect_Quasar::new
         );
         List<BiFunction<CallbackJiraServer, Executor, JenkinsPlugin>> callbackNonBlockingPlugins = Arrays.asList(
-                cla.completablefuture.jenkins.nonblocking.callback.JenkinsPlugin_CallbackCollect_Quasar::new
+                JenkinsPlugin_CallbackCollect_Quasar::new
         );
 
         BlockingJiraServer blockingSrv = new BlockingJiraServerWithLatency(new FakeBlockingJiraServer());

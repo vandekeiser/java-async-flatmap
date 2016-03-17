@@ -1,5 +1,14 @@
 package cla.completablefuture.nonblocking.callback;
 
+import cla.completablefuture.exampledomain.JiraBundle;
+import cla.completablefuture.exampledomain.JiraComponent;
+import cla.completablefuture.nonblocking.callback.exampledomain.CallbackJiraServer;
+import co.paralleluniverse.fibers.Fiber;
+import co.paralleluniverse.fibers.FiberExecutorScheduler;
+import co.paralleluniverse.fibers.FiberScheduler;
+import co.paralleluniverse.fibers.SuspendExecution;
+import co.paralleluniverse.strands.Strand;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -7,16 +16,6 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
-import cla.completablefuture.jira.JiraBundle;
-import cla.completablefuture.jira.JiraComponent;
-import cla.completablefuture.jira.nonblocking.callback.BasicCompletableCallback;
-import cla.completablefuture.jira.nonblocking.callback.Callback;
-import cla.completablefuture.jira.nonblocking.callback.CallbackJiraServer;
-import co.paralleluniverse.fibers.Fiber;
-import co.paralleluniverse.fibers.FiberExecutorScheduler;
-import co.paralleluniverse.fibers.FiberScheduler;
-import co.paralleluniverse.fibers.SuspendExecution;
-import co.paralleluniverse.strands.Strand;
 
 public class CallbackJiraServerWithLatency implements CallbackJiraServer {
     //private static final long MIN_SLEEP = 1000, MAX_SLEEP = 10_000;

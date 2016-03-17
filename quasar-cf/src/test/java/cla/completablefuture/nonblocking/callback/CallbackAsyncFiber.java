@@ -1,8 +1,8 @@
 package cla.completablefuture.nonblocking.callback;
 
-import java.util.function.Function;
-import cla.completablefuture.jira.nonblocking.callback.Callback;
 import co.paralleluniverse.fibers.FiberAsync;
+
+import java.util.function.Function;
 
 public class CallbackAsyncFiber<S, T> extends FiberAsync<T, Throwable> {
 

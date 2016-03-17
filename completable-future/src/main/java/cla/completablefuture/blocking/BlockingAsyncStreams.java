@@ -11,6 +11,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
+
 import static cla.completablefuture.blocking.BlockingAsyncStreams.FlatteningAsyncColectionCollector.flattening;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.CompletableFuture.completedFuture;

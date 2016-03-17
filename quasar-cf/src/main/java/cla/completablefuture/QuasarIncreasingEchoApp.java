@@ -1,12 +1,13 @@
 package cla.completablefuture;
 
-import java.util.concurrent.ExecutionException;
 import co.paralleluniverse.fibers.Fiber;
 import co.paralleluniverse.fibers.SuspendExecution;
 import co.paralleluniverse.strands.SuspendableCallable;
 import co.paralleluniverse.strands.SuspendableRunnable;
 import co.paralleluniverse.strands.channels.Channels;
 import co.paralleluniverse.strands.channels.IntChannel;
+
+import java.util.concurrent.ExecutionException;
 
 /**
  * Increasing-Echo Quasar Example
