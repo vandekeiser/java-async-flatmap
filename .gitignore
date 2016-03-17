@@ -8,3 +8,4 @@ quasar-archetype/*
 vertx-examples
 vertx-examples/*
 */comparaison-latences.txt
+*/comparaison-scalabilite.txt

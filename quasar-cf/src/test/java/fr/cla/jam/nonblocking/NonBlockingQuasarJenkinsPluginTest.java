@@ -100,6 +100,39 @@ public class NonBlockingQuasarJenkinsPluginTest extends MeasuringTest {
         }
     }
 
+    private static final int N = 1;
+    private static final Executor x = newCachedThreadPool();
+    @Test public void should_3bis_scale() throws FileNotFoundException {
+        try(PrintStream oout = new ConsolePlusFile("comparaison-scalabilite.txt")) {
+            printEnv(oout, pool);
+            allPlugins().stream().forEach(p -> nAtATime(N, oout, p, () -> {
+                Instant before = Instant.now();
+                Set<JiraComponent> answers = p.findComponentsByBundleName("toto59");
+                printResult(out, p, before, answers);
+            }));
+        }
+    }
+    private static void nAtATime(int nAtATime, PrintStream oout, JenkinsPlugin p, Runnable r) {
+        CountDownLatch startGate = new CountDownLatch(1);
+        CountDownLatch endGate = new CountDownLatch(nAtATime);
+        Instant b = Instant.now();
+        out.println("STARTING measuring " + p);
+
+        IntStream.range(0, nAtATime).forEach(i -> {
+            out.println("BEFORE " + i);
+            x.execute(() -> {
+                await(startGate);
+                r.run();
+                endGate.countDown();
+                out.println("AFTER " + i);
+            });
+        });
+
+        startGate.countDown();
+        await(endGate);
+        oout.printf("DONE measuring %-90s %-12s%n", p + ":", Duration.between(b, Instant.now()));
+    }
+
     @Test public void should_4_find_the_right_nunmber_of_jira_components() {
         JenkinsPlugin sut = new NonBlockingJenkinsPlugin_Collect_Quasar(
             new NonBlockingJiraServerWithLatency(new FakeNonBlockingJiraServer()),
@@ -177,6 +210,14 @@ public class NonBlockingQuasarJenkinsPluginTest extends MeasuringTest {
         CompletableFuture<T> failed = new CompletableFuture<>();
         failed.completeExceptionally(new JiraServerException());
         return failed;
+    }
+
+    private static void await(CountDownLatch startGate) {
+        try {
+            startGate.await();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
 }
