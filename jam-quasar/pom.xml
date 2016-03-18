@@ -13,31 +13,7 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
     <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <!-- Update version to suit your needs -->
-            <version>4.12</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>2.0.31-beta</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.assertj</groupId>
-            <artifactId>assertj-core</artifactId>
-            <version>3.1.0</version>
-            <scope>test</scope>
-        </dependency>
-
         <dependency>
             <groupId>fr.cla</groupId>
             <artifactId>jam-core</artifactId>
@@ -50,14 +26,13 @@
             <artifactId>jam-core</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-
+        
         <dependency>
             <groupId>co.paralleluniverse</groupId>
             <artifactId>quasar-core</artifactId>
             <version>0.7.4</version>
             <classifier>jdk8</classifier>
         </dependency>
-
     </dependencies>
 
     <build>

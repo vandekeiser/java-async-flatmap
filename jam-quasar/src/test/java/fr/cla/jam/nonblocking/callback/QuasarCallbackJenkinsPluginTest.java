@@ -48,6 +48,8 @@ import static org.mockito.Mockito.when;
 
 //TODO:
 // -tester scalabilite avec JMH
+// -factor nb de resultats
+// -separer modules fwk et domain
 @FixMethodOrder(NAME_ASCENDING)
 public class QuasarCallbackJenkinsPluginTest extends MeasuringTest {
     
