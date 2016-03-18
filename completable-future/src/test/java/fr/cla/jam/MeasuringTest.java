@@ -23,6 +23,16 @@ public abstract class MeasuringTest {
         );
     }
 
+    protected void printEnv(PrintStream oout, Executor dedicatedPool, int concurrency) {
+        oout.printf(
+                "-----------------------------CORES=%d, FJP SIZE=%d, DEDICATED POOL SIZE=%d, CONCURRENCY=%d------------------------------%n",
+                getRuntime().availableProcessors(),
+                commonPool().getParallelism(),
+                dedicatedPoolSize(dedicatedPool),
+                concurrency
+        );
+    }
+
     protected void printResult(PrintStream out, JenkinsPlugin sut, Instant beforeCall, Collection<?> answers) {
         out.printf(
             "%-90s took %-12s (found %d) %n",

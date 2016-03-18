@@ -25,14 +25,12 @@ import java.util.stream.IntStream;
 
 import static fr.cla.jam.nonblocking.exampledomain.FakeNonBlockingJiraServer.NB_OF_BUNDLES_PER_NAME;
 import static fr.cla.jam.nonblocking.exampledomain.FakeNonBlockingJiraServer.NB_OF_COMPONENTS_PER_BUNDLE;
-import static java.lang.Runtime.getRuntime;
 import static java.lang.System.out;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.Executors.newCachedThreadPool;
 import static java.util.concurrent.Executors.newFixedThreadPool;
-import static java.util.concurrent.ForkJoinPool.commonPool;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.StrictAssertions.failBecauseExceptionWasNotThrown;
@@ -51,8 +49,6 @@ public class NonBlockingQuasarJenkinsPluginTest extends MeasuringTest {
     @Test
     public void should_1_report_bundles_errors() {
         NonBlockingJiraServer jiraServer = mock(NonBlockingJiraServer.class);
-        //attention probablement pas correct!!! plutot then return completed (failure),
-        // ce qui expliquerait la necessite du catch degueu en plus du onfail
         when(jiraServer.findBundlesByName(any())).thenReturn(failure());
         JenkinsPlugin sut = new NonBlockingJenkinsPlugin_Collect_Quasar(jiraServer, newCachedThreadPool());
 
@@ -85,13 +81,12 @@ public class NonBlockingQuasarJenkinsPluginTest extends MeasuringTest {
         }
     }
 
-    //Executor pool = newCachedThreadPool();
-    Executor pool = newFixedThreadPool(1);
+    private static final Executor latencyMeasurementPool = newFixedThreadPool(1);
     @Test public void should_3_be_fast() throws FileNotFoundException {
         List<JenkinsPlugin> allPlugins = allPlugins();
 
         try(PrintStream oout = new ConsolePlusFile("comparaison-latences.txt")) {
-            printEnv(oout, pool);
+            printEnv(oout, latencyMeasurementPool);
             allPlugins.stream().forEach(p -> {
                 Instant before = Instant.now();
                 Set<JiraComponent> answers = p.findComponentsByBundleName("toto59");
@@ -100,18 +95,19 @@ public class NonBlockingQuasarJenkinsPluginTest extends MeasuringTest {
         }
     }
 
-    private static final int N = 1;
-    private static final Executor x = newCachedThreadPool();
+    private static final int CONCURRENCY = 100;
+    private static final Executor scalabilityMeasurementPool = newCachedThreadPool();
     @Test public void should_3bis_scale() throws FileNotFoundException {
         try(PrintStream oout = new ConsolePlusFile("comparaison-scalabilite.txt")) {
-            printEnv(oout, pool);
-            allPlugins().stream().forEach(p -> nAtATime(N, oout, p, () -> {
+            printEnv(oout, scalabilityMeasurementPool, CONCURRENCY);
+            allPlugins().stream().forEach(p -> nAtATime(CONCURRENCY, oout, p, () -> {
                 Instant before = Instant.now();
                 Set<JiraComponent> answers = p.findComponentsByBundleName("toto59");
                 printResult(out, p, before, answers);
             }));
         }
     }
+
     private static void nAtATime(int nAtATime, PrintStream oout, JenkinsPlugin p, Runnable r) {
         CountDownLatch startGate = new CountDownLatch(1);
         CountDownLatch endGate = new CountDownLatch(nAtATime);
@@ -120,7 +116,7 @@ public class NonBlockingQuasarJenkinsPluginTest extends MeasuringTest {
 
         IntStream.range(0, nAtATime).forEach(i -> {
             out.println("BEFORE " + i);
-            x.execute(() -> {
+            scalabilityMeasurementPool.execute(() -> {
                 await(startGate);
                 r.run();
                 endGate.countDown();
@@ -142,7 +138,7 @@ public class NonBlockingQuasarJenkinsPluginTest extends MeasuringTest {
         IntStream.rangeClosed(1, 10).forEach(i -> {
             out.println("i: " + i);
             assertThat(
-                    sut.findComponentsByBundleName("toto59")
+                sut.findComponentsByBundleName("toto59")
             ).hasSize(NB_OF_BUNDLES_PER_NAME * NB_OF_COMPONENTS_PER_BUNDLE);
         });
     }
@@ -185,12 +181,12 @@ public class NonBlockingQuasarJenkinsPluginTest extends MeasuringTest {
             BlockingJenkinsPlugin_GenericCollect_Quasar::new
         );
         List<BiFunction<NonBlockingJiraServer, Executor, JenkinsPlugin>> nonBlockingPlugins = Arrays.asList(
-                //TODO?
-                //cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_Reduce::new,
-                NonBlockingJenkinsPlugin_Collect::new,
-                //TODO?
-                //cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_GenericCollect::new,
-                NonBlockingJenkinsPlugin_Collect_Quasar::new
+            //TODO?
+            //cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_Reduce::new,
+            NonBlockingJenkinsPlugin_Collect::new,
+            //TODO?
+            //cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_GenericCollect::new,
+            NonBlockingJenkinsPlugin_Collect_Quasar::new
         );
 
         BlockingJiraServer blockingSrv = new BlockingJiraServerWithLatency(new FakeBlockingJiraServer());
@@ -198,10 +194,10 @@ public class NonBlockingQuasarJenkinsPluginTest extends MeasuringTest {
 
         List<JenkinsPlugin> allPlugins = new ArrayList<>();
         allPlugins.addAll(
-            blockingPlugins.stream().map(p -> p.apply(blockingSrv, pool)
+            blockingPlugins.stream().map(p -> p.apply(blockingSrv, latencyMeasurementPool)
         ).collect(toList()));
         allPlugins.addAll(
-            nonBlockingPlugins.stream().map(p -> p.apply(nonBlockingSrv, pool)
+            nonBlockingPlugins.stream().map(p -> p.apply(nonBlockingSrv, latencyMeasurementPool)
         ).collect(toList()));
         return allPlugins;
     }
