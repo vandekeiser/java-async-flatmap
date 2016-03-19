@@ -1,12 +1,13 @@
 package fr.cla.jam.blocking.exampledomain;
 
+import fr.cla.jam.exampledomain.JiraBundle;
+import fr.cla.jam.exampledomain.JiraComponent;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
-import fr.cla.jam.exampledomain.JiraBundle;
-import fr.cla.jam.exampledomain.JiraComponent;
 
 public class BlockingJiraServerWithLatency implements BlockingJiraServer {
     //private static final long MIN_SLEEP = 1000, MAX_SLEEP = 10_000;

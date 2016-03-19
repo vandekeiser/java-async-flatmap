@@ -1,7 +1,6 @@
 package fr.cla.jam.nonblocking.completionstage;
 
 import fr.cla.jam.Sets;
-import fr.cla.jam.nonblocking.callback.Callback;
 
 import java.util.EnumSet;
 import java.util.Set;

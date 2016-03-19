@@ -1,9 +1,10 @@
 package fr.cla.jam.blocking.exampledomain;
 
-import java.util.Set;
-import java.util.stream.IntStream;
 import fr.cla.jam.exampledomain.JiraBundle;
 import fr.cla.jam.exampledomain.JiraComponent;
+
+import java.util.Set;
+import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toSet;
 

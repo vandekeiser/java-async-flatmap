@@ -1,15 +1,20 @@
 package fr.cla.jam.nonblocking.callback;
 
+import com.jasongoodwin.monads.Try;
 import fr.cla.jam.ConsolePlusFile;
 import fr.cla.jam.MeasuringTest;
-import fr.cla.jam.exampledomain.*;
+import fr.cla.jam.blocking.exampledomain.BlockingJiraServer;
+import fr.cla.jam.blocking.exampledomain.BlockingJiraServerWithLatency;
+import fr.cla.jam.blocking.exampledomain.FakeBlockingJiraServer;
+import fr.cla.jam.exampledomain.AsyncJenkinsPlugin;
+import fr.cla.jam.exampledomain.JenkinsPlugin;
+import fr.cla.jam.exampledomain.JiraComponent;
+import fr.cla.jam.exampledomain.JiraServerException;
 import fr.cla.jam.nonblocking.callback.exampledomain.CallbackJiraServer;
 import fr.cla.jam.nonblocking.callback.exampledomain.JenkinsPlugin_CallbackCollect_Quasar;
 import fr.cla.jam.nonblocking.completionstage.NonBlockingJiraServer;
 import fr.cla.jam.nonblocking.exampledomain.FakeNonBlockingJiraServer;
 import fr.cla.jam.nonblocking.exampledomain.NonBlockingJiraServerWithLatency;
-import com.jasongoodwin.monads.Try;
-import fr.cla.jam.blocking.exampledomain.*;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 
@@ -32,9 +37,6 @@ import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.StrictAssertions.failBecauseExceptionWasNotThrown;
 import static org.junit.runners.MethodSorters.NAME_ASCENDING;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
 
 //deepneural4j
 

@@ -1,13 +1,13 @@
 package fr.cla.jam.nonblocking.exampledomain;
 
+import fr.cla.jam.exampledomain.JiraBundle;
+import fr.cla.jam.exampledomain.JiraComponent;
+import fr.cla.jam.nonblocking.completionstage.NonBlockingJiraServer;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.*;
-
-import fr.cla.jam.exampledomain.JiraBundle;
-import fr.cla.jam.exampledomain.JiraComponent;
-import fr.cla.jam.nonblocking.completionstage.NonBlockingJiraServer;
 
 public class NonBlockingJiraServerWithLatency implements NonBlockingJiraServer {
     //private static final long MIN_SLEEP = 1000, MAX_SLEEP = 10_000;

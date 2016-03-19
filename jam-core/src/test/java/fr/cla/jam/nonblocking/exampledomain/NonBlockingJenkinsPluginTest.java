@@ -1,19 +1,20 @@
 package fr.cla.jam.nonblocking.exampledomain;
 
+import com.jasongoodwin.monads.Try;
+import fr.cla.jam.MeasuringTest;
+import fr.cla.jam.blocking.exampledomain.*;
+import fr.cla.jam.exampledomain.*;
+import fr.cla.jam.nonblocking.completionstage.NonBlockingJiraServer;
+import fr.cla.jam.nonblocking.completionstage.exampledomain.NonBlockingJenkinsPlugin_Collect;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.BiFunction;
 import java.util.stream.IntStream;
 
-import fr.cla.jam.MeasuringTest;
-import fr.cla.jam.blocking.exampledomain.*;
-import fr.cla.jam.exampledomain.*;
-import fr.cla.jam.nonblocking.completionstage.NonBlockingJiraServer;
-import fr.cla.jam.nonblocking.completionstage.exampledomain.NonBlockingJenkinsPlugin_Collect;
-import com.jasongoodwin.monads.Try;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
 import static fr.cla.jam.nonblocking.exampledomain.FakeNonBlockingJiraServer.NB_OF_BUNDLES_PER_NAME;
 import static fr.cla.jam.nonblocking.exampledomain.FakeNonBlockingJiraServer.NB_OF_COMPONENTS_PER_BUNDLE;
 import static java.lang.System.out;

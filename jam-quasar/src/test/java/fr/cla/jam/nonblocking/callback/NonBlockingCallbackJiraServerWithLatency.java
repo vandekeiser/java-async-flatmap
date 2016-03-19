@@ -1,18 +1,11 @@
 package fr.cla.jam.nonblocking.callback;
 
-import co.paralleluniverse.fibers.*;
-import co.paralleluniverse.strands.SuspendableRunnable;
-import fr.cla.jam.exampledomain.JiraBundle;
-import fr.cla.jam.exampledomain.JiraComponent;
-import fr.cla.jam.nonblocking.callback.exampledomain.CallbackJiraServer;
+import co.paralleluniverse.fibers.Fiber;
+import co.paralleluniverse.fibers.FiberExecutorScheduler;
+import co.paralleluniverse.fibers.FiberScheduler;
+import co.paralleluniverse.fibers.SuspendExecution;
 import co.paralleluniverse.strands.Strand;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.*;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
+import fr.cla.jam.nonblocking.callback.exampledomain.CallbackJiraServer;
 
 public class NonBlockingCallbackJiraServerWithLatency extends AbstractCallbackJiraServerWithLatency {
     //private static final Executor delayExecutor = Executors.newCachedThreadPool();

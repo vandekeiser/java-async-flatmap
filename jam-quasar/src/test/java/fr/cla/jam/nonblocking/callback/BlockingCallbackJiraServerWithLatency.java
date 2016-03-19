@@ -2,10 +2,6 @@ package fr.cla.jam.nonblocking.callback;
 
 import fr.cla.jam.nonblocking.callback.exampledomain.CallbackJiraServer;
 
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadLocalRandom;
-
 public class BlockingCallbackJiraServerWithLatency extends AbstractCallbackJiraServerWithLatency {
 
     public BlockingCallbackJiraServerWithLatency(CallbackJiraServer jira) {

@@ -1,15 +1,17 @@
 package fr.cla.jam.nonblocking;
 
+import com.jasongoodwin.monads.Try;
 import fr.cla.jam.ConsolePlusFile;
 import fr.cla.jam.MeasuringTest;
-import fr.cla.jam.blocking.exampledomain.*;
+import fr.cla.jam.blocking.exampledomain.BlockingJiraServer;
+import fr.cla.jam.blocking.exampledomain.BlockingJiraServerWithLatency;
+import fr.cla.jam.blocking.exampledomain.FakeBlockingJiraServer;
 import fr.cla.jam.exampledomain.*;
 import fr.cla.jam.nonblocking.completionstage.NonBlockingJiraServer;
 import fr.cla.jam.nonblocking.completionstage.exampledomain.NonBlockingJenkinsPlugin_Collect;
 import fr.cla.jam.nonblocking.completionstage.exampledomain.NonBlockingJenkinsPlugin_Collect_Quasar;
 import fr.cla.jam.nonblocking.exampledomain.FakeNonBlockingJiraServer;
 import fr.cla.jam.nonblocking.exampledomain.NonBlockingJiraServerWithLatency;
-import com.jasongoodwin.monads.Try;
 import org.junit.FixMethodOrder;
 import org.junit.Ignore;
 import org.junit.Test;

@@ -2,10 +2,8 @@ package fr.cla.jam.nonblocking.promise;
 
 import co.paralleluniverse.fibers.Fiber;
 import co.paralleluniverse.fibers.FiberScheduler;
-import fr.cla.jam.nonblocking.callback.Callback;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 public class QuasarifyPromise {

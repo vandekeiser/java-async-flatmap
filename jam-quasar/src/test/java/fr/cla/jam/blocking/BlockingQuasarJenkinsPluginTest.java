@@ -1,7 +1,7 @@
 package fr.cla.jam.blocking;
 
-import fr.cla.jam.ConsolePlusFile;
 import com.jasongoodwin.monads.Try;
+import fr.cla.jam.ConsolePlusFile;
 import fr.cla.jam.MeasuringTest;
 import fr.cla.jam.blocking.exampledomain.*;
 import fr.cla.jam.exampledomain.*;

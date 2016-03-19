@@ -1,5 +1,11 @@
 package fr.cla.jam.blocking.exampledomain;
 
+import com.jasongoodwin.monads.Try;
+import fr.cla.jam.MeasuringTest;
+import fr.cla.jam.exampledomain.*;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
@@ -8,12 +14,6 @@ import java.util.Set;
 import java.util.concurrent.*;
 import java.util.function.BiFunction;
 import java.util.stream.IntStream;
-
-import com.jasongoodwin.monads.Try;
-import fr.cla.jam.MeasuringTest;
-import fr.cla.jam.exampledomain.*;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
 
 import static java.lang.System.out;
 import static java.util.Collections.emptySet;
