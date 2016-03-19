@@ -95,7 +95,7 @@ public class NonBlockingQuasarJenkinsPluginTest extends MeasuringTest {
         }
     }
 
-    private static final int CONCURRENCY = 100;
+    private static final int CONCURRENCY = 10;
     private static final Executor scalabilityMeasurementPool = newCachedThreadPool();
     @Test public void should_3bis_scale() throws FileNotFoundException {
         try(PrintStream oout = new ConsolePlusFile("comparaison-scalabilite.txt")) {
@@ -175,18 +175,18 @@ public class NonBlockingQuasarJenkinsPluginTest extends MeasuringTest {
     
     private List<JenkinsPlugin> allPlugins() {
         List<BiFunction<BlockingJiraServer, Executor, JenkinsPlugin>> blockingPlugins = Arrays.asList(
-            BlockingJenkinsPlugin_SequentialStream::new,
-            BlockingJenkinsPlugin_ParallelStream::new,
-            BlockingJenkinsPlugin_Collect::new,
-            BlockingJenkinsPlugin_GenericCollect_Quasar::new
+//            BlockingJenkinsPlugin_SequentialStream::new,
+//            BlockingJenkinsPlugin_ParallelStream::new,
+            //BlockingJenkinsPlugin_Collect::new
+//            BlockingJenkinsPlugin_GenericCollect_Quasar::new
         );
         List<BiFunction<NonBlockingJiraServer, Executor, JenkinsPlugin>> nonBlockingPlugins = Arrays.asList(
             //TODO?
             //cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_Reduce::new,
-            NonBlockingJenkinsPlugin_Collect::new,
+            NonBlockingJenkinsPlugin_Collect::new
             //TODO?
             //cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_GenericCollect::new,
-            NonBlockingJenkinsPlugin_Collect_Quasar::new
+            , NonBlockingJenkinsPlugin_Collect_Quasar::new
         );
 
         BlockingJiraServer blockingSrv = new BlockingJiraServerWithLatency(new FakeBlockingJiraServer());

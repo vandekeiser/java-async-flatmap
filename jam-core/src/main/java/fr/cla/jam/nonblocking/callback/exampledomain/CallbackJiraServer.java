@@ -8,8 +8,8 @@ import java.util.Set;
 
 public interface CallbackJiraServer {
     
-    Callback<Set<JiraBundle>> findBundlesByName(String bundleName);
-    
-    Callback<Set<JiraComponent>> findComponentsByBundle(JiraBundle bundle);
+    void findBundlesByName(String bundleName, Callback<Set<JiraBundle>> callback);
+
+    void findComponentsByBundle(JiraBundle bundle, Callback<Set<JiraComponent>> callback);
  
 }

@@ -3,9 +3,8 @@ package fr.cla.jam.nonblocking.exampledomain;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+
 import fr.cla.jam.exampledomain.JiraBundle;
 import fr.cla.jam.exampledomain.JiraComponent;
 import fr.cla.jam.nonblocking.completionstage.NonBlockingJiraServer;
@@ -23,20 +22,23 @@ public class NonBlockingJiraServerWithLatency implements NonBlockingJiraServer {
         this.jira = jira;
     }
 
+    private static final Executor delayExecutor = Executors.newCachedThreadPool();
+
     @Override
     public CompletableFuture<Set<JiraBundle>> findBundlesByName(String bundleName) {
         return CompletableFuture.runAsync(
-                () -> sleepRandomlyForRequest(bundleName)
+            () -> sleepRandomlyForRequest(bundleName),
+            delayExecutor
         ).thenCompose(
-                _void -> jira.findBundlesByName(bundleName)
+            _void -> jira.findBundlesByName(bundleName)
         );
     }
 
     @Override
     public CompletableFuture<Set<JiraComponent>> findComponentsByBundle(JiraBundle bundle) {
-        //TODO attention les run async de pas les faire ds le FJP!!
         return CompletableFuture.runAsync(
-            () -> sleepRandomlyForRequest(bundle)        
+            () -> sleepRandomlyForRequest(bundle),
+            delayExecutor
         ).thenCompose(
             _void -> jira.findComponentsByBundle(bundle)
         );

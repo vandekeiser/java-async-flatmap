@@ -1,40 +1,45 @@
-package fr.cla.jam.nonblocking.callback;
+package fr.cla.jam.nonblocking.promise;
 
 import fr.cla.jam.exampledomain.JiraBundle;
 import fr.cla.jam.exampledomain.JiraComponent;
-import fr.cla.jam.nonblocking.callback.exampledomain.CallbackJiraServer;
+import fr.cla.jam.nonblocking.promise.exampledomain.PromiseJiraServer;
 
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.IntStream;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toSet;
 
-public class FakeCallbackJiraServer implements CallbackJiraServer {
+public class FakePromiseJiraServer implements PromiseJiraServer {
 
     public static final int
         NB_OF_BUNDLES_PER_NAME = 100,
         NB_OF_COMPONENTS_PER_BUNDLE = 3;
 
     @Override
-    public void findBundlesByName(String bundleName, Callback<Set<JiraBundle>> callback) {
+    public Promise<Set<JiraBundle>> findBundlesByName(String bundleName) {
         String nonNullBundleName = requireNonNull(bundleName);
-        callback.onSuccess(
+        CompletablePromise<Set<JiraBundle>> ret = CompletablePromise.basic();
+
+        ret.complete(
             IntStream.range(0, NB_OF_BUNDLES_PER_NAME)
                 .mapToObj(i -> new JiraBundle(nonNullBundleName + i))
                 .collect(toSet())
         );
+        return ret;
     }
 
     @Override
-    public void findComponentsByBundle(JiraBundle bundle, Callback<Set<JiraComponent>> callback) {
+    public Promise<Set<JiraComponent>> findComponentsByBundle(JiraBundle bundle) {
         JiraBundle nonNullBundle = requireNonNull(bundle);
-        callback.onSuccess(
+        CompletablePromise<Set<JiraComponent>> ret = CompletablePromise.basic();
+
+        ret.complete(
             IntStream.range(0, NB_OF_COMPONENTS_PER_BUNDLE)
                 .mapToObj(i -> new JiraComponent(nonNullBundle.toString() + i))
                 .collect(toSet())
         );
+        return ret;
     }
-    
+
 }

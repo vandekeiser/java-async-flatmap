@@ -1,5 +1,6 @@
 package fr.cla.jam.nonblocking.completionstage;
 
+import co.paralleluniverse.common.monitoring.MonitorType;
 import co.paralleluniverse.fibers.Fiber;
 import co.paralleluniverse.fibers.FiberExecutorScheduler;
 import co.paralleluniverse.fibers.FiberScheduler;
@@ -7,9 +8,12 @@ import co.paralleluniverse.fibers.FiberScheduler;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 public class Quasarify {
+
+    private final static AtomicInteger callInFiberSchedulerCounter = new AtomicInteger(0);
 
     public static <T, U> Function<
         Function<T, CompletionStage<U>>,
@@ -23,7 +27,7 @@ public class Quasarify {
         T input,
         Executor dedicatedPool
     ) {
-        FiberScheduler scheduler = new FiberExecutorScheduler("callInFiber scheduler", dedicatedPool);
+        FiberScheduler scheduler = new FiberExecutorScheduler("Quasarify scheduler" + callInFiberSchedulerCounter.incrementAndGet() , dedicatedPool, MonitorType.JMX, true);
         CompletableFuture<U> fiberCf = new CompletableFuture<>();
 
         new Fiber<>(scheduler, () -> {

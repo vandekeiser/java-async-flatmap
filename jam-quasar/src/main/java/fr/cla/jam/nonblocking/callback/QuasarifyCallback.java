@@ -1,57 +1,54 @@
 package fr.cla.jam.nonblocking.callback;
 
-import co.paralleluniverse.fibers.Fiber;
-import co.paralleluniverse.fibers.FiberExecutorScheduler;
 import co.paralleluniverse.fibers.FiberScheduler;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 public class QuasarifyCallback {
 
     public static <T, U> Function<
-        Function<T, Callback<U>>,
+        BiConsumer<T, Callback<U>>,
         Function<T, CompletableFuture<U>>
-    > usingPool(Executor dedicatedPool) {
-        return callback -> input -> startWaitingForCallbackInFiber(callback, input, dedicatedPool);
+    > usingFiberScheduler(FiberScheduler dedicatedScheduler) {
+        return callback -> input -> startWaitingForCallbackInFiberScheduler(callback, input, dedicatedScheduler);
     }
 
-    private static <T, U> CompletableFuture<U> startWaitingForCallbackInFiber(
-        Function<T, Callback<U>> callback,
+    private static <T, U> CompletableFuture<U> startWaitingForCallbackInFiberScheduler(
+        BiConsumer<T, Callback<U>> call,
         T input,
-        Executor dedicatedPool
+        FiberScheduler dedicatedScheduler
     ) {
-        FiberScheduler dedicatedScheduler = new FiberExecutorScheduler("callInFiber scheduler", dedicatedPool);
         CompletableFuture<U> fiberCf = new CompletableFuture<>();
 
-        new Fiber<>(dedicatedScheduler, () -> callback.apply(input).whenComplete(
-            res -> fiberCf.complete(res),
-            x -> fiberCf.completeExceptionally(x)
-        )).start();
+//        System.out.println("startWaitingForCallbackInFiber 0");// ON PASSE LA QUE poolSize FOIS!!!
+//        new Fiber<>(dedicatedScheduler, () -> {
+//            System.out.println("startWaitingForCallbackInFiber 1");//ON ARRIVE MM PAS LA 1 fois!!!
+//            call.accept(input, new Callback<U>() {
+//                @Override public void onSuccess(U success) {
+//                    System.out.println("startWaitingForCallbackInFiber 2");
+//                    fiberCf.complete(success);
+//                }
+//                @Override public void onFailure(Throwable failure) {
+//                    System.out.println("startWaitingForCallbackInFiber 3");
+//                    fiberCf.completeExceptionally(failure);
+//                }
+//            });
+//        }).start();
+
+        call.accept(input, new Callback<U>() {
+            @Override public void onSuccess(U success) {
+                //System.out.println("startWaitingForCallbackInFiber 2");
+                fiberCf.complete(success);
+            }
+            @Override public void onFailure(Throwable failure) {
+                //System.out.println("startWaitingForCallbackInFiber 3");
+                fiberCf.completeExceptionally(failure);
+            }
+        });
 
         return fiberCf;
     }
 
-    public static <T, U> Function<
-            Function<T, Callback<U>>,
-            Function<T, CompletableFuture<U>>
-            > usingFiber(FiberScheduler dedicatedScheduler) {
-        return callback -> input -> startWaitingForCallbackInFiber(callback, input, dedicatedScheduler);
-    }
-
-    private static <T, U> CompletableFuture<U> startWaitingForCallbackInFiber(
-            Function<T, Callback<U>> callback,
-            T input,
-            FiberScheduler dedicatedScheduler
-    ) {
-        CompletableFuture<U> fiberCf = new CompletableFuture<>();
-
-        new Fiber<>(dedicatedScheduler, () -> callback.apply(input).whenComplete(
-                res -> fiberCf.complete(res),
-                x -> fiberCf.completeExceptionally(x)
-        )).start();
-
-        return fiberCf;
-    }
 }
