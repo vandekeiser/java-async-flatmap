@@ -49,7 +49,7 @@ public class CallbackJiraServerWithLatency implements CallbackJiraServer {
     private static final FiberScheduler scheduler = new FiberExecutorScheduler("delay scheduler", delayExecutor);
     private <I, O> Function<I, Callback<O>> delay(Function<I, Callback<O>> instant, Object input) {
         return i -> {
-            BasicCompletableCallback<O> delayed = new BasicCompletableCallback<>();
+            CompletableCallback<O> delayed = CompletableCallback.basic();
 
             instant.apply(i).whenComplete(
                 r -> new Fiber<Void>(scheduler, () -> {

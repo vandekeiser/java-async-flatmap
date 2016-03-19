@@ -23,20 +23,20 @@ public class BlockingJiraServerWithLatency implements BlockingJiraServer {
 
     @Override
     public Set<JiraBundle> findBundlesByName(String bundleName) {
-        sleepRandomlyForRequest(bundleName);
+        sleepRandomly_butAlwaysTheSameDurationWhenPassedParam(bundleName);
         return jira.findBundlesByName(bundleName);
     }
 
     @Override
     public Set<JiraComponent> findComponentsByBundle(JiraBundle bundle) {
-        sleepRandomlyForRequest(bundle);
+        sleepRandomly_butAlwaysTheSameDurationWhenPassedParam(bundle);
         return jira.findComponentsByBundle(bundle);
     }
     
-    private void sleepRandomlyForRequest(Object request) {
+    private void sleepRandomly_butAlwaysTheSameDurationWhenPassedParam(Object param) {
         sleep(sleeps.computeIfAbsent(
-                request,
-                k -> ThreadLocalRandom.current().nextLong(MIN_SLEEP, MAX_SLEEP)
+            param,
+            k -> ThreadLocalRandom.current().nextLong(MIN_SLEEP, MAX_SLEEP)
         ));
     }
 

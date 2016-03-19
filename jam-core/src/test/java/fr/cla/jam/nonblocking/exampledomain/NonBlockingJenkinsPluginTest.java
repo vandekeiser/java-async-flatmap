@@ -1,6 +1,5 @@
 package fr.cla.jam.nonblocking.exampledomain;
 
-import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.*;
@@ -17,13 +16,11 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import static fr.cla.jam.nonblocking.exampledomain.FakeNonBlockingJiraServer.NB_OF_BUNDLES_PER_NAME;
 import static fr.cla.jam.nonblocking.exampledomain.FakeNonBlockingJiraServer.NB_OF_COMPONENTS_PER_BUNDLE;
-import static java.lang.Runtime.getRuntime;
 import static java.lang.System.out;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 import static java.util.concurrent.Executors.newCachedThreadPool;
 import static java.util.concurrent.Executors.newFixedThreadPool;
-import static java.util.concurrent.ForkJoinPool.commonPool;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.StrictAssertions.failBecauseExceptionWasNotThrown;
@@ -56,7 +53,7 @@ public class NonBlockingJenkinsPluginTest extends MeasuringTest {
         NonBlockingJiraServer jiraServer = mock(NonBlockingJiraServer.class);
         JenkinsPlugin sut = new NonBlockingJenkinsPlugin_Collect(jiraServer, newCachedThreadPool());
         when(jiraServer.findBundlesByName(any())).thenReturn(
-                CompletableFuture.completedFuture(singleton(new JiraBundle()))
+                CompletableFuture.completedFuture(singleton(new JiraBundle("the bundle")))
         );
         when(jiraServer.findComponentsByBundle(any())).thenThrow(new JiraServerException());
         

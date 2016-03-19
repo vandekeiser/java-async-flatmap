@@ -33,4 +33,25 @@ public class QuasarifyCallback {
         return fiberCf;
     }
 
+    public static <T, U> Function<
+            Function<T, Callback<U>>,
+            Function<T, CompletableFuture<U>>
+            > usingFiber(FiberScheduler dedicatedScheduler) {
+        return callback -> input -> startWaitingForCallbackInFiber(callback, input, dedicatedScheduler);
+    }
+
+    private static <T, U> CompletableFuture<U> startWaitingForCallbackInFiber(
+            Function<T, Callback<U>> callback,
+            T input,
+            FiberScheduler dedicatedScheduler
+    ) {
+        CompletableFuture<U> fiberCf = new CompletableFuture<>();
+
+        new Fiber<>(dedicatedScheduler, () -> callback.apply(input).whenComplete(
+                res -> fiberCf.complete(res),
+                x -> fiberCf.completeExceptionally(x)
+        )).start();
+
+        return fiberCf;
+    }
 }

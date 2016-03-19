@@ -10,7 +10,6 @@ import org.junit.Test;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
-import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
@@ -20,7 +19,6 @@ import java.util.concurrent.*;
 import java.util.function.BiFunction;
 import java.util.stream.IntStream;
 
-import static java.lang.Runtime.getRuntime;
 import static java.lang.System.out;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
@@ -59,7 +57,7 @@ public class BlockingQuasarJenkinsPluginTest extends MeasuringTest {
     public void should_2_report_components_errors() {
         BlockingJiraServer jiraServer = mock(BlockingJiraServer.class);
         JenkinsPlugin sut = new BlockingJenkinsPlugin_GenericCollect_Quasar(jiraServer, newCachedThreadPool());
-        when(jiraServer.findBundlesByName(any())).thenReturn(singleton(new JiraBundle()));
+        when(jiraServer.findBundlesByName(any())).thenReturn(singleton(new JiraBundle("the bundle")));
         when(jiraServer.findComponentsByBundle(any())).thenThrow(new JiraServerException());
         
         try {

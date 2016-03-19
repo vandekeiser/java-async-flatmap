@@ -67,7 +67,7 @@ public class NonBlockingQuasarJenkinsPluginTest extends MeasuringTest {
         NonBlockingJiraServer jiraServer = mock(NonBlockingJiraServer.class);
         JenkinsPlugin sut = new NonBlockingJenkinsPlugin_Collect_Quasar(jiraServer, newCachedThreadPool());
         when(jiraServer.findBundlesByName(any())).thenReturn(
-            completedFuture(singleton(new JiraBundle()))
+            completedFuture(singleton(new JiraBundle("the bundle")))
         );
         when(jiraServer.findComponentsByBundle(any())).thenReturn(failure());
         

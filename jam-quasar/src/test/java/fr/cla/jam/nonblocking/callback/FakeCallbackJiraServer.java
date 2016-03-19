@@ -4,6 +4,7 @@ import fr.cla.jam.exampledomain.JiraBundle;
 import fr.cla.jam.exampledomain.JiraComponent;
 import fr.cla.jam.nonblocking.callback.exampledomain.CallbackJiraServer;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.IntStream;
 
@@ -16,10 +17,11 @@ public class FakeCallbackJiraServer implements CallbackJiraServer {
 
     @Override
     public Callback<Set<JiraBundle>> findBundlesByName(String bundleName) {
-        CompletableCallback<Set<JiraBundle>> ret = new BasicCompletableCallback<>();
+        String nonNullBundleName = Objects.requireNonNull(bundleName);
+        CompletableCallback<Set<JiraBundle>> ret = CompletableCallback.basic();
         ret.complete(
             IntStream.range(0, NB_OF_BUNDLES_PER_NAME)
-                .mapToObj(i -> new JiraBundle())
+                .mapToObj(i -> new JiraBundle(nonNullBundleName + i))
                 .collect(toSet())
         );
         return ret;
@@ -27,10 +29,11 @@ public class FakeCallbackJiraServer implements CallbackJiraServer {
 
     @Override
     public Callback<Set<JiraComponent>> findComponentsByBundle(JiraBundle bundle) {
-        CompletableCallback<Set<JiraComponent>> ret = new BasicCompletableCallback<>();
+        JiraBundle nonNullBundle = Objects.requireNonNull(bundle);
+        CompletableCallback<Set<JiraComponent>> ret = CompletableCallback.basic();
         ret.complete(
             IntStream.range(0, NB_OF_COMPONENTS_PER_BUNDLE)
-                .mapToObj(i -> new JiraComponent())
+                .mapToObj(i -> new JiraComponent(nonNullBundle.toString() + i))
                 .collect(toSet())
         );
         return ret;

@@ -9,7 +9,6 @@ import org.junit.Test;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
-import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
@@ -21,13 +20,11 @@ import java.util.stream.IntStream;
 
 import static fr.cla.jam.blocking.exampledomain.FakeBlockingJiraServer.NB_OF_BUNDLES_PER_NAME;
 import static fr.cla.jam.blocking.exampledomain.FakeBlockingJiraServer.NB_OF_COMPONENTS_PER_BUNDLE;
-import static java.lang.Runtime.getRuntime;
 import static java.lang.System.out;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 import static java.util.concurrent.Executors.newCachedThreadPool;
 import static java.util.concurrent.Executors.newFixedThreadPool;
-import static java.util.concurrent.ForkJoinPool.commonPool;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.StrictAssertions.failBecauseExceptionWasNotThrown;
 import static org.junit.runners.MethodSorters.NAME_ASCENDING;
@@ -58,7 +55,7 @@ public class BlockingVertxJenkinsPluginTest extends MeasuringTest {
     public void should_2_report_components_errors() {
         BlockingJiraServer jiraServer = mock(BlockingJiraServer.class);
         JenkinsPlugin sut = new BlockingJenkinsPlugin_GenericCollect_Vertx(jiraServer, newCachedThreadPool());
-        when(jiraServer.findBundlesByName(any())).thenReturn(singleton(new JiraBundle()));
+        when(jiraServer.findBundlesByName(any())).thenReturn(singleton(new JiraBundle("the bundle")));
         when(jiraServer.findComponentsByBundle(any())).thenThrow(new JiraServerException());
         
         try {

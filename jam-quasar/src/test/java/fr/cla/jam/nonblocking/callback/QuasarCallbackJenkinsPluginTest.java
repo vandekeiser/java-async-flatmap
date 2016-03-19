@@ -13,7 +13,6 @@ import fr.cla.jam.nonblocking.exampledomain.NonBlockingJiraServerWithLatency;
 import com.jasongoodwin.monads.Try;
 import fr.cla.jam.blocking.exampledomain.*;
 import org.junit.FixMethodOrder;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.FileNotFoundException;
@@ -27,13 +26,11 @@ import java.util.function.Function;
 import java.util.stream.IntStream;
 
 import static fr.cla.jam.Functions.curry;
-import static java.lang.Runtime.getRuntime;
 import static java.lang.System.out;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 import static java.util.concurrent.Executors.newCachedThreadPool;
 import static java.util.concurrent.Executors.newFixedThreadPool;
-import static java.util.concurrent.ForkJoinPool.commonPool;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.StrictAssertions.failBecauseExceptionWasNotThrown;
@@ -41,6 +38,8 @@ import static org.junit.runners.MethodSorters.NAME_ASCENDING;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+//deepneural4j
 
 //Run with
 // -javaagent:"C:\Users\Claisse\.m2\repository\co\paralleluniverse\quasar-core\0.7.4\quasar-core-0.7.4-jdk8.jar" -Dco.paralleluniverse.fibers.verifyInstrumentation=false
@@ -76,7 +75,7 @@ public class QuasarCallbackJenkinsPluginTest extends MeasuringTest {
         CallbackJiraServer jiraServer = mock(CallbackJiraServer.class);
         JenkinsPlugin sut = new JenkinsPlugin_CallbackCollect_Quasar(jiraServer, newCachedThreadPool());
         when(jiraServer.findBundlesByName(any())).thenReturn(
-            (onSuccess, onFailure) -> onSuccess.accept(singleton(new JiraBundle()))
+            (onSuccess, onFailure) -> onSuccess.accept(singleton(new JiraBundle("the bundle")))
         );
         when(jiraServer.findComponentsByBundle(any())).thenReturn(
             (onSuccess, onFailure) -> onFailure.accept(new JiraServerException())
@@ -107,8 +106,8 @@ public class QuasarCallbackJenkinsPluginTest extends MeasuringTest {
         }
     }
 
-    private static final int CONCURRENCY = 1;
-    private static final Executor scalabilityMeasurementPool = newCachedThreadPool();
+    private static final int CONCURRENCY = 100, PARALLELISM = 100;
+    private static final Executor scalabilityMeasurementPool = newFixedThreadPool(PARALLELISM);
     @Test public void should_3bis_scale() throws FileNotFoundException {
         try(PrintStream oout = new ConsolePlusFile("comparaison-scalabilite.txt")) {
             printEnv(oout, scalabilityMeasurementPool, CONCURRENCY);
@@ -157,7 +156,7 @@ public class QuasarCallbackJenkinsPluginTest extends MeasuringTest {
             newCachedThreadPool()
         );
         
-        IntStream.rangeClosed(1, 10).forEach(i -> {
+        IntStream.rangeClosed(1, 1).forEach(i -> {
             out.println("i: " + i);
             assertThat(
                 sut.findComponentsByBundleName("toto59")
@@ -197,18 +196,16 @@ public class QuasarCallbackJenkinsPluginTest extends MeasuringTest {
     
     private List<Function<Executor,JenkinsPlugin>> allPlugins() {
         List<BiFunction<BlockingJiraServer, Executor, JenkinsPlugin>> blockingPlugins = Arrays.asList(
-            BlockingJenkinsPlugin_SequentialStream::new,
-            BlockingJenkinsPlugin_ParallelStream::new,
-            BlockingJenkinsPlugin_Collect::new,
-            BlockingJenkinsPlugin_GenericCollect_Quasar::new
+//            BlockingJenkinsPlugin_SequentialStream::new
+//            , BlockingJenkinsPlugin_ParallelStream::new
+//            , BlockingJenkinsPlugin_Collect::new
+//            , BlockingJenkinsPlugin_GenericCollect_Quasar::new
         );
         List<BiFunction<NonBlockingJiraServer, Executor, JenkinsPlugin>> nonBlockingPlugins = Arrays.asList(
-            //TODO?
-            //cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_Reduce::new,
-            NonBlockingJenkinsPlugin_Collect::new,
-            //TODO?
-            //cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_GenericCollect::new,
-            NonBlockingJenkinsPlugin_Collect_Quasar::new
+//            //cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_Reduce::new //TODO?
+//            NonBlockingJenkinsPlugin_Collect::new
+//            //cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_GenericCollect::new //TODO?
+//            ,NonBlockingJenkinsPlugin_Collect_Quasar::new
         );
         List<BiFunction<CallbackJiraServer, Executor, JenkinsPlugin>> callbackNonBlockingPlugins = Arrays.asList(
             JenkinsPlugin_CallbackCollect_Quasar::new

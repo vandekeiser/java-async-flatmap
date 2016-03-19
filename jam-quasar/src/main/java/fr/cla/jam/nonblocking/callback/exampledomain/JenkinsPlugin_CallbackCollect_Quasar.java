@@ -1,5 +1,7 @@
 package fr.cla.jam.nonblocking.callback.exampledomain;
 
+import co.paralleluniverse.fibers.FiberExecutorScheduler;
+import co.paralleluniverse.fibers.FiberScheduler;
 import fr.cla.jam.exampledomain.AbstractJenkinsPlugin;
 import fr.cla.jam.exampledomain.AsyncJenkinsPlugin;
 import fr.cla.jam.exampledomain.JiraBundle;
@@ -17,15 +19,17 @@ public class JenkinsPlugin_CallbackCollect_Quasar extends AbstractJenkinsPlugin 
     private final Function<String, CompletableFuture<Set<JiraComponent>>> findComponentsByBundleNameAsync;
 
     public JenkinsPlugin_CallbackCollect_Quasar(CallbackJiraServer srv, Executor dedicatedPool) {
+        FiberScheduler dedicatedScheduler = new FiberExecutorScheduler("callInFiber scheduler", dedicatedPool);
+
         Function<String, CompletableFuture<Set<JiraBundle>>> findBundlesByNameAsync =
-            QuasarifyCallback.<String, Set<JiraBundle>>usingPool(dedicatedPool)
+            QuasarifyCallback.<String, Set<JiraBundle>>usingFiber(dedicatedScheduler)
             .apply(srv::findBundlesByName);
 
         Function<Set<JiraBundle>, CompletableFuture<Set<JiraComponent>>> 
         findComponentsByBundlesAsync = bundles -> NonBlockingAsyncSets_Collect.flatMapCallbackAsync(
                 bundles,
                 srv::findComponentsByBundle,
-                QuasarifyCallback.usingPool(dedicatedPool)
+                QuasarifyCallback.usingFiber(dedicatedScheduler)
         );
 
         this.findComponentsByBundleNameAsync = findBundlesByNameAsync.andThen(
