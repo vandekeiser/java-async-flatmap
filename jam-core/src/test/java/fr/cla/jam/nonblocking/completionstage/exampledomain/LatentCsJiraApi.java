@@ -2,7 +2,6 @@ package fr.cla.jam.nonblocking.completionstage.exampledomain;
 
 import fr.cla.jam.exampledomain.JiraBundle;
 import fr.cla.jam.exampledomain.JiraComponent;
-import fr.cla.jam.nonblocking.completionstage.CsJiraApi;
 
 import java.util.HashMap;
 import java.util.Map;

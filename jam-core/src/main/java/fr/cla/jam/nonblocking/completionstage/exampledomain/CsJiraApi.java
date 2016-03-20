@@ -1,4 +1,4 @@
-package fr.cla.jam.nonblocking.completionstage;
+package fr.cla.jam.nonblocking.completionstage.exampledomain;
 
 import fr.cla.jam.exampledomain.JiraBundle;
 import fr.cla.jam.exampledomain.JiraComponent;

@@ -5,7 +5,6 @@ import fr.cla.jam.exampledomain.CfJenkinsPlugin;
 import fr.cla.jam.exampledomain.JiraBundle;
 import fr.cla.jam.exampledomain.JiraComponent;
 import fr.cla.jam.nonblocking.completionstage.CollectCsApiIntoCf;
-import fr.cla.jam.nonblocking.completionstage.CsJiraApi;
 import fr.cla.jam.nonblocking.completionstage.QuasarCsApi2CfApi;
 
 import java.util.Set;

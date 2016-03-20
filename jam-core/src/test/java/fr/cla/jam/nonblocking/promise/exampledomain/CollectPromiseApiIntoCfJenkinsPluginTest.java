@@ -7,7 +7,7 @@ import fr.cla.jam.blocking.exampledomain.FakeSyncJiraApi;
 import fr.cla.jam.blocking.exampledomain.LatentSyncJiraApi;
 import fr.cla.jam.blocking.exampledomain.SyncJiraApi;
 import fr.cla.jam.exampledomain.*;
-import fr.cla.jam.nonblocking.completionstage.CsJiraApi;
+import fr.cla.jam.nonblocking.completionstage.exampledomain.CsJiraApi;
 import fr.cla.jam.nonblocking.completionstage.exampledomain.FakeCsJiraApi;
 import fr.cla.jam.nonblocking.completionstage.exampledomain.LatentCsJiraApi;
 import org.assertj.core.api.Assertions;

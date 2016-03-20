@@ -1,4 +1,4 @@
-package fr.cla.jam.nonblocking.promise;
+package fr.cla.jam.nonblocking.promise.exampledomain;
 
 import co.paralleluniverse.common.monitoring.MonitorType;
 import co.paralleluniverse.fibers.FiberExecutorScheduler;
@@ -7,6 +7,8 @@ import fr.cla.jam.exampledomain.AbstractJenkinsPlugin;
 import fr.cla.jam.exampledomain.CfJenkinsPlugin;
 import fr.cla.jam.exampledomain.JiraBundle;
 import fr.cla.jam.exampledomain.JiraComponent;
+import fr.cla.jam.nonblocking.promise.CollectPromiseApiIntoCf;
+import fr.cla.jam.nonblocking.promise.QuasarPromiseApi2CfApi;
 import fr.cla.jam.nonblocking.promise.exampledomain.PromiseJiraApi;
 
 import java.util.Set;

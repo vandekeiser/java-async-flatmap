@@ -1,4 +1,4 @@
-package fr.cla.jam.nonblocking.promise;
+package fr.cla.jam.nonblocking.promise.exampledomain;
 
 import com.jasongoodwin.monads.Try;
 import fr.cla.jam.ConsolePlusFile;
@@ -7,11 +7,10 @@ import fr.cla.jam.blocking.exampledomain.FakeSyncJiraApi;
 import fr.cla.jam.blocking.exampledomain.LatentSyncJiraApi;
 import fr.cla.jam.blocking.exampledomain.SyncJiraApi;
 import fr.cla.jam.exampledomain.*;
-import fr.cla.jam.nonblocking.completionstage.CsJiraApi;
+import fr.cla.jam.nonblocking.completionstage.exampledomain.CsJiraApi;
 import fr.cla.jam.nonblocking.completionstage.exampledomain.FakeCsJiraApi;
 import fr.cla.jam.nonblocking.completionstage.exampledomain.LatentCsJiraApi;
-import fr.cla.jam.nonblocking.promise.exampledomain.FakePromiseJiraApi;
-import fr.cla.jam.nonblocking.promise.exampledomain.PromiseJiraApi;
+import fr.cla.jam.nonblocking.promise.NonBlockingLatentPromiseJiraApi;
 import org.assertj.core.api.Assertions;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -103,10 +102,8 @@ public class QuasarCollectPromiseApiIntoCfJenkinsPluginTest extends MeasuringTes
         }
     }
 
-    private static final int CONCURRENCY = 100, PARALLELISM = 1;
-    //private static final Executor scalabilityMeasurementPool = newCachedThreadPool();
+    private static final int CONCURRENCY = 1000, PARALLELISM = 1;
     private static final Executor scalabilityMeasurementPool = newFixedThreadPool(PARALLELISM);
-
     @Test
     public void should_3bis_scale() throws FileNotFoundException {
         Set<JiraComponent> blackHole = new HashSet<>();
@@ -214,6 +211,7 @@ public class QuasarCollectPromiseApiIntoCfJenkinsPluginTest extends MeasuringTes
 //            ,QuasarCollectCsApiIntoCfJenkinsPlugin::new
         );
         List<BiFunction<PromiseJiraApi, Executor, JenkinsPlugin>> promiseNonBlockingPlugins = Arrays.asList(
+            CollectPromiseApiIntoCfJenkinsPlugin::new,
             QuasarCollectPromiseApiIntoCfJenkinsPlugin::new
         );
 

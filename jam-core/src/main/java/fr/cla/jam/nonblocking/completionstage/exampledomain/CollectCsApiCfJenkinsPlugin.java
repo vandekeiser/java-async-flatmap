@@ -6,7 +6,6 @@ import fr.cla.jam.exampledomain.JiraBundle;
 import fr.cla.jam.exampledomain.JiraComponent;
 import fr.cla.jam.nonblocking.completionstage.CollectCsApiIntoCf;
 import fr.cla.jam.nonblocking.completionstage.CsApi2CfApi;
-import fr.cla.jam.nonblocking.completionstage.CsJiraApi;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;

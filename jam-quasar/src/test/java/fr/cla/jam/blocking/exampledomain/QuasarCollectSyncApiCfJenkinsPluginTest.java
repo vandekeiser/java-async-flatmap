@@ -1,4 +1,4 @@
-package fr.cla.jam.blocking;
+package fr.cla.jam.blocking.exampledomain;
 
 import com.jasongoodwin.monads.Try;
 import fr.cla.jam.ConsolePlusFile;

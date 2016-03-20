@@ -27,11 +27,6 @@ public class QuasarPromiseApi2CfApi {
             x -> fiberCf.completeExceptionally(x)
         )).start();
 
-//        promise.apply(input).whenComplete(
-//            res -> fiberCf.complete(res),
-//            x -> fiberCf.completeExceptionally(x)
-//        );
-
         return fiberCf;
     }
 

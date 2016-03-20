@@ -7,7 +7,6 @@ import fr.cla.jam.blocking.exampledomain.FakeSyncJiraApi;
 import fr.cla.jam.blocking.exampledomain.LatentSyncJiraApi;
 import fr.cla.jam.blocking.exampledomain.SyncJiraApi;
 import fr.cla.jam.exampledomain.*;
-import fr.cla.jam.nonblocking.completionstage.CsJiraApi;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 
