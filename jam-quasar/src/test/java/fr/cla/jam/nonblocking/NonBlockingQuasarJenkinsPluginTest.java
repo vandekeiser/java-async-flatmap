@@ -7,11 +7,11 @@ import fr.cla.jam.blocking.exampledomain.BlockingJiraApi;
 import fr.cla.jam.blocking.exampledomain.BlockingJiraApiWithLatency;
 import fr.cla.jam.blocking.exampledomain.FakeBlockingJiraApi;
 import fr.cla.jam.exampledomain.*;
-import fr.cla.jam.nonblocking.completionstage.NonBlockingJiraApi;
+import fr.cla.jam.nonblocking.completionstage.CompletionStageJiraApi;
 import fr.cla.jam.nonblocking.completionstage.exampledomain.NonBlockingJenkinsPlugin_Collect;
 import fr.cla.jam.nonblocking.completionstage.exampledomain.NonBlockingJenkinsPlugin_Collect_Quasar;
-import fr.cla.jam.nonblocking.exampledomain.FakeNonBlockingJiraApi;
-import fr.cla.jam.nonblocking.exampledomain.NonBlockingJiraApiWithLatency;
+import fr.cla.jam.nonblocking.exampledomain.FakeCompletionStageJiraApi;
+import fr.cla.jam.nonblocking.exampledomain.CompletionStageJiraApiWithLatency;
 import org.junit.FixMethodOrder;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -50,7 +50,7 @@ public class NonBlockingQuasarJenkinsPluginTest extends MeasuringTest {
 
     @Test
     public void should_1_report_bundles_errors() {
-        NonBlockingJiraApi jira = mock(NonBlockingJiraApi.class);
+        CompletionStageJiraApi jira = mock(CompletionStageJiraApi.class);
         when(jira.findBundlesByName(any())).thenReturn(failure());
         JenkinsPlugin sut = new NonBlockingJenkinsPlugin_Collect_Quasar(jira, newCachedThreadPool());
 
@@ -66,7 +66,7 @@ public class NonBlockingQuasarJenkinsPluginTest extends MeasuringTest {
     
     @Test
     public void should_2_report_components_errors() {
-        NonBlockingJiraApi jira = mock(NonBlockingJiraApi.class);
+        CompletionStageJiraApi jira = mock(CompletionStageJiraApi.class);
         JenkinsPlugin sut = new NonBlockingJenkinsPlugin_Collect_Quasar(jira, newCachedThreadPool());
         when(jira.findBundlesByName(any())).thenReturn(
             completedFuture(singleton(new JiraBundle("the bundle")))
@@ -133,7 +133,7 @@ public class NonBlockingQuasarJenkinsPluginTest extends MeasuringTest {
 
     @Test public void should_4_find_the_right_nunmber_of_jira_components() {
         JenkinsPlugin sut = new NonBlockingJenkinsPlugin_Collect_Quasar(
-            new NonBlockingJiraApiWithLatency(new FakeNonBlockingJiraApi()),
+            new CompletionStageJiraApiWithLatency(new FakeCompletionStageJiraApi()),
             newCachedThreadPool()
         );
         
@@ -147,7 +147,7 @@ public class NonBlockingQuasarJenkinsPluginTest extends MeasuringTest {
     
     @Test public void should_5_be_chainable() {
         AsyncJenkinsPlugin sut = new NonBlockingJenkinsPlugin_Collect_Quasar(
-            new NonBlockingJiraApiWithLatency(new FakeNonBlockingJiraApi()),
+            new CompletionStageJiraApiWithLatency(new FakeCompletionStageJiraApi()),
             newCachedThreadPool()
         );
      
@@ -182,7 +182,7 @@ public class NonBlockingQuasarJenkinsPluginTest extends MeasuringTest {
             //BlockingJenkinsPlugin_Collect::new
 //            BlockingJenkinsPlugin_GenericCollect_Quasar::new
         );
-        List<BiFunction<NonBlockingJiraApi, Executor, JenkinsPlugin>> nonBlockingPlugins = Arrays.asList(
+        List<BiFunction<CompletionStageJiraApi, Executor, JenkinsPlugin>> nonBlockingPlugins = Arrays.asList(
             //TODO?
             //cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_Reduce::new,
             NonBlockingJenkinsPlugin_Collect::new
@@ -192,7 +192,7 @@ public class NonBlockingQuasarJenkinsPluginTest extends MeasuringTest {
         );
 
         BlockingJiraApi blockingSrv = new BlockingJiraApiWithLatency(new FakeBlockingJiraApi());
-        NonBlockingJiraApi nonBlockingSrv = new NonBlockingJiraApiWithLatency(new FakeNonBlockingJiraApi());
+        CompletionStageJiraApi nonBlockingSrv = new CompletionStageJiraApiWithLatency(new FakeCompletionStageJiraApi());
 
         List<JenkinsPlugin> allPlugins = new ArrayList<>();
         allPlugins.addAll(

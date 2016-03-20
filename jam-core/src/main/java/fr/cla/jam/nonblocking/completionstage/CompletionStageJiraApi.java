@@ -6,7 +6,7 @@ import fr.cla.jam.exampledomain.JiraComponent;
 import java.util.Set;
 import java.util.concurrent.CompletionStage;
 
-public interface NonBlockingJiraApi {
+public interface CompletionStageJiraApi {
     
     CompletionStage<Set<JiraBundle>> findBundlesByName(String bundleName);
     

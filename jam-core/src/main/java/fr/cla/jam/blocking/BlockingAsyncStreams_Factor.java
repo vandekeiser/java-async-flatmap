@@ -1,6 +1,6 @@
 package fr.cla.jam.blocking;
 
-import fr.cla.jam.ContainerOfMany;
+import fr.cla.jam.StreamContainerOfMany;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -42,33 +42,6 @@ public final class BlockingAsyncStreams_Factor {
             StreamContainerOfMany::underlyingContainer
         );
     }
-    
-    
-    private static class StreamContainerOfMany<E, Es extends Stream<E>> 
-    implements ContainerOfMany<E> {
-        private final Es stream;
-        private StreamContainerOfMany(Es stream) {this.stream = requireNonNull(stream);}
-        private Es underlyingContainer() {return this.stream;}
-        
-        @Override public Stream<E> stream() {
-            return underlyingContainer();
-        }
-        
-        static <F, Fs extends Stream<F>> 
-        BinaryOperator<StreamContainerOfMany<F, Fs>> containerUnion(
-            BinaryOperator<Fs> streamUnion
-        ) {
-            return (c1, c2) -> new StreamContainerOfMany<>(streamUnion.apply(
-                c1.underlyingContainer(), c2.underlyingContainer()
-            ));           
-        }
-        
-        static <F, Fs extends Stream<F>>
-        ContainerSupplier<F, StreamContainerOfMany<F, Fs>> containerSupplier(
-            StreamSupplier<F, Fs> streamSupplier
-        ) {
-            return () -> new StreamContainerOfMany<>(streamSupplier.get());
-        }
-    }
-    
+
+
 }

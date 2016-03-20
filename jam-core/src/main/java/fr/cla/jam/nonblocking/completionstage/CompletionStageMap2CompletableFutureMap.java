@@ -5,10 +5,10 @@ import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 
-public final class NonBlockingCompletableFutures {
+public final class CompletionStageMap2CompletableFutureMap {
 
-    public static <S, T> Function<S, CompletableFuture<T>> 
-    asyncifyUsingPool(Function<S, CompletionStage<T>> mapper, Executor pool) {
+    public static <S, T> Function<S, CompletableFuture<T>>
+    placeInPoolWhenComplete(Function<S, CompletionStage<T>> mapper, Executor pool) {
         return e -> {
             CompletableFuture<T> result = new CompletableFuture<>(); 
             mapper.apply(e).whenCompleteAsync(

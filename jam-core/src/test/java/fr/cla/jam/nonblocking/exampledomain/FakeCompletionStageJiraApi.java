@@ -2,7 +2,7 @@ package fr.cla.jam.nonblocking.exampledomain;
 
 import fr.cla.jam.exampledomain.JiraBundle;
 import fr.cla.jam.exampledomain.JiraComponent;
-import fr.cla.jam.nonblocking.completionstage.NonBlockingJiraApi;
+import fr.cla.jam.nonblocking.completionstage.CompletionStageJiraApi;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -14,7 +14,7 @@ import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.stream.Collectors.toSet;
 
-public class FakeNonBlockingJiraApi implements NonBlockingJiraApi {
+public class FakeCompletionStageJiraApi implements CompletionStageJiraApi {
 
     @Override
     public CompletableFuture<Set<JiraBundle>> findBundlesByName(String bundleName) {

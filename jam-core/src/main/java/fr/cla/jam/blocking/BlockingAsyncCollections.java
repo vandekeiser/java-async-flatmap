@@ -36,6 +36,6 @@ public final class BlockingAsyncCollections {
             .collect(toSet())
             .stream()
             .collect(FlatteningCollectionCollector.flattening(collectionSupplier, collectionUnion));
-}
+    }
 
 }

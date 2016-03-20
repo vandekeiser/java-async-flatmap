@@ -7,9 +7,9 @@ import fr.cla.jam.blocking.exampledomain.BlockingJiraApi;
 import fr.cla.jam.blocking.exampledomain.BlockingJiraApiWithLatency;
 import fr.cla.jam.blocking.exampledomain.FakeBlockingJiraApi;
 import fr.cla.jam.exampledomain.*;
-import fr.cla.jam.nonblocking.completionstage.NonBlockingJiraApi;
-import fr.cla.jam.nonblocking.exampledomain.FakeNonBlockingJiraApi;
-import fr.cla.jam.nonblocking.exampledomain.NonBlockingJiraApiWithLatency;
+import fr.cla.jam.nonblocking.completionstage.CompletionStageJiraApi;
+import fr.cla.jam.nonblocking.exampledomain.FakeCompletionStageJiraApi;
+import fr.cla.jam.nonblocking.exampledomain.CompletionStageJiraApiWithLatency;
 import fr.cla.jam.nonblocking.promise.exampledomain.PromiseJiraApi;
 import org.assertj.core.api.Assertions;
 import org.junit.FixMethodOrder;
@@ -205,7 +205,7 @@ public class QuasarPromiseJenkinsPluginTest extends MeasuringTest {
                 //BlockingJenkinsPlugin_Collect::new
 //            , BlockingJenkinsPlugin_GenericCollect_Quasar::new
         );
-        List<BiFunction<NonBlockingJiraApi, Executor, JenkinsPlugin>> nonBlockingPlugins = Arrays.asList(
+        List<BiFunction<CompletionStageJiraApi, Executor, JenkinsPlugin>> nonBlockingPlugins = Arrays.asList(
 //            //cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_Reduce::new //TODO?
 //            NonBlockingJenkinsPlugin_Collect::new
 //            //cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_GenericCollect::new //TODO?
@@ -216,7 +216,7 @@ public class QuasarPromiseJenkinsPluginTest extends MeasuringTest {
         );
 
         BlockingJiraApi blockingSrv = new BlockingJiraApiWithLatency(new FakeBlockingJiraApi());
-        NonBlockingJiraApi nonBlockingSrv = new NonBlockingJiraApiWithLatency(new FakeNonBlockingJiraApi());
+        CompletionStageJiraApi nonBlockingSrv = new CompletionStageJiraApiWithLatency(new FakeCompletionStageJiraApi());
         PromiseJiraApi promiseNonBlockingSrv = new PromiseJiraApiWithLatency(new FakePromiseJiraApi());
 
         List<Function<Executor, JenkinsPlugin>> allPlugins = new ArrayList<>();

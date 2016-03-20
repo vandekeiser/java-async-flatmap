@@ -5,7 +5,7 @@ import fr.cla.jam.exampledomain.AsyncJenkinsPlugin;
 import fr.cla.jam.exampledomain.JiraBundle;
 import fr.cla.jam.exampledomain.JiraComponent;
 import fr.cla.jam.nonblocking.completionstage.NonBlockingAsyncSets_Collect;
-import fr.cla.jam.nonblocking.completionstage.NonBlockingJiraApi;
+import fr.cla.jam.nonblocking.completionstage.CompletionStageJiraApi;
 import fr.cla.jam.nonblocking.completionstage.Quasarify;
 
 import java.util.Set;
@@ -17,7 +17,7 @@ public class NonBlockingJenkinsPlugin_Collect_Quasar extends AbstractJenkinsPlug
     
     private final Function<String, CompletableFuture<Set<JiraComponent>>> findComponentsByBundleNameAsync;
 
-    public NonBlockingJenkinsPlugin_Collect_Quasar(NonBlockingJiraApi srv, Executor dedicatedPool) {
+    public NonBlockingJenkinsPlugin_Collect_Quasar(CompletionStageJiraApi srv, Executor dedicatedPool) {
         Function<String, CompletableFuture<Set<JiraBundle>>> findBundlesByNameAsync =
             Quasarify.<String, Set<JiraBundle>>usingPool(dedicatedPool)
             .apply(srv::findBundlesByName);

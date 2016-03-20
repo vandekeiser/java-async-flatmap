@@ -7,6 +7,7 @@ import java.util.concurrent.Executor;
 import java.util.function.Function;
 
 import static fr.cla.jam.FlatteningSetCollector.flattening;
+import static fr.cla.jam.nonblocking.completionstage.CompletionStageMap2CompletableFutureMap.placeInPoolWhenComplete;
 import static java.util.stream.Collectors.toSet;
 
 public final class NonBlockingAsyncSets_Collect {
@@ -17,12 +18,12 @@ public final class NonBlockingAsyncSets_Collect {
         Executor parallelisationPool
     ) {
         return inputs.stream()
-            .map(NonBlockingCompletableFutures.asyncifyUsingPool(mapper, parallelisationPool))
+            .map(placeInPoolWhenComplete(mapper, parallelisationPool))
             .collect(toSet())
             .stream()
             .collect(flattening());
     }
-    
+
     public static <E, F> CompletableFuture<Set<F>> flatMapAsync(
         Set<E> inputs,
         Function<E, CompletionStage<Set<F>>> mapper,

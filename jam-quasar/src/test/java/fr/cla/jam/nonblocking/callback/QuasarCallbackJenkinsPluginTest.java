@@ -12,9 +12,9 @@ import fr.cla.jam.exampledomain.JiraApiException;
 import fr.cla.jam.exampledomain.JiraComponent;
 import fr.cla.jam.nonblocking.callback.exampledomain.CallbackJiraApi;
 import fr.cla.jam.nonblocking.callback.exampledomain.JenkinsPlugin_CallbackCollect_Quasar;
-import fr.cla.jam.nonblocking.completionstage.NonBlockingJiraApi;
-import fr.cla.jam.nonblocking.exampledomain.FakeNonBlockingJiraApi;
-import fr.cla.jam.nonblocking.exampledomain.NonBlockingJiraApiWithLatency;
+import fr.cla.jam.nonblocking.completionstage.CompletionStageJiraApi;
+import fr.cla.jam.nonblocking.exampledomain.FakeCompletionStageJiraApi;
+import fr.cla.jam.nonblocking.exampledomain.CompletionStageJiraApiWithLatency;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 
@@ -198,7 +198,7 @@ public class QuasarCallbackJenkinsPluginTest extends MeasuringTest {
              //BlockingJenkinsPlugin_Collect::new
 //            , BlockingJenkinsPlugin_GenericCollect_Quasar::new
         );
-        List<BiFunction<NonBlockingJiraApi, Executor, JenkinsPlugin>> nonBlockingPlugins = Arrays.asList(
+        List<BiFunction<CompletionStageJiraApi, Executor, JenkinsPlugin>> nonBlockingPlugins = Arrays.asList(
 //            //cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_Reduce::new //TODO?
 //            NonBlockingJenkinsPlugin_Collect::new
 //            //cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_GenericCollect::new //TODO?
@@ -209,7 +209,7 @@ public class QuasarCallbackJenkinsPluginTest extends MeasuringTest {
         );
 
         BlockingJiraApi blockingSrv = new BlockingJiraApiWithLatency(new FakeBlockingJiraApi());
-        NonBlockingJiraApi nonBlockingSrv = new NonBlockingJiraApiWithLatency(new FakeNonBlockingJiraApi());
+        CompletionStageJiraApi nonBlockingSrv = new CompletionStageJiraApiWithLatency(new FakeCompletionStageJiraApi());
         CallbackJiraApi callbackNonBlockingSrv = new NonBlockingCallbackJiraApiWithLatency(new FakeCallbackJiraApi());
 
         List<Function<Executor,JenkinsPlugin>> allPlugins = new ArrayList<>();

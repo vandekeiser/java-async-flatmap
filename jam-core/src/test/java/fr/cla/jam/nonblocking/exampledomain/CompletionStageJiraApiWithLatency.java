@@ -2,7 +2,7 @@ package fr.cla.jam.nonblocking.exampledomain;
 
 import fr.cla.jam.exampledomain.JiraBundle;
 import fr.cla.jam.exampledomain.JiraComponent;
-import fr.cla.jam.nonblocking.completionstage.NonBlockingJiraApi;
+import fr.cla.jam.nonblocking.completionstage.CompletionStageJiraApi;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,12 +12,12 @@ import java.util.concurrent.*;
 import static fr.cla.jam.FakeApi.MAX_SLEEP;
 import static fr.cla.jam.FakeApi.MIN_SLEEP;
 
-public class NonBlockingJiraApiWithLatency implements NonBlockingJiraApi {
+public class CompletionStageJiraApiWithLatency implements CompletionStageJiraApi {
 
-    private final NonBlockingJiraApi jira;
+    private final CompletionStageJiraApi jira;
     private final Map<Object, Long> sleeps = new HashMap<>();
 
-    public NonBlockingJiraApiWithLatency(NonBlockingJiraApi jira) {
+    public CompletionStageJiraApiWithLatency(CompletionStageJiraApi jira) {
         this.jira = jira;
     }
 
