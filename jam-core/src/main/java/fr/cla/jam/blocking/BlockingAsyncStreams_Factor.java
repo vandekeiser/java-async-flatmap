@@ -1,6 +1,6 @@
 package fr.cla.jam.blocking;
 
-import fr.cla.jam.StreamContainerOfMany;
+import fr.cla.jam.util.containers.StreamContainerOfMany;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -32,7 +32,7 @@ public final class BlockingAsyncStreams_Factor {
         StreamSupplier<F, Fs> streamSupplier,
         BinaryOperator<Fs> streamUnion
     ) {
-        return BlockingAsyncContainersOfMany.flatMapAsync(
+        return CollectSyncContainersOfManyApiIntoCf.flatMapAsync(
             new StreamContainerOfMany<>(inputs),
             mapper.andThen(StreamContainerOfMany::new),
             parallelisationPool,
