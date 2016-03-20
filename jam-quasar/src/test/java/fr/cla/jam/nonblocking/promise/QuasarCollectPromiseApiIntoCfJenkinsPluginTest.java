@@ -103,7 +103,7 @@ public class QuasarCollectPromiseApiIntoCfJenkinsPluginTest extends MeasuringTes
         }
     }
 
-    private static final int CONCURRENCY = 10, PARALLELISM = 1;
+    private static final int CONCURRENCY = 100, PARALLELISM = 1;
     //private static final Executor scalabilityMeasurementPool = newCachedThreadPool();
     private static final Executor scalabilityMeasurementPool = newFixedThreadPool(PARALLELISM);
 
@@ -124,6 +124,7 @@ public class QuasarCollectPromiseApiIntoCfJenkinsPluginTest extends MeasuringTes
         System.out.println(blackHole);
     }
 
+    private static final Executor clientsPool = newCachedThreadPool();
     private static void nAtATime(int nAtATime, PrintStream oout, JenkinsPlugin p, Runnable r) {
         CountDownLatch startGate = new CountDownLatch(1);
         CountDownLatch endGate = new CountDownLatch(nAtATime);
@@ -132,7 +133,7 @@ public class QuasarCollectPromiseApiIntoCfJenkinsPluginTest extends MeasuringTes
 
         IntStream.range(0, nAtATime).forEach(i -> {
             //out.println("BEFORE " + i);
-            scalabilityMeasurementPool.execute(() -> {
+            clientsPool.execute(() -> {
                 await(startGate);
                 r.run();
                 endGate.countDown();

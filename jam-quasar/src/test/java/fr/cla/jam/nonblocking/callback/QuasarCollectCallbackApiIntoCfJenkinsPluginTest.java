@@ -98,7 +98,7 @@ public class QuasarCollectCallbackApiIntoCfJenkinsPluginTest extends MeasuringTe
         }
     }
 
-    private static final int CONCURRENCY = 10, PARALLELISM = 1;
+    private static final int CONCURRENCY = 100, PARALLELISM = 1;
     //private static final Executor scalabilityMeasurementPool = newCachedThreadPool();
     private static final Executor scalabilityMeasurementPool = newFixedThreadPool(PARALLELISM);
     @Test public void should_3bis_scale() throws FileNotFoundException {
@@ -118,6 +118,7 @@ public class QuasarCollectCallbackApiIntoCfJenkinsPluginTest extends MeasuringTe
     }
 
     private static void nAtATime(int nAtATime, PrintStream oout, JenkinsPlugin p, Runnable r) {
+        Executor clientsPool = newCachedThreadPool();
         CountDownLatch startGate = new CountDownLatch(1);
         CountDownLatch endGate = new CountDownLatch(nAtATime);
         Instant b = Instant.now();
@@ -125,7 +126,7 @@ public class QuasarCollectCallbackApiIntoCfJenkinsPluginTest extends MeasuringTe
 
         IntStream.range(0, nAtATime).forEach(i -> {
             //out.println("BEFORE " + i);
-            scalabilityMeasurementPool.execute(() -> {
+            clientsPool.execute(() -> {
                 await(startGate);
                 r.run();
                 endGate.countDown();

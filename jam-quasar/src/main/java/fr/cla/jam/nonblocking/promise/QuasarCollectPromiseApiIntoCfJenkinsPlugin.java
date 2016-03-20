@@ -24,8 +24,8 @@ public class QuasarCollectPromiseApiIntoCfJenkinsPlugin extends AbstractJenkinsP
         FiberScheduler dedicatedScheduler = dedicatedScheduler(dedicatedPool);
 
         Function<String, CompletableFuture<Set<JiraBundle>>> findBundlesByNameAsync =
-                QuasarPromiseApi2CfApi.<String, Set<JiraBundle>>usingFiberScheduler(dedicatedScheduler)
-                .apply(srv::findBundlesByName);
+            QuasarPromiseApi2CfApi.<String, Set<JiraBundle>>usingFiberScheduler(dedicatedScheduler)
+            .apply(srv::findBundlesByName);
 
         Function<Set<JiraBundle>, CompletableFuture<Set<JiraComponent>>>
         findComponentsByBundlesAsync = bundles -> CollectPromiseApiIntoCf.flatMapPromiseAsync(

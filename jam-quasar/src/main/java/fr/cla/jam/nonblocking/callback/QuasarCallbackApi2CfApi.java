@@ -24,31 +24,29 @@ public class QuasarCallbackApi2CfApi {
         CompletableFuture<U> fiberCf = new CompletableFuture<>();
 
         //DOES MORE HARM THAN GOOD!
-//        //System.out.println("startWaitingForCallbackInFiber 0");// ON PASSE LA QUE poolSize FOIS!!!
-//        new Fiber<>(dedicatedScheduler, () -> {
-//            //System.out.println("startWaitingForCallbackInFiber 1");//ON ARRIVE MM PAS LA 1 fois!!!
-//            call.accept(input, new Callback<U>() {
-//                @Override public void onSuccess(U success) {
-//                    //System.out.println("startWaitingForCallbackInFiber 2");
-//                    fiberCf.complete(success);
-//                }
-//                @Override public void onFailure(Throwable failure) {
-//                    //System.out.println("startWaitingForCallbackInFiber 3");
-//                    fiberCf.completeExceptionally(failure);
-//                }
-//            });
-//        }).start();
+        System.out.println("startWaitingForCallbackInFiber 0");// ON PASSE LA QUE poolSize FOIS!!!
+        new Fiber<>(dedicatedScheduler, () -> {
+            System.out.println("startWaitingForCallbackInFiber 1");//ON ARRIVE MM PAS LA 1 fois!!!
+            call.accept(input, new Callback<U>() {
+                @Override public void onSuccess(U success) {
+                    System.out.println("startWaitingForCallbackInFiber 2");
+                    fiberCf.complete(success);
+                }
+                @Override public void onFailure(Throwable failure) {
+                    System.out.println("startWaitingForCallbackInFiber 3");
+                    fiberCf.completeExceptionally(failure);
+                }
+            });
+        }).start();
 
-        //System.out.println("startWaitingForCallbackInFiber 0");// ON PASSE LA QUE poolSize FOIS!!!
-
-        call.accept(input, new Callback<U>() {
-            @Override public void onSuccess(U success) {
-                fiberCf.complete(success);
-            }
-            @Override public void onFailure(Throwable failure) {
-                fiberCf.completeExceptionally(failure);
-            }
-        });
+//        call.accept(input, new Callback<U>() {
+//            @Override public void onSuccess(U success) {
+//                fiberCf.complete(success);
+//            }
+//            @Override public void onFailure(Throwable failure) {
+//                fiberCf.completeExceptionally(failure);
+//            }
+//        });
 
         return fiberCf;
     }
