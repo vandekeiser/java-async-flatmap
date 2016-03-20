@@ -1,6 +1,6 @@
 package fr.cla.jam.util.containers;
 
-import fr.cla.jam.blocking.BlockingAsyncStreams_Factor;
+import fr.cla.jam.apitypes.sync.BlockingAsyncStreams_Factor;
 
 import java.util.function.BinaryOperator;
 import java.util.stream.Stream;

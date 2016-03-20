@@ -135,7 +135,7 @@
 
                         <!-- Quasar Agent for JDK 8 -->
                         <argument>-javaagent:${co.paralleluniverse:quasar-core:jar:jdk8}</argument>
-                        <!-- Add "=b" to force instrumenting blocking calls like Thread.sleep() -->
+                        <!-- Add "=b" to force instrumenting sync calls like Thread.sleep() -->
 
                         <!-- Classpath -->
                         <argument>-classpath</argument>

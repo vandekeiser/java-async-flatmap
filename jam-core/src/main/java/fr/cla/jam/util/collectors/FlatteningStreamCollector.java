@@ -1,6 +1,6 @@
 package fr.cla.jam.util.collectors;
 
-import fr.cla.jam.blocking.CollectSyncStreamApiIntoCf;
+import fr.cla.jam.apitypes.sync.CollectSyncStreamApiIntoCf;
 
 import java.util.EnumSet;
 import java.util.Set;
