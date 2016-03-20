@@ -1,6 +1,6 @@
-package fr.cla.jam.nonblocking.callback;
+package fr.cla.jam.nonblocking.callback.exampledomain;
 
-import fr.cla.jam.nonblocking.callback.exampledomain.CallbackJiraApi;
+import fr.cla.jam.nonblocking.callback.Callback;
 
 public class BlockingLatentCallbackJiraApi extends AbstractLatentCallbackJiraApi {
 

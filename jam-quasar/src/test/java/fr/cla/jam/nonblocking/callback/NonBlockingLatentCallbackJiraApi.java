@@ -5,6 +5,7 @@ import co.paralleluniverse.fibers.FiberExecutorScheduler;
 import co.paralleluniverse.fibers.FiberScheduler;
 import co.paralleluniverse.fibers.SuspendExecution;
 import co.paralleluniverse.strands.Strand;
+import fr.cla.jam.nonblocking.callback.exampledomain.AbstractLatentCallbackJiraApi;
 import fr.cla.jam.nonblocking.callback.exampledomain.CallbackJiraApi;
 
 public class NonBlockingLatentCallbackJiraApi extends AbstractLatentCallbackJiraApi {

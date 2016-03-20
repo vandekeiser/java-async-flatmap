@@ -10,8 +10,6 @@ import fr.cla.jam.exampledomain.CfJenkinsPlugin;
 import fr.cla.jam.exampledomain.JenkinsPlugin;
 import fr.cla.jam.exampledomain.JiraApiException;
 import fr.cla.jam.exampledomain.JiraComponent;
-import fr.cla.jam.nonblocking.callback.BlockingLatentCallbackJiraApi;
-import fr.cla.jam.nonblocking.callback.FakeCallbackJiraApi;
 import fr.cla.jam.nonblocking.completionstage.CsJiraApi;
 import fr.cla.jam.nonblocking.completionstage.exampledomain.FakeCsJiraApi;
 import fr.cla.jam.nonblocking.completionstage.exampledomain.LatentCsJiraApi;
