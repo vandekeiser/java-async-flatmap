@@ -25,11 +25,11 @@ public class QuasarCollectSyncApiCfJenkinsPlugin extends AbstractJenkinsPlugin i
         
         Function<Set<JiraBundle>, CompletableFuture<Set<JiraComponent>>> findComponentsByBundlesAsync = 
             bundles -> CollectSyncCollectionApiIntoCf.flatMapCollectionAsync(
-                    bundles,
-                    srv::findComponentsByBundle,
-                    QuasarSyncApi2CfApi.supplyQuasar(),
-                    Collections::emptySet,
-                    Sets::union
+                bundles,
+                srv::findComponentsByBundle,
+                QuasarSyncApi2CfApi.supplyQuasar(),
+                Collections::emptySet,
+                Sets::union
             );
                 
         this.findComponentsByBundleNameAsync = findBundlesByNameAsync.andThen(
