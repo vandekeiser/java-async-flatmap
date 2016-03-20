@@ -2,7 +2,10 @@ package fr.cla.jam.nonblocking.completionstage.exampledomain;
 
 import com.jasongoodwin.monads.Try;
 import fr.cla.jam.MeasuringTest;
-import fr.cla.jam.blocking.exampledomain.*;
+import fr.cla.jam.blocking.exampledomain.CollectSyncApiCfJenkinsPlugin;
+import fr.cla.jam.blocking.exampledomain.FakeSyncJiraApi;
+import fr.cla.jam.blocking.exampledomain.LatentSyncJiraApi;
+import fr.cla.jam.blocking.exampledomain.SyncJiraApi;
 import fr.cla.jam.exampledomain.*;
 import fr.cla.jam.nonblocking.completionstage.CsJiraApi;
 import org.junit.FixMethodOrder;

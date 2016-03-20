@@ -2,6 +2,7 @@ package fr.cla.jam.nonblocking.promise;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.function.Function;
 
 import static fr.cla.jam.util.collectors.FlatteningSetCollector.flattening;
@@ -23,5 +24,14 @@ public final class CollectPromiseApiIntoCf {
         .stream()
         .collect(flattening());
     }
+
+    public static <E, F> CompletableFuture<Set<F>> flatMapPromiseAsyncUsingPool(
+            Set<E> inputs,
+            Function<E, Promise<Set<F>>> mapper,
+            Executor dedicatedPool
+    ) {
+        return flatMapPromiseAsync(inputs, mapper, PromiseApi2CfApi.waitToBeCalledBack(dedicatedPool));
+    }
+
 
 }

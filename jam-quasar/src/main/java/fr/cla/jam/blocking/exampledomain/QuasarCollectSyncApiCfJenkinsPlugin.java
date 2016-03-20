@@ -1,13 +1,13 @@
 package fr.cla.jam.blocking.exampledomain;
 
-import fr.cla.jam.util.containers.Sets;
 import fr.cla.jam.blocking.CollectSyncCollectionApiIntoCf;
-import fr.cla.jam.blocking.SyncApi2CfApi;
 import fr.cla.jam.blocking.QuasarSyncApi2CfApi;
+import fr.cla.jam.blocking.SyncApi2CfApi;
 import fr.cla.jam.exampledomain.AbstractJenkinsPlugin;
 import fr.cla.jam.exampledomain.CfJenkinsPlugin;
 import fr.cla.jam.exampledomain.JiraBundle;
 import fr.cla.jam.exampledomain.JiraComponent;
+import fr.cla.jam.util.containers.Sets;
 
 import java.util.Collections;
 import java.util.Set;

@@ -9,8 +9,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import static java.util.Objects.requireNonNull;
-
 public final class BlockingAsyncStreams_Factor {
 
     public interface StreamSupplier<E, Es extends Stream<E>> 

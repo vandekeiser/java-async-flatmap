@@ -7,7 +7,6 @@ import fr.cla.jam.exampledomain.AbstractJenkinsPlugin;
 import fr.cla.jam.exampledomain.CfJenkinsPlugin;
 import fr.cla.jam.exampledomain.JiraBundle;
 import fr.cla.jam.exampledomain.JiraComponent;
-import fr.cla.jam.nonblocking.callback.CallbackApi2CfApi;
 import fr.cla.jam.nonblocking.callback.CollectCallbackApiIntoCf;
 import fr.cla.jam.nonblocking.callback.QuasarCallbackApi2CfApi;
 

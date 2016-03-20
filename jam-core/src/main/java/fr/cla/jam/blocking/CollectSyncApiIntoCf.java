@@ -1,7 +1,7 @@
 package fr.cla.jam.blocking;
 
-import fr.cla.jam.util.containers.CollectionSupplier;
 import fr.cla.jam.util.collectors.FlatteningCollectionCollector;
+import fr.cla.jam.util.containers.CollectionSupplier;
 import fr.cla.jam.util.containers.Sets;
 
 import java.util.Collection;

@@ -17,7 +17,7 @@ public final class CollectCsApiIntoCf {
         Executor parallelisationPool
     ) {
         return inputs.stream()
-            .map(placeInPoolWhenComplete(mapper, parallelisationPool))
+            .map(CsApi2CfApi.placeInPoolWhenComplete(mapper, parallelisationPool))
             .collect(toSet())
             .stream()
             .collect(flattening());
@@ -38,18 +38,4 @@ public final class CollectCsApiIntoCf {
             .collect(flattening());    
     }
 
-    public static <S, T> Function<S, CompletableFuture<T>>
-    placeInPoolWhenComplete(Function<S, CompletionStage<T>> mapper, Executor pool) {
-        return e -> {
-            CompletableFuture<T> result = new CompletableFuture<>();
-            mapper.apply(e).whenCompleteAsync(
-                (t, x) -> {
-                    if(x != null) result.completeExceptionally(x);
-                    else result.complete(t);
-                },
-                pool
-            );
-            return result;
-        };
-    }
 }

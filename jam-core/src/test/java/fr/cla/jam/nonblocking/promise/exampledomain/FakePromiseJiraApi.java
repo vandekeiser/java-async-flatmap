@@ -4,7 +4,6 @@ import fr.cla.jam.exampledomain.JiraBundle;
 import fr.cla.jam.exampledomain.JiraComponent;
 import fr.cla.jam.nonblocking.promise.CompletablePromise;
 import fr.cla.jam.nonblocking.promise.Promise;
-import fr.cla.jam.nonblocking.promise.exampledomain.PromiseJiraApi;
 
 import java.util.Set;
 import java.util.stream.IntStream;
