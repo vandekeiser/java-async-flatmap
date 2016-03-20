@@ -1,19 +1,17 @@
-package fr.cla.jam.nonblocking.callback;
+package fr.cla.jam.nonblocking.callback.exampledomain;
 
 import com.jasongoodwin.monads.Try;
 import fr.cla.jam.ConsolePlusFile;
 import fr.cla.jam.MeasuringTest;
-import fr.cla.jam.blocking.exampledomain.SyncJiraApi;
-import fr.cla.jam.blocking.exampledomain.LatentSyncJiraApi;
 import fr.cla.jam.blocking.exampledomain.FakeSyncJiraApi;
+import fr.cla.jam.blocking.exampledomain.LatentSyncJiraApi;
+import fr.cla.jam.blocking.exampledomain.SyncJiraApi;
 import fr.cla.jam.exampledomain.CfJenkinsPlugin;
 import fr.cla.jam.exampledomain.JenkinsPlugin;
 import fr.cla.jam.exampledomain.JiraApiException;
 import fr.cla.jam.exampledomain.JiraComponent;
-import fr.cla.jam.nonblocking.callback.exampledomain.CallbackJiraApi;
-import fr.cla.jam.nonblocking.callback.exampledomain.DefectiveCallbackJiraApi;
-import fr.cla.jam.nonblocking.callback.exampledomain.HalfDefectiveCallbackJiraApi;
-import fr.cla.jam.nonblocking.callback.exampledomain.QuasarCollectCallbackApiIntoCfJenkinsPlugin;
+import fr.cla.jam.nonblocking.callback.BlockingLatentCallbackJiraApi;
+import fr.cla.jam.nonblocking.callback.FakeCallbackJiraApi;
 import fr.cla.jam.nonblocking.completionstage.CsJiraApi;
 import fr.cla.jam.nonblocking.completionstage.exampledomain.FakeCsJiraApi;
 import fr.cla.jam.nonblocking.completionstage.exampledomain.LatentCsJiraApi;
@@ -44,22 +42,18 @@ import static org.junit.runners.MethodSorters.NAME_ASCENDING;
 
 //deepneural4j
 
-//Run with
-// -javaagent:"C:\Users\Claisse\.m2\repository\co\paralleluniverse\quasar-core\0.7.4\quasar-core-0.7.4-jdk8.jar" -Dco.paralleluniverse.fibers.verifyInstrumentation=false
-// -javaagent:"C:\Users\User\.m2\repository\co\paralleluniverse\quasar-core\0.7.4\quasar-core-0.7.4-jdk8.jar" -Dco.paralleluniverse.fibers.verifyInstrumentation=false
-
 //TODO:
 // -tester scalabilite avec JMH
 // -factor nb de resultats
 // -separer modules fwk et domain
 @FixMethodOrder(NAME_ASCENDING)
-public class QuasarCollectCallbackApiIntoCfJenkinsPluginTest extends MeasuringTest {
+public class CollectCallbackApiIntoCfJenkinsPluginTest extends MeasuringTest {
     
     @Test
     public void should_1_report_bundles_errors() {
         CallbackJiraApi jira = new DefectiveCallbackJiraApi();
 
-        JenkinsPlugin sut = new QuasarCollectCallbackApiIntoCfJenkinsPlugin(jira, newCachedThreadPool());
+        JenkinsPlugin sut = new CollectCallbackApiIntoCfJenkinsPlugin(jira, newCachedThreadPool());
 
         try {
             sut.findComponentsByBundleName("foo");
@@ -74,7 +68,7 @@ public class QuasarCollectCallbackApiIntoCfJenkinsPluginTest extends MeasuringTe
     @Test
     public void should_2_report_components_errors() {
         CallbackJiraApi jira = new HalfDefectiveCallbackJiraApi();
-        JenkinsPlugin sut = new QuasarCollectCallbackApiIntoCfJenkinsPlugin(jira, newCachedThreadPool());
+        JenkinsPlugin sut = new CollectCallbackApiIntoCfJenkinsPlugin(jira, newCachedThreadPool());
 
         try {
             sut.findComponentsByBundleName("foo");    
@@ -101,9 +95,10 @@ public class QuasarCollectCallbackApiIntoCfJenkinsPluginTest extends MeasuringTe
         }
     }
 
-    private static final int CONCURRENCY = 1, PARALLELISM = 1000;
-    //private static final Executor scalabilityMeasurementPool = newCachedThreadPool();
-    private static final Executor scalabilityMeasurementPool = newFixedThreadPool(PARALLELISM);
+    //private static final int PARALLELISM = 100;
+    private static final int CONCURRENCY = 10;
+    private static final Executor scalabilityMeasurementPool = newCachedThreadPool();
+    //private static final Executor scalabilityMeasurementPool = newFixedThreadPool(PARALLELISM);
     @Test public void should_3bis_scale() throws FileNotFoundException {
         Set<JiraComponent> blackHole = new HashSet<>();
         try(PrintStream oout = new ConsolePlusFile("comparaison-scalabilite.txt")) {
@@ -150,8 +145,8 @@ public class QuasarCollectCallbackApiIntoCfJenkinsPluginTest extends MeasuringTe
     }
 
     @Test public void should_4_find_the_right_nunmber_of_jira_components() {
-        JenkinsPlugin sut = new QuasarCollectCallbackApiIntoCfJenkinsPlugin(
-            new NonBlockingLatentCallbackJiraApi(new FakeCallbackJiraApi()),
+        JenkinsPlugin sut = new CollectCallbackApiIntoCfJenkinsPlugin(
+            new BlockingLatentCallbackJiraApi(new FakeCallbackJiraApi()),
             newCachedThreadPool()
         );
         
@@ -164,8 +159,8 @@ public class QuasarCollectCallbackApiIntoCfJenkinsPluginTest extends MeasuringTe
     }
     
     @Test public void should_5_be_chainable() {
-        CfJenkinsPlugin sut = new QuasarCollectCallbackApiIntoCfJenkinsPlugin(
-            new NonBlockingLatentCallbackJiraApi(new FakeCallbackJiraApi()),
+        CfJenkinsPlugin sut = new CollectCallbackApiIntoCfJenkinsPlugin(
+            new BlockingLatentCallbackJiraApi(new FakeCallbackJiraApi()),
             newCachedThreadPool()
         );
      
@@ -207,12 +202,12 @@ public class QuasarCollectCallbackApiIntoCfJenkinsPluginTest extends MeasuringTe
 //            ,QuasarCollectCsApiIntoCfJenkinsPlugin::new
         );
         List<BiFunction<CallbackJiraApi, Executor, JenkinsPlugin>> callbackNonBlockingPlugins = Arrays.asList(
-            QuasarCollectCallbackApiIntoCfJenkinsPlugin::new
+                CollectCallbackApiIntoCfJenkinsPlugin::new
         );
 
         SyncJiraApi blockingSrv = new LatentSyncJiraApi(new FakeSyncJiraApi());
         CsJiraApi nonBlockingSrv = new LatentCsJiraApi(new FakeCsJiraApi());
-        CallbackJiraApi callbackNonBlockingSrv = new NonBlockingLatentCallbackJiraApi(new FakeCallbackJiraApi());
+        CallbackJiraApi callbackNonBlockingSrv = new BlockingLatentCallbackJiraApi(new FakeCallbackJiraApi());
 
         List<Function<Executor,JenkinsPlugin>> allPlugins = new ArrayList<>();
         allPlugins.addAll(blockingPlugins.stream().map(curry(blockingSrv)).collect(toList()));

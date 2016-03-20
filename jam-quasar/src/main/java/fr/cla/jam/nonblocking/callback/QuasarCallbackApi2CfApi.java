@@ -1,5 +1,6 @@
 package fr.cla.jam.nonblocking.callback;
 
+import co.paralleluniverse.fibers.Fiber;
 import co.paralleluniverse.fibers.FiberScheduler;
 
 import java.util.concurrent.CompletableFuture;
@@ -22,31 +23,20 @@ public class QuasarCallbackApi2CfApi {
     ) {
         CompletableFuture<U> fiberCf = new CompletableFuture<>();
 
-//        System.out.println("startWaitingForCallbackInFiber 0");// ON PASSE LA QUE poolSize FOIS!!!
-//        new Fiber<>(dedicatedScheduler, () -> {
-//            System.out.println("startWaitingForCallbackInFiber 1");//ON ARRIVE MM PAS LA 1 fois!!!
-//            call.accept(input, new Callback<U>() {
-//                @Override public void onSuccess(U success) {
-//                    System.out.println("startWaitingForCallbackInFiber 2");
-//                    fiberCf.complete(success);
-//                }
-//                @Override public void onFailure(Throwable failure) {
-//                    System.out.println("startWaitingForCallbackInFiber 3");
-//                    fiberCf.completeExceptionally(failure);
-//                }
-//            });
-//        }).start();
-
-        call.accept(input, new Callback<U>() {
-            @Override public void onSuccess(U success) {
-                //System.out.println("startWaitingForCallbackInFiber 2");
-                fiberCf.complete(success);
-            }
-            @Override public void onFailure(Throwable failure) {
-                //System.out.println("startWaitingForCallbackInFiber 3");
-                fiberCf.completeExceptionally(failure);
-            }
-        });
+        //System.out.println("startWaitingForCallbackInFiber 0");// ON PASSE LA QUE poolSize FOIS!!!
+        new Fiber<>(dedicatedScheduler, () -> {
+            //System.out.println("startWaitingForCallbackInFiber 1");//ON ARRIVE MM PAS LA 1 fois!!!
+            call.accept(input, new Callback<U>() {
+                @Override public void onSuccess(U success) {
+                    //System.out.println("startWaitingForCallbackInFiber 2");
+                    fiberCf.complete(success);
+                }
+                @Override public void onFailure(Throwable failure) {
+                    //System.out.println("startWaitingForCallbackInFiber 3");
+                    fiberCf.completeExceptionally(failure);
+                }
+            });
+        }).start();
 
         return fiberCf;
     }
