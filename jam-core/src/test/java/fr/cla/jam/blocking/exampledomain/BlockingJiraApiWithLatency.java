@@ -12,12 +12,12 @@ import java.util.concurrent.TimeUnit;
 import static fr.cla.jam.FakeApi.MAX_SLEEP;
 import static fr.cla.jam.FakeApi.MIN_SLEEP;
 
-public class BlockingJiraServerWithLatency implements BlockingJiraServer {
+public class BlockingJiraApiWithLatency implements BlockingJiraApi {
 
-    private final BlockingJiraServer jira;
+    private final BlockingJiraApi jira;
     private final Map<Object, Long> sleeps = new HashMap<>();
 
-    public BlockingJiraServerWithLatency(BlockingJiraServer jira) {
+    public BlockingJiraApiWithLatency(BlockingJiraApi jira) {
         this.jira = jira;
     }
 

@@ -11,9 +11,9 @@ import static java.util.stream.Collectors.toSet;
 
 public class BlockingJenkinsPlugin_SequentialStream extends AbstractJenkinsPlugin implements JenkinsPlugin {
 
-    private final BlockingJiraServer srv;
+    private final BlockingJiraApi srv;
 
-    public BlockingJenkinsPlugin_SequentialStream(BlockingJiraServer srv, Executor dedicatedPool) {
+    public BlockingJenkinsPlugin_SequentialStream(BlockingJiraApi srv, Executor dedicatedPool) {
         this.srv = srv;
     }
 

@@ -2,7 +2,7 @@ package fr.cla.jam.nonblocking.callback;
 
 import fr.cla.jam.exampledomain.JiraBundle;
 import fr.cla.jam.exampledomain.JiraComponent;
-import fr.cla.jam.nonblocking.callback.exampledomain.CallbackJiraServer;
+import fr.cla.jam.nonblocking.callback.exampledomain.CallbackJiraApi;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,14 +15,14 @@ import java.util.function.BiConsumer;
 import static fr.cla.jam.FakeApi.MAX_SLEEP;
 import static fr.cla.jam.FakeApi.MIN_SLEEP;
 
-public abstract class AbstractCallbackJiraServerWithLatency implements CallbackJiraServer {
+public abstract class AbstractCallbackJiraApiWithLatency implements CallbackJiraApi {
 
     protected static final Executor delayExecutor = Executors.newFixedThreadPool(1);
 
-    private final CallbackJiraServer jira;
+    private final CallbackJiraApi jira;
     protected final Map<Object, Long> sleeps = new HashMap<>();
 
-    public AbstractCallbackJiraServerWithLatency(CallbackJiraServer jira) {
+    public AbstractCallbackJiraApiWithLatency(CallbackJiraApi jira) {
         this.jira = jira;
     }
 

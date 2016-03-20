@@ -19,7 +19,7 @@ public class BlockingJenkinsPlugin_GenericCollect_Quasar extends AbstractJenkins
     
     private final Function<String, CompletableFuture<Set<JiraComponent>>> findComponentsByBundleNameAsync;
 
-    public BlockingJenkinsPlugin_GenericCollect_Quasar(BlockingJiraServer srv, Executor dedicatedPool) {
+    public BlockingJenkinsPlugin_GenericCollect_Quasar(BlockingJiraApi srv, Executor dedicatedPool) {
         Function<String, CompletableFuture<Set<JiraBundle>>> findBundlesByNameAsync = 
             BlockingCompletableFutures.asyncify(srv::findBundlesByName, QuasarCfAdapter.supplyQuasar());
         

@@ -6,7 +6,7 @@ import fr.cla.jam.nonblocking.promise.Promise;
 
 import java.util.Set;
 
-public interface PromiseJiraServer {
+public interface PromiseJiraApi {
 
     Promise<Set<JiraBundle>> findBundlesByName(String bundleName);
 

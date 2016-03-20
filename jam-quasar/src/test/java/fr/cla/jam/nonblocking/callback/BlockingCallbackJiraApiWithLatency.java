@@ -1,10 +1,10 @@
 package fr.cla.jam.nonblocking.callback;
 
-import fr.cla.jam.nonblocking.callback.exampledomain.CallbackJiraServer;
+import fr.cla.jam.nonblocking.callback.exampledomain.CallbackJiraApi;
 
-public class BlockingCallbackJiraServerWithLatency extends AbstractCallbackJiraServerWithLatency {
+public class BlockingCallbackJiraApiWithLatency extends AbstractCallbackJiraApiWithLatency {
 
-    public BlockingCallbackJiraServerWithLatency(CallbackJiraServer jira) {
+    public BlockingCallbackJiraApiWithLatency(CallbackJiraApi jira) {
         super(jira);
     }
 

@@ -6,7 +6,7 @@ import fr.cla.jam.nonblocking.callback.Callback;
 
 import java.util.Set;
 
-public interface CallbackJiraServer {
+public interface CallbackJiraApi {
     
     void findBundlesByName(String bundleName, Callback<Set<JiraBundle>> callback);
 

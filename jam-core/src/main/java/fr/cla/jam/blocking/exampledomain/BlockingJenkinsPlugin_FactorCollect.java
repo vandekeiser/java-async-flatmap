@@ -15,7 +15,7 @@ public class BlockingJenkinsPlugin_FactorCollect implements AsyncJenkinsPlugin {
     
     private final Function<String, CompletableFuture<Set<JiraComponent>>> findComponentsByBundleNameAsync;
 
-    public BlockingJenkinsPlugin_FactorCollect(BlockingJiraServer srv, Executor dedicatedPool) {
+    public BlockingJenkinsPlugin_FactorCollect(BlockingJiraApi srv, Executor dedicatedPool) {
         Function<String, CompletableFuture<Set<JiraBundle>>> findBundlesByNameAsync =
             BlockingCompletableFutures.asyncifyWithPool(srv::findBundlesByName, dedicatedPool);
         

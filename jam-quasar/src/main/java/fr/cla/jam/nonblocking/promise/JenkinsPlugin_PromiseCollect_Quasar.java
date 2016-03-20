@@ -7,7 +7,7 @@ import fr.cla.jam.exampledomain.AbstractJenkinsPlugin;
 import fr.cla.jam.exampledomain.AsyncJenkinsPlugin;
 import fr.cla.jam.exampledomain.JiraBundle;
 import fr.cla.jam.exampledomain.JiraComponent;
-import fr.cla.jam.nonblocking.promise.exampledomain.PromiseJiraServer;
+import fr.cla.jam.nonblocking.promise.exampledomain.PromiseJiraApi;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -20,7 +20,7 @@ public class JenkinsPlugin_PromiseCollect_Quasar extends AbstractJenkinsPlugin i
     private final Function<String, CompletableFuture<Set<JiraComponent>>> findComponentsByBundleNameAsync;
     private final static AtomicInteger callInFiberSchedulerCounter = new AtomicInteger(0);
 
-    public JenkinsPlugin_PromiseCollect_Quasar(PromiseJiraServer srv, Executor dedicatedPool) {
+    public JenkinsPlugin_PromiseCollect_Quasar(PromiseJiraApi srv, Executor dedicatedPool) {
         FiberScheduler dedicatedScheduler = dedicatedScheduler(dedicatedPool);
 
         Function<String, CompletableFuture<Set<JiraBundle>>> findBundlesByNameAsync =

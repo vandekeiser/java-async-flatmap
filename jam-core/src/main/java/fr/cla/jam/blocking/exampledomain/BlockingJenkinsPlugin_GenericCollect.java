@@ -17,7 +17,7 @@ public class BlockingJenkinsPlugin_GenericCollect implements AsyncJenkinsPlugin 
     
     private final Function<String, CompletableFuture<Set<JiraComponent>>> findComponentsByBundleNameAsync;
 
-    public BlockingJenkinsPlugin_GenericCollect(BlockingJiraServer srv, Executor dedicatedPool) {
+    public BlockingJenkinsPlugin_GenericCollect(BlockingJiraApi srv, Executor dedicatedPool) {
         Function<String, CompletableFuture<Set<JiraBundle>>> findBundlesByNameAsync = 
             BlockingCompletableFutures.asyncifyWithPool(srv::findBundlesByName, dedicatedPool);
         

@@ -2,21 +2,20 @@ package fr.cla.jam.nonblocking.callback;
 
 import fr.cla.jam.exampledomain.JiraBundle;
 import fr.cla.jam.exampledomain.JiraComponent;
-import fr.cla.jam.exampledomain.JiraServerException;
-import fr.cla.jam.nonblocking.callback.exampledomain.CallbackJiraServer;
+import fr.cla.jam.exampledomain.JiraApiException;
+import fr.cla.jam.nonblocking.callback.exampledomain.CallbackJiraApi;
 
 import java.util.Set;
 
-import static java.util.Collections.singleton;
+public class DefectiveCallbackJiraApi implements CallbackJiraApi {
 
-public class HalfDefectiveCallbackJiraServer implements CallbackJiraServer {
     @Override
     public void findBundlesByName(String bundleName, Callback<Set<JiraBundle>> callback) {
-        callback.onSuccess(singleton(new JiraBundle("foo")));
+        callback.onFailure(new JiraApiException());
     }
 
     @Override
     public void findComponentsByBundle(JiraBundle bundle, Callback<Set<JiraComponent>> callback) {
-        callback.onFailure(new JiraServerException());
+        callback.onFailure(new JiraApiException());
     }
 }

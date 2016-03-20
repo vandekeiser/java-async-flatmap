@@ -16,7 +16,7 @@ public class BlockingJenkinsPlugin_Reduce extends AbstractJenkinsPlugin implemen
     
     private final Function<String, CompletableFuture<Set<JiraComponent>>> findComponentsByBundleNameAsync;
 
-    public BlockingJenkinsPlugin_Reduce(BlockingJiraServer srv, Executor dedicatedPool) {
+    public BlockingJenkinsPlugin_Reduce(BlockingJiraApi srv, Executor dedicatedPool) {
         Function<String, CompletableFuture<Set<JiraBundle>>> findBundlesByNameAsync = 
             BlockingCompletableFutures.asyncifyWithPool(srv::findBundlesByName, dedicatedPool);
         

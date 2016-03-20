@@ -5,13 +5,13 @@ import co.paralleluniverse.fibers.FiberExecutorScheduler;
 import co.paralleluniverse.fibers.FiberScheduler;
 import co.paralleluniverse.fibers.SuspendExecution;
 import co.paralleluniverse.strands.Strand;
-import fr.cla.jam.nonblocking.callback.exampledomain.CallbackJiraServer;
+import fr.cla.jam.nonblocking.callback.exampledomain.CallbackJiraApi;
 
-public class NonBlockingCallbackJiraServerWithLatency extends AbstractCallbackJiraServerWithLatency {
+public class NonBlockingCallbackJiraApiWithLatency extends AbstractCallbackJiraApiWithLatency {
     //private static final Executor delayExecutor = Executors.newCachedThreadPool();
     private static final FiberScheduler delayScheduler = new FiberExecutorScheduler("delay scheduler", delayExecutor);
 
-    public NonBlockingCallbackJiraServerWithLatency(CallbackJiraServer jira) {
+    public NonBlockingCallbackJiraApiWithLatency(CallbackJiraApi jira) {
         super(jira);
     }
 

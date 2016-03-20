@@ -19,7 +19,7 @@ public class BlockingJenkinsPlugin_GenericCollect_Vertx extends AbstractJenkinsP
     
     private final Function<String, CompletableFuture<Set<JiraComponent>>> findComponentsByBundleNameAsync;
 
-    public BlockingJenkinsPlugin_GenericCollect_Vertx(BlockingJiraServer srv, Executor dedicatedPool) {
+    public BlockingJenkinsPlugin_GenericCollect_Vertx(BlockingJiraApi srv, Executor dedicatedPool) {
         Function<String, CompletableFuture<Set<JiraBundle>>> findBundlesByNameAsync =
             BlockingCompletableFutures.asyncify(srv::findBundlesByName, BlockingVertxCfAdapter.supplyVertx());
         

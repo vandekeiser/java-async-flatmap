@@ -4,7 +4,7 @@ import com.jasongoodwin.monads.Try;
 import fr.cla.jam.MeasuringTest;
 import fr.cla.jam.blocking.exampledomain.*;
 import fr.cla.jam.exampledomain.*;
-import fr.cla.jam.nonblocking.completionstage.NonBlockingJiraServer;
+import fr.cla.jam.nonblocking.completionstage.NonBlockingJiraApi;
 import fr.cla.jam.nonblocking.completionstage.exampledomain.NonBlockingJenkinsPlugin_Collect;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -35,35 +35,35 @@ public class NonBlockingJenkinsPluginTest extends MeasuringTest {
 
     @Test
     public void should_1_report_bundles_errors() {
-        NonBlockingJiraServer jiraServer = mock(NonBlockingJiraServer.class);
-        when(jiraServer.findBundlesByName(any())).thenThrow(new JiraServerException());
-        JenkinsPlugin sut = new NonBlockingJenkinsPlugin_Collect(jiraServer, newCachedThreadPool());
+        NonBlockingJiraApi jira = mock(NonBlockingJiraApi.class);
+        when(jira.findBundlesByName(any())).thenThrow(new JiraApiException());
+        JenkinsPlugin sut = new NonBlockingJenkinsPlugin_Collect(jira, newCachedThreadPool());
         
         try {
             sut.findComponentsByBundleName("foo");
-            failBecauseExceptionWasNotThrown(JiraServerException.class);
-        } catch (JiraServerException | CompletionException expected) {
+            failBecauseExceptionWasNotThrown(JiraApiException.class);
+        } catch (JiraApiException | CompletionException expected) {
             if(expected instanceof CompletionException) {
-                assertThat(expected.getCause() instanceof JiraServerException).isTrue();       
+                assertThat(expected.getCause() instanceof JiraApiException).isTrue();
             }
         }
     }
     
     @Test
     public void should_2_report_components_errors() {
-        NonBlockingJiraServer jiraServer = mock(NonBlockingJiraServer.class);
-        JenkinsPlugin sut = new NonBlockingJenkinsPlugin_Collect(jiraServer, newCachedThreadPool());
-        when(jiraServer.findBundlesByName(any())).thenReturn(
+        NonBlockingJiraApi jira = mock(NonBlockingJiraApi.class);
+        JenkinsPlugin sut = new NonBlockingJenkinsPlugin_Collect(jira, newCachedThreadPool());
+        when(jira.findBundlesByName(any())).thenReturn(
                 CompletableFuture.completedFuture(singleton(new JiraBundle("the bundle")))
         );
-        when(jiraServer.findComponentsByBundle(any())).thenThrow(new JiraServerException());
+        when(jira.findComponentsByBundle(any())).thenThrow(new JiraApiException());
         
         try {
             sut.findComponentsByBundleName("foo");    
-            failBecauseExceptionWasNotThrown(JiraServerException.class);
-        } catch (JiraServerException | CompletionException expected) {
+            failBecauseExceptionWasNotThrown(JiraApiException.class);
+        } catch (JiraApiException | CompletionException expected) {
             if(expected instanceof CompletionException) {
-                assertThat(expected.getCause()).isInstanceOf(JiraServerException.class);
+                assertThat(expected.getCause()).isInstanceOf(JiraApiException.class);
             }
         }
     }
@@ -84,7 +84,7 @@ public class NonBlockingJenkinsPluginTest extends MeasuringTest {
 
     @Test public void should_4_find_the_right_nunmber_of_jira_components() {
         JenkinsPlugin sut = new NonBlockingJenkinsPlugin_Collect(
-                new NonBlockingJiraServerWithLatency(new FakeNonBlockingJiraServer()),
+                new NonBlockingJiraApiWithLatency(new FakeNonBlockingJiraApi()),
                 newCachedThreadPool()
         );
         
@@ -98,7 +98,7 @@ public class NonBlockingJenkinsPluginTest extends MeasuringTest {
     
     @Test public void should_5_be_chainable() {
         AsyncJenkinsPlugin sut = new NonBlockingJenkinsPlugin_Collect(
-            new NonBlockingJiraServerWithLatency(new FakeNonBlockingJiraServer()),
+            new NonBlockingJiraApiWithLatency(new FakeNonBlockingJiraApi()),
             newCachedThreadPool()
         );
      
@@ -128,7 +128,7 @@ public class NonBlockingJenkinsPluginTest extends MeasuringTest {
     
     @Test public void should_6_work_with_other_collections() {
         JenkinsPlugin sut = new NonBlockingJenkinsPlugin_Collect(
-            new NonBlockingJiraServerWithLatency(new FakeNonBlockingJiraServer()),
+            new NonBlockingJiraApiWithLatency(new FakeNonBlockingJiraApi()),
             newCachedThreadPool()
         );
      
@@ -138,14 +138,14 @@ public class NonBlockingJenkinsPluginTest extends MeasuringTest {
     }
 
     private List<? extends JenkinsPlugin> allPlugins() {
-        List<BiFunction<BlockingJiraServer, Executor, JenkinsPlugin>> blockingPlugins = Arrays.asList(
+        List<BiFunction<BlockingJiraApi, Executor, JenkinsPlugin>> blockingPlugins = Arrays.asList(
             BlockingJenkinsPlugin_SequentialStream::new,
             BlockingJenkinsPlugin_ParallelStream::new,
             BlockingJenkinsPlugin_Reduce::new,
             BlockingJenkinsPlugin_Collect::new,
             BlockingJenkinsPlugin_GenericCollect::new
         );
-        List<BiFunction<NonBlockingJiraServer, Executor, JenkinsPlugin>> nonBlockingPlugins = Arrays.asList(
+        List<BiFunction<NonBlockingJiraApi, Executor, JenkinsPlugin>> nonBlockingPlugins = Arrays.asList(
             //TODO?
             //cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_Reduce::new,
             NonBlockingJenkinsPlugin_Collect::new
@@ -153,8 +153,8 @@ public class NonBlockingJenkinsPluginTest extends MeasuringTest {
             //cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_GenericCollect::new,
         );
 
-        BlockingJiraServer blockingSrv = new BlockingJiraServerWithLatency(new FakeBlockingJiraServer());
-        NonBlockingJiraServer nonBlockingSrv = new NonBlockingJiraServerWithLatency(new FakeNonBlockingJiraServer());
+        BlockingJiraApi blockingSrv = new BlockingJiraApiWithLatency(new FakeBlockingJiraApi());
+        NonBlockingJiraApi nonBlockingSrv = new NonBlockingJiraApiWithLatency(new FakeNonBlockingJiraApi());
 
         List<JenkinsPlugin> allPlugins = new ArrayList<>();
         allPlugins.addAll(

@@ -22,7 +22,7 @@ public class JenkinsPlugin_CallbackCollect_Quasar extends AbstractJenkinsPlugin 
     private final Function<String, CompletableFuture<Set<JiraComponent>>> findComponentsByBundleNameAsync;
     private final static AtomicInteger callInFiberSchedulerCounter = new AtomicInteger(0);
 
-    public JenkinsPlugin_CallbackCollect_Quasar(CallbackJiraServer srv, Executor dedicatedPool) {
+    public JenkinsPlugin_CallbackCollect_Quasar(CallbackJiraApi srv, Executor dedicatedPool) {
         FiberScheduler dedicatedScheduler = dedicatedScheduler(dedicatedPool);
         //Supplier<FiberScheduler> dedicatedScheduler = dedicatedSchedulerSupplier(dedicatedPool);
 

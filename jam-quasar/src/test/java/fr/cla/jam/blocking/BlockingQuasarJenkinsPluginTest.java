@@ -41,39 +41,39 @@ public class BlockingQuasarJenkinsPluginTest extends MeasuringTest {
 
     @Test
     public void should_1_report_bundles_errors() {
-        BlockingJiraServer jiraServer = mock(BlockingJiraServer.class);
-        when(jiraServer.findBundlesByName(any())).thenThrow(new JiraServerException());
-        JenkinsPlugin sut = new BlockingJenkinsPlugin_GenericCollect_Quasar(jiraServer, newCachedThreadPool());
+        BlockingJiraApi jira = mock(BlockingJiraApi.class);
+        when(jira.findBundlesByName(any())).thenThrow(new JiraApiException());
+        JenkinsPlugin sut = new BlockingJenkinsPlugin_GenericCollect_Quasar(jira, newCachedThreadPool());
         
         try {
             sut.findComponentsByBundleName("foo");
-            failBecauseExceptionWasNotThrown(JiraServerException.class);
-        } catch (JiraServerException | CompletionException expected) {
+            failBecauseExceptionWasNotThrown(JiraApiException.class);
+        } catch (JiraApiException | CompletionException expected) {
             if(expected instanceof CompletionException) {
-                assertThat(expected.getCause().getCause()).isInstanceOf(JiraServerException.class);
+                assertThat(expected.getCause().getCause()).isInstanceOf(JiraApiException.class);
             }
         }
     }
     
     @Test
     public void should_2_report_components_errors() {
-        BlockingJiraServer jiraServer = mock(BlockingJiraServer.class);
-        JenkinsPlugin sut = new BlockingJenkinsPlugin_GenericCollect_Quasar(jiraServer, newCachedThreadPool());
-        when(jiraServer.findBundlesByName(any())).thenReturn(singleton(new JiraBundle("the bundle")));
-        when(jiraServer.findComponentsByBundle(any())).thenThrow(new JiraServerException());
+        BlockingJiraApi jira = mock(BlockingJiraApi.class);
+        JenkinsPlugin sut = new BlockingJenkinsPlugin_GenericCollect_Quasar(jira, newCachedThreadPool());
+        when(jira.findBundlesByName(any())).thenReturn(singleton(new JiraBundle("the bundle")));
+        when(jira.findComponentsByBundle(any())).thenThrow(new JiraApiException());
         
         try {
             sut.findComponentsByBundleName("foo");    
-            failBecauseExceptionWasNotThrown(JiraServerException.class);
-        } catch (JiraServerException | CompletionException expected) {
+            failBecauseExceptionWasNotThrown(JiraApiException.class);
+        } catch (JiraApiException | CompletionException expected) {
             if(expected instanceof CompletionException) {
-                assertThat(expected.getCause().getCause()).isInstanceOf(JiraServerException.class);
+                assertThat(expected.getCause().getCause()).isInstanceOf(JiraApiException.class);
             }
         }
     }
     
     @Test public void should_3_be_fast() throws FileNotFoundException {
-        List<BiFunction<BlockingJiraServer, Executor, JenkinsPlugin>> plugins = Arrays.asList(
+        List<BiFunction<BlockingJiraApi, Executor, JenkinsPlugin>> plugins = Arrays.asList(
             BlockingJenkinsPlugin_SequentialStream::new,
             BlockingJenkinsPlugin_ParallelStream::new,
             BlockingJenkinsPlugin_Reduce::new,
@@ -83,7 +83,7 @@ public class BlockingQuasarJenkinsPluginTest extends MeasuringTest {
             BlockingJenkinsPlugin_GenericCollect_Quasar::new
         );
        
-        BlockingJiraServer srv = new BlockingJiraServerWithLatency(new FakeBlockingJiraServer());
+        BlockingJiraApi srv = new BlockingJiraApiWithLatency(new FakeBlockingJiraApi());
         //Executor pool = newCachedThreadPool();
         Executor pool = newFixedThreadPool(commonPool().getParallelism());
         
@@ -103,7 +103,7 @@ public class BlockingQuasarJenkinsPluginTest extends MeasuringTest {
     
     @Test public void should_4_find_the_right_nunmber_of_jira_components() {
         JenkinsPlugin sut = new BlockingJenkinsPlugin_GenericCollect_Quasar(
-                new BlockingJiraServerWithLatency(new FakeBlockingJiraServer()),
+                new BlockingJiraApiWithLatency(new FakeBlockingJiraApi()),
                 newCachedThreadPool()
         );
         
@@ -117,7 +117,7 @@ public class BlockingQuasarJenkinsPluginTest extends MeasuringTest {
     
     @Test public void should_5_be_chainable() {
         AsyncJenkinsPlugin sut = new BlockingJenkinsPlugin_GenericCollect_Quasar(
-            new BlockingJiraServerWithLatency(new FakeBlockingJiraServer()),
+            new BlockingJiraApiWithLatency(new FakeBlockingJiraApi()),
             newCachedThreadPool()
         );
      
@@ -148,7 +148,7 @@ public class BlockingQuasarJenkinsPluginTest extends MeasuringTest {
     
     @Test public void should_6_work_with_other_collections() {
         JenkinsPlugin sut = new BlockingJenkinsPlugin_GenericCollect_Quasar(
-            new BlockingJiraServerWithLatency(new FakeBlockingJiraServer()),
+            new BlockingJiraApiWithLatency(new FakeBlockingJiraApi()),
             newCachedThreadPool()
         );
      

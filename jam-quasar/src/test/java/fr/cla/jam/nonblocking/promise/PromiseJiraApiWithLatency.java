@@ -7,7 +7,7 @@ import co.paralleluniverse.fibers.SuspendExecution;
 import co.paralleluniverse.strands.Strand;
 import fr.cla.jam.exampledomain.JiraBundle;
 import fr.cla.jam.exampledomain.JiraComponent;
-import fr.cla.jam.nonblocking.promise.exampledomain.PromiseJiraServer;
+import fr.cla.jam.nonblocking.promise.exampledomain.PromiseJiraApi;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,12 +20,12 @@ import java.util.function.Function;
 import static fr.cla.jam.FakeApi.MAX_SLEEP;
 import static fr.cla.jam.FakeApi.MIN_SLEEP;
 
-public class PromiseJiraServerWithLatency implements PromiseJiraServer {
+public class PromiseJiraApiWithLatency implements PromiseJiraApi {
 
-    private final PromiseJiraServer jira;
+    private final PromiseJiraApi jira;
     private final Map<Object, Long> sleeps = new HashMap<>();
 
-    public PromiseJiraServerWithLatency(PromiseJiraServer jira) {
+    public PromiseJiraApiWithLatency(PromiseJiraApi jira) {
         this.jira = jira;
     }
 

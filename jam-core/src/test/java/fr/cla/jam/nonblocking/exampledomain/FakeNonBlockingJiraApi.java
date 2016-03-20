@@ -1,23 +1,25 @@
-package fr.cla.jam.nonblocking.callback;
+package fr.cla.jam.nonblocking.exampledomain;
 
 import fr.cla.jam.exampledomain.JiraBundle;
 import fr.cla.jam.exampledomain.JiraComponent;
-import fr.cla.jam.nonblocking.callback.exampledomain.CallbackJiraServer;
+import fr.cla.jam.nonblocking.completionstage.NonBlockingJiraApi;
 
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.IntStream;
 
 import static fr.cla.jam.FakeApi.NB_OF_BUNDLES_PER_NAME;
 import static fr.cla.jam.FakeApi.NB_OF_COMPONENTS_PER_BUNDLE;
 import static java.util.Objects.requireNonNull;
+import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.stream.Collectors.toSet;
 
-public class FakeCallbackJiraServer implements CallbackJiraServer {
+public class FakeNonBlockingJiraApi implements NonBlockingJiraApi {
 
     @Override
-    public void findBundlesByName(String bundleName, Callback<Set<JiraBundle>> callback) {
+    public CompletableFuture<Set<JiraBundle>> findBundlesByName(String bundleName) {
         String nonNullBundleName = requireNonNull(bundleName);
-        callback.onSuccess(
+        return completedFuture(
             IntStream.range(0, NB_OF_BUNDLES_PER_NAME)
                 .mapToObj(i -> new JiraBundle(nonNullBundleName + i))
                 .collect(toSet())
@@ -25,9 +27,9 @@ public class FakeCallbackJiraServer implements CallbackJiraServer {
     }
 
     @Override
-    public void findComponentsByBundle(JiraBundle bundle, Callback<Set<JiraComponent>> callback) {
+    public CompletableFuture<Set<JiraComponent>> findComponentsByBundle(JiraBundle bundle) {
         JiraBundle nonNullBundle = requireNonNull(bundle);
-        callback.onSuccess(
+        return completedFuture(
             IntStream.range(0, NB_OF_COMPONENTS_PER_BUNDLE)
                 .mapToObj(i -> new JiraComponent(nonNullBundle.toString() + i))
                 .collect(toSet())
