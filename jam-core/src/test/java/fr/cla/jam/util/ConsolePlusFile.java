@@ -1,4 +1,4 @@
-package fr.cla.jam;
+package fr.cla.jam.util;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;

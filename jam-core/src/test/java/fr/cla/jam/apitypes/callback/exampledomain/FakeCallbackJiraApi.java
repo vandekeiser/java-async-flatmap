@@ -7,8 +7,8 @@ import fr.cla.jam.exampledomain.JiraComponent;
 import java.util.Set;
 import java.util.stream.IntStream;
 
-import static fr.cla.jam.FakeApi.NB_OF_BUNDLES_PER_NAME;
-import static fr.cla.jam.FakeApi.NB_OF_COMPONENTS_PER_BUNDLE;
+import static fr.cla.jam.util.FakeApi.NB_OF_BUNDLES_PER_NAME;
+import static fr.cla.jam.util.FakeApi.NB_OF_COMPONENTS_PER_BUNDLE;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toSet;
 

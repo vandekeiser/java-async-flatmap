@@ -1,4 +1,4 @@
-package fr.cla.jam;
+package fr.cla.jam.util;
 
 public class FakeApi {
 

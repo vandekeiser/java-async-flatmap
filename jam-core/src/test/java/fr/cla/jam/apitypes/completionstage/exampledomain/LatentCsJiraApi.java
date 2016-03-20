@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.*;
 
-import static fr.cla.jam.FakeApi.MAX_SLEEP;
-import static fr.cla.jam.FakeApi.MIN_SLEEP;
+import static fr.cla.jam.util.FakeApi.MAX_SLEEP;
+import static fr.cla.jam.util.FakeApi.MIN_SLEEP;
 
 public class LatentCsJiraApi implements CsJiraApi {
 

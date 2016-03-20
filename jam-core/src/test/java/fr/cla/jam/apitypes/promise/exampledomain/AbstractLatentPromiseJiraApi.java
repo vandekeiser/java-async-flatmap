@@ -13,8 +13,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
 
-import static fr.cla.jam.FakeApi.MAX_SLEEP;
-import static fr.cla.jam.FakeApi.MIN_SLEEP;
+import static fr.cla.jam.util.FakeApi.MAX_SLEEP;
+import static fr.cla.jam.util.FakeApi.MIN_SLEEP;
 
 public abstract class AbstractLatentPromiseJiraApi implements PromiseJiraApi {
 

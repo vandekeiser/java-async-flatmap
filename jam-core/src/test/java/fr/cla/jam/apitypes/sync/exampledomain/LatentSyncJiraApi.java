@@ -9,8 +9,8 @@ import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
-import static fr.cla.jam.FakeApi.MAX_SLEEP;
-import static fr.cla.jam.FakeApi.MIN_SLEEP;
+import static fr.cla.jam.util.FakeApi.MAX_SLEEP;
+import static fr.cla.jam.util.FakeApi.MIN_SLEEP;
 
 public class LatentSyncJiraApi implements SyncJiraApi {
 

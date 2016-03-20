@@ -1,10 +1,8 @@
-package fr.cla.jam;
+package fr.cla.jam.exampledomain;
 
 import com.jasongoodwin.monads.Try;
-import fr.cla.jam.exampledomain.CfJenkinsPlugin;
-import fr.cla.jam.exampledomain.JenkinsPlugin;
-import fr.cla.jam.exampledomain.JiraApiException;
-import fr.cla.jam.exampledomain.JiraComponent;
+import fr.cla.jam.util.ConsolePlusFile;
+import fr.cla.jam.util.MeasuringTest;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 
@@ -20,8 +18,8 @@ import java.util.concurrent.*;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 
-import static fr.cla.jam.FakeApi.NB_OF_BUNDLES_PER_NAME;
-import static fr.cla.jam.FakeApi.NB_OF_COMPONENTS_PER_BUNDLE;
+import static fr.cla.jam.util.FakeApi.NB_OF_BUNDLES_PER_NAME;
+import static fr.cla.jam.util.FakeApi.NB_OF_COMPONENTS_PER_BUNDLE;
 import static java.lang.System.out;
 import static java.util.Collections.emptySet;
 import static java.util.concurrent.Executors.newCachedThreadPool;
