@@ -98,7 +98,7 @@ public class QuasarCollectCallbackApiIntoCfJenkinsPluginTest extends MeasuringTe
         }
     }
 
-    private static final int CONCURRENCY = 1, PARALLELISM = 1000;
+    private static final int CONCURRENCY = 10, PARALLELISM = 1;
     //private static final Executor scalabilityMeasurementPool = newCachedThreadPool();
     private static final Executor scalabilityMeasurementPool = newFixedThreadPool(PARALLELISM);
     @Test public void should_3bis_scale() throws FileNotFoundException {

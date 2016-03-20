@@ -103,7 +103,7 @@ public class QuasarCollectPromiseApiIntoCfJenkinsPluginTest extends MeasuringTes
         }
     }
 
-    private static final int CONCURRENCY = 10, PARALLELISM = 100;
+    private static final int CONCURRENCY = 10, PARALLELISM = 1;
     //private static final Executor scalabilityMeasurementPool = newCachedThreadPool();
     private static final Executor scalabilityMeasurementPool = newFixedThreadPool(PARALLELISM);
 
@@ -213,7 +213,7 @@ public class QuasarCollectPromiseApiIntoCfJenkinsPluginTest extends MeasuringTes
 //            ,QuasarCollectCsApiIntoCfJenkinsPlugin::new
         );
         List<BiFunction<PromiseJiraApi, Executor, JenkinsPlugin>> promiseNonBlockingPlugins = Arrays.asList(
-                QuasarCollectPromiseApiIntoCfJenkinsPlugin::new
+            QuasarCollectPromiseApiIntoCfJenkinsPlugin::new
         );
 
         SyncJiraApi blockingSrv = new LatentSyncJiraApi(new FakeSyncJiraApi());

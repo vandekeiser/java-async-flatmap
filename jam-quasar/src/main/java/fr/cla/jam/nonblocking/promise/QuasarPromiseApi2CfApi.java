@@ -22,10 +22,16 @@ public class QuasarPromiseApi2CfApi {
     ) {
         CompletableFuture<U> fiberCf = new CompletableFuture<>();
 
-        new Fiber<>(dedicatedScheduler, () -> promise.apply(input).whenComplete(
+        //DOES MORE HARM THAN GOOD!
+//        new Fiber<>(dedicatedScheduler, () -> promise.apply(input).whenComplete(
+//            res -> fiberCf.complete(res),
+//            x -> fiberCf.completeExceptionally(x)
+//        )).start();
+
+        promise.apply(input).whenComplete(
             res -> fiberCf.complete(res),
             x -> fiberCf.completeExceptionally(x)
-        )).start();
+        );
 
         return fiberCf;
     }
