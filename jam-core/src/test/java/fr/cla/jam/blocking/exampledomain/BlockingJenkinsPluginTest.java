@@ -66,12 +66,12 @@ public class BlockingJenkinsPluginTest extends MeasuringTest {
     
     @Test public void should_3_be_fast() {
         List<BiFunction<BlockingJiraApi, Executor, JenkinsPlugin>> plugins = Arrays.asList(
-            BlockingJenkinsPlugin_SequentialStream::new,
-            BlockingJenkinsPlugin_ParallelStream::new,
-            BlockingJenkinsPlugin_Reduce::new,
             BlockingJenkinsPlugin_Collect::new,
-            BlockingJenkinsPlugin_GenericCollect::new,
-            BlockingJenkinsPlugin_FactorCollect::new
+            BlockingJenkinsPlugin_Collect::new,
+            BlockingJenkinsPlugin_Collect::new,
+            BlockingJenkinsPlugin_Collect::new,
+            BlockingJenkinsPlugin_Collect::new,
+            BlockingJenkinsPlugin_Collect::new
         );
        
         BlockingJiraApi srv = new BlockingJiraApiWithLatency(new FakeBlockingJiraApi());
@@ -89,7 +89,7 @@ public class BlockingJenkinsPluginTest extends MeasuringTest {
     }
     
     @Test public void should_4_find_the_right_nunmber_of_jira_components() {
-        JenkinsPlugin sut = new BlockingJenkinsPlugin_FactorCollect(
+        JenkinsPlugin sut = new BlockingJenkinsPlugin_Collect(
                 new BlockingJiraApiWithLatency(new FakeBlockingJiraApi()),
                 newCachedThreadPool()
         );

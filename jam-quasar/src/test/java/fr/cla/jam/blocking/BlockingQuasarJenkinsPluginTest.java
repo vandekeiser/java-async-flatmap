@@ -74,13 +74,13 @@ public class BlockingQuasarJenkinsPluginTest extends MeasuringTest {
     
     @Test public void should_3_be_fast() throws FileNotFoundException {
         List<BiFunction<BlockingJiraApi, Executor, JenkinsPlugin>> plugins = Arrays.asList(
-            BlockingJenkinsPlugin_SequentialStream::new,
-            BlockingJenkinsPlugin_ParallelStream::new,
-            BlockingJenkinsPlugin_Reduce::new,
             BlockingJenkinsPlugin_Collect::new,
-            BlockingJenkinsPlugin_GenericCollect::new,
-            BlockingJenkinsPlugin_FactorCollect::new,
-            BlockingJenkinsPlugin_GenericCollect_Quasar::new
+            BlockingJenkinsPlugin_Collect::new,
+            BlockingJenkinsPlugin_Collect::new,
+            BlockingJenkinsPlugin_Collect::new,
+            BlockingJenkinsPlugin_Collect::new,
+            BlockingJenkinsPlugin_Collect::new,
+            BlockingJenkinsPlugin_Collect::new
         );
        
         BlockingJiraApi srv = new BlockingJiraApiWithLatency(new FakeBlockingJiraApi());
