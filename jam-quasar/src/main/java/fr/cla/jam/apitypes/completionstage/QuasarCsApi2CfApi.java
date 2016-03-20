@@ -19,11 +19,11 @@ public class QuasarCsApi2CfApi {
         Function<T, CompletionStage<U>>,
         Function<T, CompletableFuture<U>>
     > usingPool(Executor dedicatedPool) {
-        return blocking -> input -> callInFiber(blocking, input, dedicatedPool);
+        return mapper -> input -> callInFiber(mapper, input, dedicatedPool);
     }
 
     private static <T, U> CompletableFuture<U> callInFiber(
-        Function<T, CompletionStage<U>> blocking,
+        Function<T, CompletionStage<U>> mapper,
         T input,
         Executor dedicatedPool
     ) {
@@ -31,7 +31,7 @@ public class QuasarCsApi2CfApi {
         CompletableFuture<U> fiberCf = new CompletableFuture<>();
 
         new Fiber<>(scheduler, () -> {
-            blocking.apply(input).whenComplete((res, x) -> {
+            mapper.apply(input).whenComplete((res, x) -> {
                 if (x != null) fiberCf.completeExceptionally(x);
                 else fiberCf.complete(res);
             });

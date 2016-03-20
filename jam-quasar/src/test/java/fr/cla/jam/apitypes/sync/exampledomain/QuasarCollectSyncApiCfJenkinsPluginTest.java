@@ -59,14 +59,14 @@ public class QuasarCollectSyncApiCfJenkinsPluginTest extends AbstractJenkinsPlug
 
     @Override
     protected List<Function<Executor, JenkinsPlugin>> allPluginsForLatencyMeasurement() {
-        List<BiFunction<SyncJiraApi, Executor, JenkinsPlugin>> blockingPlugins = Arrays.asList(
+        List<BiFunction<SyncJiraApi, Executor, JenkinsPlugin>> syncPlugins = Arrays.asList(
             CollectSyncApiCfJenkinsPlugin::new
         );
 
-        SyncJiraApi blockingSrv = new LatentSyncJiraApi(new FakeSyncJiraApi());
+        SyncJiraApi syncApi = new LatentSyncJiraApi(new FakeSyncJiraApi());
 
         List<Function<Executor,JenkinsPlugin>> allPlugins = new ArrayList<>();
-        allPlugins.addAll(blockingPlugins.stream().map(curry(blockingSrv)).collect(toList()));
+        allPlugins.addAll(syncPlugins.stream().map(curry(syncApi)).collect(toList()));
         return allPlugins;
     }
 
