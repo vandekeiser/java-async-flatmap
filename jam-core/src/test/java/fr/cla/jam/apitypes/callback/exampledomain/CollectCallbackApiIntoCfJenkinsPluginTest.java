@@ -65,44 +65,11 @@ public class CollectCallbackApiIntoCfJenkinsPluginTest extends AbstractJenkinsPl
     @Override
     protected List<Function<Executor, JenkinsPlugin>> allPluginsForLatencyMeasurement() {
         List<BiFunction<SyncJiraApi, Executor, JenkinsPlugin>> blockingPlugins = Arrays.asList(
-//            SequentialStreamSyncApiJenkinsPlugin::new
-//            , ParallelStreamSyncApiJenkinsPlugin::new
-                //CollectSyncApiCfJenkinsPlugin::new
-//            , QuasarCollectSyncApiCfJenkinsPlugin::new
         );
         List<BiFunction<CsJiraApi, Executor, JenkinsPlugin>> nonBlockingPlugins = Arrays.asList(
-//            CollectCsApiCfJenkinsPlugin::new
-//            ,QuasarCollectCsApiIntoCfJenkinsPlugin::new
         );
         List<BiFunction<CallbackJiraApi, Executor, JenkinsPlugin>> callbackNonBlockingPlugins = Arrays.asList(
-                CollectCallbackApiIntoCfJenkinsPlugin::new
-        );
-
-        SyncJiraApi blockingSrv = new LatentSyncJiraApi(new FakeSyncJiraApi());
-        CsJiraApi nonBlockingSrv = new LatentCsJiraApi(new FakeCsJiraApi());
-        CallbackJiraApi callbackNonBlockingSrv = new BlockingLatentCallbackJiraApi(new FakeCallbackJiraApi());
-
-        List<Function<Executor,JenkinsPlugin>> allPlugins = new ArrayList<>();
-        allPlugins.addAll(blockingPlugins.stream().map(curry(blockingSrv)).collect(toList()));
-        allPlugins.addAll(nonBlockingPlugins.stream().map(curry(nonBlockingSrv)).collect(toList()));
-        allPlugins.addAll(callbackNonBlockingPlugins.stream().map(curry(callbackNonBlockingSrv)).collect(toList()));
-        return allPlugins;
-    }
-
-    @Override
-    protected List<Function<Executor, JenkinsPlugin>> allPluginsForScalabilityMeasurement() {
-        List<BiFunction<SyncJiraApi, Executor, JenkinsPlugin>> blockingPlugins = Arrays.asList(
-//            SequentialStreamSyncApiJenkinsPlugin::new
-//            , ParallelStreamSyncApiJenkinsPlugin::new
-                //CollectSyncApiCfJenkinsPlugin::new
-//            , QuasarCollectSyncApiCfJenkinsPlugin::new
-        );
-        List<BiFunction<CsJiraApi, Executor, JenkinsPlugin>> nonBlockingPlugins = Arrays.asList(
-//            CollectCsApiCfJenkinsPlugin::new
-//            ,QuasarCollectCsApiIntoCfJenkinsPlugin::new
-        );
-        List<BiFunction<CallbackJiraApi, Executor, JenkinsPlugin>> callbackNonBlockingPlugins = Arrays.asList(
-                CollectCallbackApiIntoCfJenkinsPlugin::new
+            CollectCallbackApiIntoCfJenkinsPlugin::new
         );
 
         SyncJiraApi blockingSrv = new LatentSyncJiraApi(new FakeSyncJiraApi());

@@ -1,11 +1,5 @@
 package fr.cla.jam.apitypes.sync.exampledomain;
 
-import fr.cla.jam.apitypes.callback.NonBlockingLatentCallbackJiraApi;
-import fr.cla.jam.apitypes.callback.exampledomain.CallbackJiraApi;
-import fr.cla.jam.apitypes.callback.exampledomain.FakeCallbackJiraApi;
-import fr.cla.jam.apitypes.completionstage.exampledomain.CsJiraApi;
-import fr.cla.jam.apitypes.completionstage.exampledomain.FakeCsJiraApi;
-import fr.cla.jam.apitypes.completionstage.exampledomain.LatentCsJiraApi;
 import fr.cla.jam.exampledomain.*;
 import org.junit.FixMethodOrder;
 
@@ -68,40 +62,11 @@ public class QuasarCollectSyncApiCfJenkinsPluginTest extends AbstractJenkinsPlug
         List<BiFunction<SyncJiraApi, Executor, JenkinsPlugin>> blockingPlugins = Arrays.asList(
             CollectSyncApiCfJenkinsPlugin::new
         );
-        List<BiFunction<CsJiraApi, Executor, JenkinsPlugin>> nonBlockingPlugins = Arrays.asList(
-        );
-        List<BiFunction<CallbackJiraApi, Executor, JenkinsPlugin>> callbackNonBlockingPlugins = Arrays.asList(
-        );
 
         SyncJiraApi blockingSrv = new LatentSyncJiraApi(new FakeSyncJiraApi());
-        CsJiraApi nonBlockingSrv = new LatentCsJiraApi(new FakeCsJiraApi());
-        CallbackJiraApi callbackNonBlockingSrv = new NonBlockingLatentCallbackJiraApi(new FakeCallbackJiraApi());
 
         List<Function<Executor,JenkinsPlugin>> allPlugins = new ArrayList<>();
         allPlugins.addAll(blockingPlugins.stream().map(curry(blockingSrv)).collect(toList()));
-        allPlugins.addAll(nonBlockingPlugins.stream().map(curry(nonBlockingSrv)).collect(toList()));
-        allPlugins.addAll(callbackNonBlockingPlugins.stream().map(curry(callbackNonBlockingSrv)).collect(toList()));
-        return allPlugins;
-    }
-
-    @Override
-    protected List<Function<Executor, JenkinsPlugin>> allPluginsForScalabilityMeasurement() {
-        List<BiFunction<SyncJiraApi, Executor, JenkinsPlugin>> blockingPlugins = Arrays.asList(
-                CollectSyncApiCfJenkinsPlugin::new
-        );
-        List<BiFunction<CsJiraApi, Executor, JenkinsPlugin>> nonBlockingPlugins = Arrays.asList(
-        );
-        List<BiFunction<CallbackJiraApi, Executor, JenkinsPlugin>> callbackNonBlockingPlugins = Arrays.asList(
-        );
-
-        SyncJiraApi blockingSrv = new LatentSyncJiraApi(new FakeSyncJiraApi());
-        CsJiraApi nonBlockingSrv = new LatentCsJiraApi(new FakeCsJiraApi());
-        CallbackJiraApi callbackNonBlockingSrv = new NonBlockingLatentCallbackJiraApi(new FakeCallbackJiraApi());
-
-        List<Function<Executor,JenkinsPlugin>> allPlugins = new ArrayList<>();
-        allPlugins.addAll(blockingPlugins.stream().map(curry(blockingSrv)).collect(toList()));
-        allPlugins.addAll(nonBlockingPlugins.stream().map(curry(nonBlockingSrv)).collect(toList()));
-        allPlugins.addAll(callbackNonBlockingPlugins.stream().map(curry(callbackNonBlockingSrv)).collect(toList()));
         return allPlugins;
     }
 

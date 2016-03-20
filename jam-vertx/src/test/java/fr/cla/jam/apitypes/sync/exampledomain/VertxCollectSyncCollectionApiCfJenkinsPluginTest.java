@@ -1,9 +1,9 @@
 package fr.cla.jam.apitypes.sync.exampledomain;
 
 import com.jasongoodwin.monads.Try;
+import fr.cla.jam.exampledomain.*;
 import fr.cla.jam.util.ConsolePlusFile;
 import fr.cla.jam.util.MeasuringTest;
-import fr.cla.jam.exampledomain.*;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 

@@ -88,27 +88,6 @@ public class CollectPromiseApiIntoCfJenkinsPluginTest extends AbstractJenkinsPlu
         return allPlugins;
     }
 
-    @Override
-    protected List<Function<Executor, JenkinsPlugin>> allPluginsForScalabilityMeasurement() {
-        List<BiFunction<SyncJiraApi, Executor, JenkinsPlugin>> blockingPlugins = Arrays.asList(
-        );
-        List<BiFunction<CsJiraApi, Executor, JenkinsPlugin>> nonBlockingPlugins = Arrays.asList(
-        );
-        List<BiFunction<PromiseJiraApi, Executor, JenkinsPlugin>> promiseNonBlockingPlugins = Arrays.asList(
-            CollectPromiseApiIntoCfJenkinsPlugin::new
-        );
-
-        SyncJiraApi blockingSrv = new LatentSyncJiraApi(new FakeSyncJiraApi());
-        CsJiraApi nonBlockingSrv = new LatentCsJiraApi(new FakeCsJiraApi());
-        PromiseJiraApi promiseNonBlockingSrv = new BlockingLatentPromiseJiraApi(new FakePromiseJiraApi());
-
-        List<Function<Executor, JenkinsPlugin>> allPlugins = new ArrayList<>();
-        allPlugins.addAll(blockingPlugins.stream().map(curry(blockingSrv)).collect(toList()));
-        allPlugins.addAll(nonBlockingPlugins.stream().map(curry(nonBlockingSrv)).collect(toList()));
-        allPlugins.addAll(promiseNonBlockingPlugins.stream().map(curry(promiseNonBlockingSrv)).collect(toList()));
-        return allPlugins;
-    }
-
 }
 
 

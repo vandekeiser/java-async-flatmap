@@ -71,32 +71,6 @@ public class QuasarCollectCsApiIntoCfJenkinsPluginTest extends AbstractJenkinsPl
     @Override
     protected List<Function<Executor, JenkinsPlugin>> allPluginsForLatencyMeasurement() {
         List<BiFunction<SyncJiraApi, Executor, JenkinsPlugin>> blockingPlugins = Arrays.asList(
-//            SequentialStreamSyncApiJenkinsPlugin::new,
-//            ParallelStreamSyncApiJenkinsPlugin::new,
-                //CollectSyncApiCfJenkinsPlugin::new
-//            QuasarCollectSyncApiCfJenkinsPlugin::new
-        );
-        List<BiFunction<CsJiraApi, Executor, JenkinsPlugin>> nonBlockingPlugins = Arrays.asList(
-            CollectCsApiCfJenkinsPlugin::new
-            , QuasarCollectCsApiIntoCfJenkinsPlugin::new
-        );
-
-        SyncJiraApi blockingSrv = new LatentSyncJiraApi(new FakeSyncJiraApi());
-        CsJiraApi nonBlockingSrv = new LatentCsJiraApi(new FakeCsJiraApi());
-
-        List<Function<Executor,JenkinsPlugin>> allPlugins = new ArrayList<>();
-        allPlugins.addAll(blockingPlugins.stream().map(curry(blockingSrv)).collect(toList()));
-        allPlugins.addAll(nonBlockingPlugins.stream().map(curry(nonBlockingSrv)).collect(toList()));
-        return allPlugins;
-    }
-
-    @Override
-    protected List<Function<Executor, JenkinsPlugin>> allPluginsForScalabilityMeasurement() {
-        List<BiFunction<SyncJiraApi, Executor, JenkinsPlugin>> blockingPlugins = Arrays.asList(
-//            SequentialStreamSyncApiJenkinsPlugin::new,
-//            ParallelStreamSyncApiJenkinsPlugin::new,
-                //CollectSyncApiCfJenkinsPlugin::new
-//            QuasarCollectSyncApiCfJenkinsPlugin::new
         );
         List<BiFunction<CsJiraApi, Executor, JenkinsPlugin>> nonBlockingPlugins = Arrays.asList(
             CollectCsApiCfJenkinsPlugin::new

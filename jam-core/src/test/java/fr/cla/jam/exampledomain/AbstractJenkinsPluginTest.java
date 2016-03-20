@@ -80,6 +80,7 @@ public abstract class AbstractJenkinsPluginTest extends MeasuringTest {
     }
 
     protected abstract List<Function<Executor,JenkinsPlugin>> allPluginsForLatencyMeasurement();
+
     private static final Executor latencyMeasurementPool = newCachedThreadPool();
     @Test public void should_3_be_fast() throws FileNotFoundException {
         try(PrintStream oout = new ConsolePlusFile("comparaison-latences.txt")) {
@@ -95,7 +96,10 @@ public abstract class AbstractJenkinsPluginTest extends MeasuringTest {
 
     protected abstract int scalabilityTestParallelism();
     protected abstract int scalabilityTestConcurrency();
-    protected abstract List<Function<Executor,JenkinsPlugin>> allPluginsForScalabilityMeasurement();
+    protected List<Function<Executor,JenkinsPlugin>> allPluginsForScalabilityMeasurement() {
+        return allPluginsForLatencyMeasurement();
+    }
+
     @Test public void should_3bis_scale() throws FileNotFoundException {
         int CONCURRENCY = scalabilityTestConcurrency(), PARALLELISM = scalabilityTestParallelism();
         Executor scalabilityMeasurementPool = newFixedThreadPool(PARALLELISM);
