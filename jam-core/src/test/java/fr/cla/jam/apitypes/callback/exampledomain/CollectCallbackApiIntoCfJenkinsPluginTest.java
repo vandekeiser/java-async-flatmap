@@ -1,12 +1,12 @@
 package fr.cla.jam.apitypes.callback.exampledomain;
 
-import fr.cla.jam.AbstractJenkinsPluginTest;
 import fr.cla.jam.apitypes.completionstage.exampledomain.CsJiraApi;
 import fr.cla.jam.apitypes.completionstage.exampledomain.FakeCsJiraApi;
 import fr.cla.jam.apitypes.completionstage.exampledomain.LatentCsJiraApi;
 import fr.cla.jam.apitypes.sync.exampledomain.FakeSyncJiraApi;
 import fr.cla.jam.apitypes.sync.exampledomain.LatentSyncJiraApi;
 import fr.cla.jam.apitypes.sync.exampledomain.SyncJiraApi;
+import fr.cla.jam.exampledomain.AbstractJenkinsPluginTest;
 import fr.cla.jam.exampledomain.CfJenkinsPlugin;
 import fr.cla.jam.exampledomain.JenkinsPlugin;
 import org.junit.FixMethodOrder;
