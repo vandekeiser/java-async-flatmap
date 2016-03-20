@@ -1,6 +1,6 @@
 package fr.cla.jam.blocking.exampledomain;
 
-import fr.cla.jam.blocking.BlockingAsyncSets_Collect;
+import fr.cla.jam.blocking.BlockingAsyncCollections;
 import fr.cla.jam.blocking.BlockingCompletableFutures;
 import fr.cla.jam.exampledomain.AbstractJenkinsPlugin;
 import fr.cla.jam.exampledomain.AsyncJenkinsPlugin;
@@ -21,7 +21,7 @@ public class BlockingJenkinsPlugin_Collect extends AbstractJenkinsPlugin impleme
             BlockingCompletableFutures.asyncifyWithPool(srv::findBundlesByName, dedicatedPool);
         
         Function<Set<JiraBundle>, CompletableFuture<Set<JiraComponent>>> findComponentsByBundlesAsync = 
-            bundles -> BlockingAsyncSets_Collect.flatMapAsync(bundles, srv::findComponentsByBundle, dedicatedPool);
+            bundles -> BlockingAsyncCollections.flatMapSetAsync(bundles, srv::findComponentsByBundle, dedicatedPool);
                 
         this.findComponentsByBundleNameAsync = findBundlesByNameAsync.andThen(
             bundlesFuture -> bundlesFuture.thenCompose(findComponentsByBundlesAsync)

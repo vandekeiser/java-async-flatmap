@@ -3,6 +3,8 @@ package fr.cla.jam.blocking;
 import fr.cla.jam.CollectionSupplier;
 import fr.cla.jam.FlatteningCollectionCollector;
 import fr.cla.jam.Sets;
+import fr.cla.jam.exampledomain.JiraBundle;
+import fr.cla.jam.exampledomain.JiraComponent;
 
 import java.util.Collection;
 import java.util.Collections;
