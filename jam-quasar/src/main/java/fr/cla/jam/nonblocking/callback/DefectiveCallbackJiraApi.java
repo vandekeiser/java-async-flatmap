@@ -1,8 +1,8 @@
 package fr.cla.jam.nonblocking.callback;
 
+import fr.cla.jam.exampledomain.JiraApiException;
 import fr.cla.jam.exampledomain.JiraBundle;
 import fr.cla.jam.exampledomain.JiraComponent;
-import fr.cla.jam.exampledomain.JiraApiException;
 import fr.cla.jam.nonblocking.callback.exampledomain.CallbackJiraApi;
 
 import java.util.Set;

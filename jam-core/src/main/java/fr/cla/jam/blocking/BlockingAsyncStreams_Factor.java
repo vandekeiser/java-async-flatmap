@@ -1,5 +1,7 @@
 package fr.cla.jam.blocking;
 
+import fr.cla.jam.ContainerOfMany;
+
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.BinaryOperator;
@@ -43,7 +45,7 @@ public final class BlockingAsyncStreams_Factor {
     
     
     private static class StreamContainerOfMany<E, Es extends Stream<E>> 
-    implements BlockingAsyncContainersOfMany.ContainerOfMany<E> {
+    implements ContainerOfMany<E> {
         private final Es stream;
         private StreamContainerOfMany(Es stream) {this.stream = requireNonNull(stream);}
         private Es underlyingContainer() {return this.stream;}
@@ -62,7 +64,7 @@ public final class BlockingAsyncStreams_Factor {
         }
         
         static <F, Fs extends Stream<F>>
-        BlockingAsyncContainersOfMany.ContainerSupplier<F, StreamContainerOfMany<F, Fs>> containerSupplier(
+        ContainerSupplier<F, StreamContainerOfMany<F, Fs>> containerSupplier(
             StreamSupplier<F, Fs> streamSupplier
         ) {
             return () -> new StreamContainerOfMany<>(streamSupplier.get());
