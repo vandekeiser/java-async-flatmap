@@ -139,11 +139,11 @@ public class NonBlockingJenkinsPluginTest extends MeasuringTest {
 
     private List<? extends JenkinsPlugin> allPlugins() {
         List<BiFunction<BlockingJiraApi, Executor, JenkinsPlugin>> blockingPlugins = Arrays.asList(
-            BlockingJenkinsPlugin_SequentialStream::new,
-            BlockingJenkinsPlugin_ParallelStream::new,
-            BlockingJenkinsPlugin_Reduce::new,
             BlockingJenkinsPlugin_Collect::new,
-            BlockingJenkinsPlugin_GenericCollect::new
+            BlockingJenkinsPlugin_Collect::new,
+            BlockingJenkinsPlugin_Collect::new,
+            BlockingJenkinsPlugin_Collect::new,
+            BlockingJenkinsPlugin_Collect::new
         );
         List<BiFunction<CompletionStageJiraApi, Executor, JenkinsPlugin>> nonBlockingPlugins = Arrays.asList(
             //TODO?

@@ -35,7 +35,7 @@ public class BlockingJenkinsPluginTest extends MeasuringTest {
     public void should_1_report_bundles_errors() {
         BlockingJiraApi jira = mock(BlockingJiraApi.class);
         when(jira.findBundlesByName(any())).thenThrow(new JiraApiException());
-        JenkinsPlugin sut = new BlockingJenkinsPlugin_GenericCollect(jira, newCachedThreadPool());
+        JenkinsPlugin sut = new BlockingJenkinsPlugin_Collect(jira, newCachedThreadPool());
         
         try {
             sut.findComponentsByBundleName("foo");
@@ -50,7 +50,7 @@ public class BlockingJenkinsPluginTest extends MeasuringTest {
     @Test
     public void should_2_report_components_errors() {
         BlockingJiraApi jira = mock(BlockingJiraApi.class);
-        JenkinsPlugin sut = new BlockingJenkinsPlugin_GenericCollect(jira, newCachedThreadPool());
+        JenkinsPlugin sut = new BlockingJenkinsPlugin_Collect(jira, newCachedThreadPool());
         when(jira.findBundlesByName(any())).thenReturn(singleton(new JiraBundle("the bundle")));
         when(jira.findComponentsByBundle(any())).thenThrow(new JiraApiException());
         
@@ -90,8 +90,8 @@ public class BlockingJenkinsPluginTest extends MeasuringTest {
     
     @Test public void should_4_find_the_right_nunmber_of_jira_components() {
         JenkinsPlugin sut = new BlockingJenkinsPlugin_Collect(
-                new BlockingJiraApiWithLatency(new FakeBlockingJiraApi()),
-                newCachedThreadPool()
+            new BlockingJiraApiWithLatency(new FakeBlockingJiraApi()),
+            newCachedThreadPool()
         );
         
         IntStream.rangeClosed(1, 1).forEach(i -> {
@@ -103,7 +103,7 @@ public class BlockingJenkinsPluginTest extends MeasuringTest {
     }
     
     @Test public void should_5_be_chainable() {
-        AsyncJenkinsPlugin sut = new BlockingJenkinsPlugin_GenericCollect(
+        AsyncJenkinsPlugin sut = new BlockingJenkinsPlugin_Collect(
             new BlockingJiraApiWithLatency(new FakeBlockingJiraApi()),
             newCachedThreadPool()
         );
@@ -134,7 +134,7 @@ public class BlockingJenkinsPluginTest extends MeasuringTest {
     }
     
     @Test public void should_6_work_with_other_collections() {
-        JenkinsPlugin sut = new BlockingJenkinsPlugin_GenericCollect(
+        JenkinsPlugin sut = new BlockingJenkinsPlugin_Collect(
             new BlockingJiraApiWithLatency(new FakeBlockingJiraApi()),
             newCachedThreadPool()
         );
