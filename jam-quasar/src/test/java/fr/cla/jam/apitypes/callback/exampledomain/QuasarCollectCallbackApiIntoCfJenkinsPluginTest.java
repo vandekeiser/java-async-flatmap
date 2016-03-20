@@ -59,7 +59,7 @@ public class QuasarCollectCallbackApiIntoCfJenkinsPluginTest extends AbstractJen
 
     @Override
     protected int scalabilityTestConcurrency() {
-        return 1000;
+        return 10000;
     }
 
     @Override
@@ -69,19 +69,76 @@ public class QuasarCollectCallbackApiIntoCfJenkinsPluginTest extends AbstractJen
         List<BiFunction<CsJiraApi, Executor, JenkinsPlugin>> csPlugins = Arrays.asList(
         );
         List<BiFunction<CallbackJiraApi, Executor, JenkinsPlugin>> callbackPlugins = Arrays.asList(
-            CollectCallbackApiIntoCfJenkinsPlugin::new,
-            QuasarCollectCallbackApiIntoCfJenkinsPlugin::new
+//            CollectCallbackApiIntoCfJenkinsPlugin::new,
+//            QuasarCollectCallbackApiIntoCfJenkinsPlugin::new
+
+                CollectCallbackApiIntoCfJenkinsPlugin::new
+
+//                QuasarCollectCallbackApiIntoCfJenkinsPlugin::new
         );
 
         SyncJiraApi syncApi = new LatentSyncJiraApi(new FakeSyncJiraApi());
         CsJiraApi csApi = new LatentCsJiraApi(new FakeCsJiraApi());
-        CallbackJiraApi callbackApi = new NonBlockingLatentCallbackJiraApi(new FakeCallbackJiraApi());
+//        CallbackJiraApi blockingCallbackApi = new BlockingLatentCallbackJiraApi(new FakeCallbackJiraApi());
+        CallbackJiraApi nonBlockingCallbackApi = new NonBlockingLatentCallbackJiraApi(new FakeCallbackJiraApi());
 
         List<Function<Executor,JenkinsPlugin>> allPlugins = new ArrayList<>();
         allPlugins.addAll(syncPlugins.stream().map(curry(syncApi)).collect(toList()));
         allPlugins.addAll(csPlugins.stream().map(curry(csApi)).collect(toList()));
-        allPlugins.addAll(callbackPlugins.stream().map(curry(callbackApi)).collect(toList()));
+//        allPlugins.addAll(callbackPlugins.stream().map(curry(blockingCallbackApi)).collect(toList()));
+        allPlugins.addAll(callbackPlugins.stream().map(curry(nonBlockingCallbackApi)).collect(toList()));
         return allPlugins;
     }
 
+    /*
+    * AVEC -javaagent
+    *   blockingCallbackApi + CollectCallbackApiIntoCfJenkinsPlugin = jamais
+    *   blockingCallbackApi + QuasarCollectCallbackApiIntoCfJenkinsPlugin = jamais
+    *   nonBlockingCallbackApi + CollectCallbackApiIntoCfJenkinsPlugin = PT6.957S
+    *   nonBlockingCallbackApi + QuasarCollectCallbackApiIntoCfJenkinsPlugin = PT10.04S
+    *
+    * SANS -javaagent
+    *   blockingCallbackApi + CollectCallbackApiIntoCfJenkinsPlugin = jamais
+    *   blockingCallbackApi + QuasarCollectCallbackApiIntoCfJenkinsPlugin = "QUASAR WARNING" , jamais
+    *   nonBlockingCallbackApi + CollectCallbackApiIntoCfJenkinsPlugin = "QUASAR WARNING" , PT8.659S
+    *   nonBlockingCallbackApi + QuasarCollectCallbackApiIntoCfJenkinsPlugin = "QUASAR WARNING" , PT6.268S
+    *
+    * -->la presence de l'agent ne change rien!!
+    * -->l'utilisation de l'api blocking/nonblocking fait toute la difference
+    *   -->mais ca devrait etre impossible puisque les Fiber.sleep devbraient devenir des Thread.sleep
+    *
+    * SANS -javaagent, remplace fiber.sleep par thread.sleep dans nonBlockingCallbackApi
+    *   nonBlockingCallbackApi(thread.sleep) + CollectCallbackApiIntoCfJenkinsPlugin = "QUASAR WARNING" , jamais
+    *   nonBlockingCallbackApi(thread.sleep) + QuasarCollectCallbackApiIntoCfJenkinsPlugin = "QUASAR WARNING" , jamais
+    * donc c'est bien ca
+    *
+    * Par contre, il y avait un truc bizarre ds AbstractLatentCallbackJiraApi:
+    *   protected static final Executor delayExecutor = Executors.newFixedThreadPool(1);
+    * On change juste ca, tjrs avec un sleep ds le supposement nonblocking:
+    *   protected static final Executor delayExecutor = Executors.newCachedThreadPool();
+    *
+    * Ca donne:
+    *   nonBlockingCallbackApi(thread.sleep) + CollectCallbackApiIntoCfJenkinsPlugin = "QUASAR WARNING" ,  PT7.197S
+    *   nonBlockingCallbackApi(thread.sleep) + QuasarCollectCallbackApiIntoCfJenkinsPlugin = "QUASAR WARNING" ,  PT14.858S
+    *
+    * C'est uniquement le ralentissement du sleep qui cause ca
+    * On passe CONCURRENCY à 10_000 pour voir si l'api cesse d'etre capable d'etre nonblocking et que ca s'effondre qd on depasse le nb de threads possibles:
+    *
+    *Ca donne:
+    *   nonBlockingCallbackApi(thread.sleep) + CollectCallbackApiIntoCfJenkinsPlugin = "QUASAR WARNING" , PT1M34.403S
+    *   nonBlockingCallbackApi(thread.sleep) + QuasarCollectCallbackApiIntoCfJenkinsPlugin = "QUASAR WARNING" , PT3M57.857S
+    *
+    * Je repasse en fiber.sleep pour voir si ca arrange (le delay executor est tjrs newCached):
+    *   nonBlockingCallbackApi(thread.sleep) + CollectCallbackApiIntoCfJenkinsPlugin = "QUASAR WARNING" , PT1M50.697S
+    *   nonBlockingCallbackApi(thread.sleep) + QuasarCollectCallbackApiIntoCfJenkinsPlugin = "QUASAR WARNING" , PT2M9.132S
+    *Ca change rien..
+    *
+    * Je remet l'agent:
+    *   nonBlockingCallbackApi(thread.sleep) + CollectCallbackApiIntoCfJenkinsPlugin = "QUASAR WARNING" , jamais
+    *   nonBlockingCallbackApi(thread.sleep) + QuasarCollectCallbackApiIntoCfJenkinsPlugin = "QUASAR WARNING" , jamais
+    *
+    * Je remet le delaypool a 1, en fait son but etait justement d'eviter ca:
+    *   -avec l'agent c'est long, mais on voit defiler les after xxx a 13s, puis OutOfMemoryError: GC overhead limit exceeded
+     *  -sans l'agent c'est long, mais on voit defiler les after xxx a 1mn, puis OutOfMemoryError: GC overhead limit exceeded
+    * */
 }

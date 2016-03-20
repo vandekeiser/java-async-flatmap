@@ -112,7 +112,8 @@ public abstract class AbstractJenkinsPluginTest extends MeasuringTest {
                 .forEach(p -> nAtATime(CONCURRENCY, oout, p, () -> {
                     Instant before = Instant.now();
                     Set<JiraComponent> answers = p.findComponentsByBundleName("toto59");
-                    //printResult(out, p, before, answers);
+
+                    printResult(out, p, before, answers);
                     blackHole.addAll(answers);
                 }));
         }
@@ -127,12 +128,12 @@ public abstract class AbstractJenkinsPluginTest extends MeasuringTest {
         out.println("STARTING measuring " + p);
 
         IntStream.range(0, nAtATime).forEach(i -> {
-            //out.println("BEFORE " + i);
+            out.println("BEFORE " + i);
             clientsPool.execute(() -> {
                 await(startGate);
                 r.run();
                 endGate.countDown();
-                //out.println("AFTER " + i);
+                out.println("AFTER " + i);
             });
         });
 

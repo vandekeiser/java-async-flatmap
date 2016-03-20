@@ -18,6 +18,7 @@ import static fr.cla.jam.util.FakeApi.MIN_SLEEP;
 public abstract class AbstractLatentCallbackJiraApi implements CallbackJiraApi {
 
     protected static final Executor delayExecutor = Executors.newFixedThreadPool(1);
+//    protected static final Executor delayExecutor = Executors.newCachedThreadPool();
 
     private final CallbackJiraApi jira;
     protected final Map<Object, Long> sleeps = new HashMap<>();
