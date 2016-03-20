@@ -3,9 +3,9 @@ package fr.cla.jam.nonblocking.promise;
 import com.jasongoodwin.monads.Try;
 import fr.cla.jam.ConsolePlusFile;
 import fr.cla.jam.MeasuringTest;
-import fr.cla.jam.blocking.exampledomain.BlockingJiraApi;
-import fr.cla.jam.blocking.exampledomain.BlockingJiraApiWithLatency;
-import fr.cla.jam.blocking.exampledomain.FakeBlockingJiraApi;
+import fr.cla.jam.blocking.exampledomain.SyncJiraApi;
+import fr.cla.jam.blocking.exampledomain.SyncJiraApiWithLatency;
+import fr.cla.jam.blocking.exampledomain.FakeSyncJiraApi;
 import fr.cla.jam.exampledomain.*;
 import fr.cla.jam.nonblocking.completionstage.CompletionStageJiraApi;
 import fr.cla.jam.nonblocking.exampledomain.FakeCompletionStageJiraApi;
@@ -169,7 +169,7 @@ public class QuasarPromiseJenkinsPluginTest extends MeasuringTest {
 
     @Test
     public void should_5_be_chainable() {
-        AsyncJenkinsPlugin sut = new JenkinsPlugin_PromiseCollect_Quasar(
+        CfJenkinsPlugin sut = new JenkinsPlugin_PromiseCollect_Quasar(
             new PromiseJiraApiWithLatency(new FakePromiseJiraApi()),
             newCachedThreadPool()
         );
@@ -199,10 +199,10 @@ public class QuasarPromiseJenkinsPluginTest extends MeasuringTest {
     }
 
     private List<Function<Executor, JenkinsPlugin>> allPlugins() {
-        List<BiFunction<BlockingJiraApi, Executor, JenkinsPlugin>> blockingPlugins = Arrays.asList(
-//            BlockingJenkinsPlugin_SequentialStream::new
-//            , BlockingJenkinsPlugin_ParallelStream::new
-                //BlockingJenkinsPlugin_Collect::new
+        List<BiFunction<SyncJiraApi, Executor, JenkinsPlugin>> blockingPlugins = Arrays.asList(
+//            SequentialStreamSyncApiJenkinsPlugin::new
+//            , ParallelStreamSyncApiJenkinsPlugin::new
+                //CollectSyncApiCfJenkinsPlugin::new
 //            , BlockingJenkinsPlugin_GenericCollect_Quasar::new
         );
         List<BiFunction<CompletionStageJiraApi, Executor, JenkinsPlugin>> nonBlockingPlugins = Arrays.asList(
@@ -215,7 +215,7 @@ public class QuasarPromiseJenkinsPluginTest extends MeasuringTest {
                 JenkinsPlugin_PromiseCollect_Quasar::new
         );
 
-        BlockingJiraApi blockingSrv = new BlockingJiraApiWithLatency(new FakeBlockingJiraApi());
+        SyncJiraApi blockingSrv = new SyncJiraApiWithLatency(new FakeSyncJiraApi());
         CompletionStageJiraApi nonBlockingSrv = new CompletionStageJiraApiWithLatency(new FakeCompletionStageJiraApi());
         PromiseJiraApi promiseNonBlockingSrv = new PromiseJiraApiWithLatency(new FakePromiseJiraApi());
 

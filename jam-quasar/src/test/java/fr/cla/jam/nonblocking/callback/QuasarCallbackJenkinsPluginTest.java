@@ -3,10 +3,10 @@ package fr.cla.jam.nonblocking.callback;
 import com.jasongoodwin.monads.Try;
 import fr.cla.jam.ConsolePlusFile;
 import fr.cla.jam.MeasuringTest;
-import fr.cla.jam.blocking.exampledomain.BlockingJiraApi;
-import fr.cla.jam.blocking.exampledomain.BlockingJiraApiWithLatency;
-import fr.cla.jam.blocking.exampledomain.FakeBlockingJiraApi;
-import fr.cla.jam.exampledomain.AsyncJenkinsPlugin;
+import fr.cla.jam.blocking.exampledomain.SyncJiraApi;
+import fr.cla.jam.blocking.exampledomain.SyncJiraApiWithLatency;
+import fr.cla.jam.blocking.exampledomain.FakeSyncJiraApi;
+import fr.cla.jam.exampledomain.CfJenkinsPlugin;
 import fr.cla.jam.exampledomain.JenkinsPlugin;
 import fr.cla.jam.exampledomain.JiraApiException;
 import fr.cla.jam.exampledomain.JiraComponent;
@@ -162,7 +162,7 @@ public class QuasarCallbackJenkinsPluginTest extends MeasuringTest {
     }
     
     @Test public void should_5_be_chainable() {
-        AsyncJenkinsPlugin sut = new JenkinsPlugin_CallbackCollect_Quasar(
+        CfJenkinsPlugin sut = new JenkinsPlugin_CallbackCollect_Quasar(
             new NonBlockingCallbackJiraApiWithLatency(new FakeCallbackJiraApi()),
             newCachedThreadPool()
         );
@@ -192,10 +192,10 @@ public class QuasarCallbackJenkinsPluginTest extends MeasuringTest {
     }
     
     private List<Function<Executor,JenkinsPlugin>> allPlugins() {
-        List<BiFunction<BlockingJiraApi, Executor, JenkinsPlugin>> blockingPlugins = Arrays.asList(
-//            BlockingJenkinsPlugin_SequentialStream::new
-//            , BlockingJenkinsPlugin_ParallelStream::new
-             //BlockingJenkinsPlugin_Collect::new
+        List<BiFunction<SyncJiraApi, Executor, JenkinsPlugin>> blockingPlugins = Arrays.asList(
+//            SequentialStreamSyncApiJenkinsPlugin::new
+//            , ParallelStreamSyncApiJenkinsPlugin::new
+             //CollectSyncApiCfJenkinsPlugin::new
 //            , BlockingJenkinsPlugin_GenericCollect_Quasar::new
         );
         List<BiFunction<CompletionStageJiraApi, Executor, JenkinsPlugin>> nonBlockingPlugins = Arrays.asList(
@@ -208,7 +208,7 @@ public class QuasarCallbackJenkinsPluginTest extends MeasuringTest {
             JenkinsPlugin_CallbackCollect_Quasar::new
         );
 
-        BlockingJiraApi blockingSrv = new BlockingJiraApiWithLatency(new FakeBlockingJiraApi());
+        SyncJiraApi blockingSrv = new SyncJiraApiWithLatency(new FakeSyncJiraApi());
         CompletionStageJiraApi nonBlockingSrv = new CompletionStageJiraApiWithLatency(new FakeCompletionStageJiraApi());
         CallbackJiraApi callbackNonBlockingSrv = new NonBlockingCallbackJiraApiWithLatency(new FakeCallbackJiraApi());
 

@@ -97,7 +97,7 @@ public class NonBlockingJenkinsPluginTest extends MeasuringTest {
     }
     
     @Test public void should_5_be_chainable() {
-        AsyncJenkinsPlugin sut = new NonBlockingJenkinsPlugin_Collect(
+        CfJenkinsPlugin sut = new NonBlockingJenkinsPlugin_Collect(
             new CompletionStageJiraApiWithLatency(new FakeCompletionStageJiraApi()),
             newCachedThreadPool()
         );
@@ -138,12 +138,12 @@ public class NonBlockingJenkinsPluginTest extends MeasuringTest {
     }
 
     private List<? extends JenkinsPlugin> allPlugins() {
-        List<BiFunction<BlockingJiraApi, Executor, JenkinsPlugin>> blockingPlugins = Arrays.asList(
-            BlockingJenkinsPlugin_Collect::new,
-            BlockingJenkinsPlugin_Collect::new,
-            BlockingJenkinsPlugin_Collect::new,
-            BlockingJenkinsPlugin_Collect::new,
-            BlockingJenkinsPlugin_Collect::new
+        List<BiFunction<SyncJiraApi, Executor, JenkinsPlugin>> blockingPlugins = Arrays.asList(
+            CollectSyncApiCfJenkinsPlugin::new,
+            CollectSyncApiCfJenkinsPlugin::new,
+            CollectSyncApiCfJenkinsPlugin::new,
+            CollectSyncApiCfJenkinsPlugin::new,
+            CollectSyncApiCfJenkinsPlugin::new
         );
         List<BiFunction<CompletionStageJiraApi, Executor, JenkinsPlugin>> nonBlockingPlugins = Arrays.asList(
             //TODO?
@@ -153,7 +153,7 @@ public class NonBlockingJenkinsPluginTest extends MeasuringTest {
             //cla.completablefuture.jenkins.nonblocking.JenkinsPlugin_GenericCollect::new,
         );
 
-        BlockingJiraApi blockingSrv = new BlockingJiraApiWithLatency(new FakeBlockingJiraApi());
+        SyncJiraApi blockingSrv = new SyncJiraApiWithLatency(new FakeSyncJiraApi());
         CompletionStageJiraApi nonBlockingSrv = new CompletionStageJiraApiWithLatency(new FakeCompletionStageJiraApi());
 
         List<JenkinsPlugin> allPlugins = new ArrayList<>();

@@ -4,7 +4,7 @@ import co.paralleluniverse.common.monitoring.MonitorType;
 import co.paralleluniverse.fibers.FiberExecutorScheduler;
 import co.paralleluniverse.fibers.FiberScheduler;
 import fr.cla.jam.exampledomain.AbstractJenkinsPlugin;
-import fr.cla.jam.exampledomain.AsyncJenkinsPlugin;
+import fr.cla.jam.exampledomain.CfJenkinsPlugin;
 import fr.cla.jam.exampledomain.JiraBundle;
 import fr.cla.jam.exampledomain.JiraComponent;
 import fr.cla.jam.nonblocking.promise.exampledomain.PromiseJiraApi;
@@ -15,7 +15,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
-public class JenkinsPlugin_PromiseCollect_Quasar extends AbstractJenkinsPlugin implements AsyncJenkinsPlugin {
+public class JenkinsPlugin_PromiseCollect_Quasar extends AbstractJenkinsPlugin implements CfJenkinsPlugin {
 
     private final Function<String, CompletableFuture<Set<JiraComponent>>> findComponentsByBundleNameAsync;
     private final static AtomicInteger callInFiberSchedulerCounter = new AtomicInteger(0);

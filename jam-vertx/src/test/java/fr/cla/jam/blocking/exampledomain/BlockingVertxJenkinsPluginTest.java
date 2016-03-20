@@ -37,7 +37,7 @@ public class BlockingVertxJenkinsPluginTest extends MeasuringTest {
 
     @Test
     public void should_1_report_bundles_errors() {
-        BlockingJiraApi jira = mock(BlockingJiraApi.class);
+        SyncJiraApi jira = mock(SyncJiraApi.class);
         when(jira.findBundlesByName(any())).thenThrow(new JiraApiException());
         JenkinsPlugin sut = new BlockingJenkinsPlugin_GenericCollect_Vertx(jira, newCachedThreadPool());
         
@@ -53,7 +53,7 @@ public class BlockingVertxJenkinsPluginTest extends MeasuringTest {
     
     @Test
     public void should_2_report_components_errors() {
-        BlockingJiraApi jira = mock(BlockingJiraApi.class);
+        SyncJiraApi jira = mock(SyncJiraApi.class);
         JenkinsPlugin sut = new BlockingJenkinsPlugin_GenericCollect_Vertx(jira, newCachedThreadPool());
         when(jira.findBundlesByName(any())).thenReturn(singleton(new JiraBundle("the bundle")));
         when(jira.findComponentsByBundle(any())).thenThrow(new JiraApiException());
@@ -69,17 +69,17 @@ public class BlockingVertxJenkinsPluginTest extends MeasuringTest {
     }
     
     @Test public void should_3_be_fast() throws FileNotFoundException {
-        List<BiFunction<BlockingJiraApi, Executor, JenkinsPlugin>> plugins = Arrays.asList(
-            BlockingJenkinsPlugin_Collect::new,
-            BlockingJenkinsPlugin_Collect::new,
-            BlockingJenkinsPlugin_Collect::new,
-            BlockingJenkinsPlugin_Collect::new,
-            BlockingJenkinsPlugin_Collect::new,
-            BlockingJenkinsPlugin_Collect::new,
-            BlockingJenkinsPlugin_Collect::new
+        List<BiFunction<SyncJiraApi, Executor, JenkinsPlugin>> plugins = Arrays.asList(
+            CollectSyncApiCfJenkinsPlugin::new,
+            CollectSyncApiCfJenkinsPlugin::new,
+            CollectSyncApiCfJenkinsPlugin::new,
+            CollectSyncApiCfJenkinsPlugin::new,
+            CollectSyncApiCfJenkinsPlugin::new,
+            CollectSyncApiCfJenkinsPlugin::new,
+            CollectSyncApiCfJenkinsPlugin::new
         );
 
-        BlockingJiraApi srv = new BlockingJiraApiWithLatency(new FakeBlockingJiraApi());
+        SyncJiraApi srv = new SyncJiraApiWithLatency(new FakeSyncJiraApi());
         //Executor pool = newCachedThreadPool();
         Executor pool = newFixedThreadPool(1);
         
@@ -97,7 +97,7 @@ public class BlockingVertxJenkinsPluginTest extends MeasuringTest {
     
     @Test public void should_4_find_the_right_nunmber_of_jira_components() {
         JenkinsPlugin sut = new BlockingJenkinsPlugin_GenericCollect_Vertx(
-                new BlockingJiraApiWithLatency(new FakeBlockingJiraApi()),
+                new SyncJiraApiWithLatency(new FakeSyncJiraApi()),
                 newCachedThreadPool()
         );
         
@@ -110,8 +110,8 @@ public class BlockingVertxJenkinsPluginTest extends MeasuringTest {
     }
     
     @Test public void should_5_be_chainable() {
-        AsyncJenkinsPlugin sut = new BlockingJenkinsPlugin_GenericCollect_Vertx(
-            new BlockingJiraApiWithLatency(new FakeBlockingJiraApi()),
+        CfJenkinsPlugin sut = new BlockingJenkinsPlugin_GenericCollect_Vertx(
+            new SyncJiraApiWithLatency(new FakeSyncJiraApi()),
             newCachedThreadPool()
         );
      
@@ -142,7 +142,7 @@ public class BlockingVertxJenkinsPluginTest extends MeasuringTest {
     
     @Test public void should_6_work_with_other_collections() {
         JenkinsPlugin sut = new BlockingJenkinsPlugin_GenericCollect_Vertx(
-            new BlockingJiraApiWithLatency(new FakeBlockingJiraApi()),
+            new SyncJiraApiWithLatency(new FakeSyncJiraApi()),
             newCachedThreadPool()
         );
      

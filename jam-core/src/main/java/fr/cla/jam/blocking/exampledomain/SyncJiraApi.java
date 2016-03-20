@@ -5,7 +5,7 @@ import fr.cla.jam.exampledomain.JiraComponent;
 
 import java.util.Set;
 
-public interface BlockingJiraApi {
+public interface SyncJiraApi {
     
     Set<JiraBundle> findBundlesByName(String bundleName);
     

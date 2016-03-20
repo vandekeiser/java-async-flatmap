@@ -5,7 +5,7 @@ import fr.cla.jam.blocking.BlockingAsyncCollectionsWithGenericAsyncifier;
 import fr.cla.jam.blocking.BlockingCompletableFutures;
 import fr.cla.jam.blocking.QuasarCfAdapter;
 import fr.cla.jam.exampledomain.AbstractJenkinsPlugin;
-import fr.cla.jam.exampledomain.AsyncJenkinsPlugin;
+import fr.cla.jam.exampledomain.CfJenkinsPlugin;
 import fr.cla.jam.exampledomain.JiraBundle;
 import fr.cla.jam.exampledomain.JiraComponent;
 
@@ -15,11 +15,11 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 
-public class BlockingJenkinsPlugin_GenericCollect_Quasar extends AbstractJenkinsPlugin implements AsyncJenkinsPlugin {
+public class BlockingJenkinsPlugin_GenericCollect_Quasar extends AbstractJenkinsPlugin implements CfJenkinsPlugin {
     
     private final Function<String, CompletableFuture<Set<JiraComponent>>> findComponentsByBundleNameAsync;
 
-    public BlockingJenkinsPlugin_GenericCollect_Quasar(BlockingJiraApi srv, Executor dedicatedPool) {
+    public BlockingJenkinsPlugin_GenericCollect_Quasar(SyncJiraApi srv, Executor dedicatedPool) {
         Function<String, CompletableFuture<Set<JiraBundle>>> findBundlesByNameAsync = 
             BlockingCompletableFutures.asyncify(srv::findBundlesByName, QuasarCfAdapter.supplyQuasar());
         

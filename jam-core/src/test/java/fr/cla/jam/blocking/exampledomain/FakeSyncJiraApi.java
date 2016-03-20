@@ -10,7 +10,7 @@ import static fr.cla.jam.FakeApi.NB_OF_BUNDLES_PER_NAME;
 import static fr.cla.jam.FakeApi.NB_OF_COMPONENTS_PER_BUNDLE;
 import static java.util.stream.Collectors.toSet;
 
-public class FakeBlockingJiraApi implements BlockingJiraApi {
+public class FakeSyncJiraApi implements SyncJiraApi {
 
     @Override
     public Set<JiraBundle> findBundlesByName(String bundleName) {
