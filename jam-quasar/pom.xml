@@ -124,7 +124,8 @@
                         -->
 
                         <!-- Turn off before production -->
-                        <argument>-Dco.paralleluniverse.fibers.verifyInstrumentation=true</argument>
+                        <!--<argument>-Dco.paralleluniverse.fibers.verifyInstrumentation=true</argument>-->
+                        <argument>-Dco.paralleluniverse.fibers.verifyInstrumentation=false</argument>
 
                         <!-- Enable if using compile-time (AoT) instrumentation -->
                         <!-- argument>-Dco.paralleluniverse.fibers.disableAgentWarning</argument -->
@@ -161,7 +162,8 @@
                     -->
 
                     <!-- Turn off before production -->
-                    <argLine>-Dco.paralleluniverse.fibers.verifyInstrumentation=true</argLine>
+                    <!--<argLine>-Dco.paralleluniverse.fibers.verifyInstrumentation=true</argLine>-->
+                    <argLine>-Dco.paralleluniverse.fibers.verifyInstrumentation=false</argLine>
 
                     <!-- Enable if using compile-time (AoT) instrumentation -->
                     <!-- argLine>-Dco.paralleluniverse.fibers.disableAgentWarning</argLine -->
