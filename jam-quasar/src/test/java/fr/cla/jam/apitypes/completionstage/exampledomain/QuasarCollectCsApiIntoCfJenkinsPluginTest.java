@@ -1,6 +1,6 @@
 package fr.cla.jam.apitypes.completionstage.exampledomain;
 
-import fr.cla.jam.AbstractCfJenkinsPluginTest;
+import fr.cla.jam.AbstractJenkinsPluginTest;
 import fr.cla.jam.apitypes.sync.exampledomain.FakeSyncJiraApi;
 import fr.cla.jam.apitypes.sync.exampledomain.LatentSyncJiraApi;
 import fr.cla.jam.apitypes.sync.exampledomain.SyncJiraApi;
@@ -35,7 +35,7 @@ import static org.mockito.Mockito.when;
 // -javaagent:"C:\Users\User\.m2\repository\co\paralleluniverse\quasar-core\0.7.4\quasar-core-0.7.4-jdk8.jar" -Dco.paralleluniverse.fibers.verifyInstrumentation=false
 @Ignore
 @FixMethodOrder(NAME_ASCENDING)
-public class QuasarCollectCsApiIntoCfJenkinsPluginTest2 extends AbstractCfJenkinsPluginTest {
+public class QuasarCollectCsApiIntoCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
 
     @Override
     protected CfJenkinsPlugin defectiveSut() {

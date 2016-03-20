@@ -41,7 +41,7 @@ import static org.junit.runners.MethodSorters.NAME_ASCENDING;
 // -factor nb de resultats
 // -separer modules fwk et domain
 @FixMethodOrder(NAME_ASCENDING)
-public abstract class AbstractCfJenkinsPluginTest extends MeasuringTest {
+public abstract class AbstractJenkinsPluginTest extends MeasuringTest {
 
     protected abstract CfJenkinsPlugin defectiveSut();
     @Test

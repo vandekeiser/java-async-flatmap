@@ -1,6 +1,6 @@
 package fr.cla.jam.apitypes.promise.exampledomain;
 
-import fr.cla.jam.AbstractCfJenkinsPluginTest;
+import fr.cla.jam.AbstractJenkinsPluginTest;
 import fr.cla.jam.apitypes.completionstage.exampledomain.CsJiraApi;
 import fr.cla.jam.apitypes.completionstage.exampledomain.FakeCsJiraApi;
 import fr.cla.jam.apitypes.completionstage.exampledomain.LatentCsJiraApi;
@@ -30,7 +30,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @FixMethodOrder(NAME_ASCENDING)
-public class CollectPromiseApiIntoCfJenkinsPluginTest2 extends AbstractCfJenkinsPluginTest {
+public class CollectPromiseApiIntoCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
 
     @Override
     protected CfJenkinsPlugin defectiveSut() {
