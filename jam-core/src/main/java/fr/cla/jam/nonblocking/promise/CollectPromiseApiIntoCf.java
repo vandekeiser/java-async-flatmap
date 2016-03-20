@@ -24,5 +24,4 @@ public final class CollectPromiseApiIntoCf {
         .collect(flattening());
     }
 
-
 }

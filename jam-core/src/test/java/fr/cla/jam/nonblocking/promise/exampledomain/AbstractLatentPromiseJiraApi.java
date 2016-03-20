@@ -1,12 +1,9 @@
-package fr.cla.jam.nonblocking.promise;
+package fr.cla.jam.nonblocking.promise.exampledomain;
 
-import co.paralleluniverse.fibers.Fiber;
-import co.paralleluniverse.fibers.FiberExecutorScheduler;
-import co.paralleluniverse.fibers.FiberScheduler;
-import co.paralleluniverse.fibers.SuspendExecution;
-import co.paralleluniverse.strands.Strand;
 import fr.cla.jam.exampledomain.JiraBundle;
 import fr.cla.jam.exampledomain.JiraComponent;
+import fr.cla.jam.nonblocking.promise.CompletablePromise;
+import fr.cla.jam.nonblocking.promise.Promise;
 import fr.cla.jam.nonblocking.promise.exampledomain.PromiseJiraApi;
 
 import java.util.HashMap;
@@ -20,12 +17,14 @@ import java.util.function.Function;
 import static fr.cla.jam.FakeApi.MAX_SLEEP;
 import static fr.cla.jam.FakeApi.MIN_SLEEP;
 
-public class LatentPromiseJiraApi implements PromiseJiraApi {
+public abstract class AbstractLatentPromiseJiraApi implements PromiseJiraApi {
 
     private final PromiseJiraApi jira;
     private final Map<Object, Long> sleeps = new HashMap<>();
 
-    public LatentPromiseJiraApi(PromiseJiraApi jira) {
+    protected static final Executor delayExecutor = Executors.newCachedThreadPool();
+
+    public AbstractLatentPromiseJiraApi(PromiseJiraApi jira) {
         this.jira = jira;
     }
 
@@ -43,39 +42,27 @@ public class LatentPromiseJiraApi implements PromiseJiraApi {
         return delayedCallbackProducer.apply(bundle);
     }
 
-    private static final Executor delayExecutor = Executors.newCachedThreadPool();
-    private static final FiberScheduler scheduler = new FiberExecutorScheduler("delay scheduler", delayExecutor);
-
     private <I, O> Function<I, Promise<O>> delay(Function<I, Promise<O>> instant, Object input) {
         return i -> {
             CompletablePromise<O> delayed = CompletablePromise.basic();
 
             instant.apply(i).whenComplete(
-                r -> new Fiber<Void>(scheduler, () -> {
-                    sleepRandomlyForRequest(input);
-                    delayed.complete(r);
-                }).start(),
+                    res -> sleepThenPropagateSuccess(i, res, delayed),
 
-                x -> delayed.completeExceptionnally(x)
+                    x -> delayed.completeExceptionnally(x)
             );
 
             return delayed;
         };
     }
 
-    private void sleepRandomlyForRequest(Object request) throws SuspendExecution {
-        sleep(sleeps.computeIfAbsent(
+    protected abstract <I, O> void sleepThenPropagateSuccess(I i, O success, CompletablePromise<O> c);
+
+    protected long sleepDuration(Object request) {
+        return sleeps.computeIfAbsent(
                 request,
                 k -> ThreadLocalRandom.current().nextLong(MIN_SLEEP, MAX_SLEEP)
-        ));
-    }
-
-    private void sleep(long sleepInMillis) throws SuspendExecution {
-        try {
-            Fiber.sleep(sleepInMillis);
-        } catch (InterruptedException e) {
-            Strand.currentStrand().interrupt();
-        }
+        );
     }
 
 }

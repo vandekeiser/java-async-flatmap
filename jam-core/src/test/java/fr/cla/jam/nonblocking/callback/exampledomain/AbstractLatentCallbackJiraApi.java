@@ -3,7 +3,6 @@ package fr.cla.jam.nonblocking.callback.exampledomain;
 import fr.cla.jam.exampledomain.JiraBundle;
 import fr.cla.jam.exampledomain.JiraComponent;
 import fr.cla.jam.nonblocking.callback.Callback;
-import fr.cla.jam.nonblocking.callback.exampledomain.CallbackJiraApi;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -61,8 +60,9 @@ public abstract class AbstractLatentCallbackJiraApi implements CallbackJiraApi {
 
     protected long sleepDuration(Object request) {
         return sleeps.computeIfAbsent(
-                request,
-                k -> ThreadLocalRandom.current().nextLong(MIN_SLEEP, MAX_SLEEP)
+            request,
+            k -> ThreadLocalRandom.current().nextLong(MIN_SLEEP, MAX_SLEEP)
         );
     }
+
 }

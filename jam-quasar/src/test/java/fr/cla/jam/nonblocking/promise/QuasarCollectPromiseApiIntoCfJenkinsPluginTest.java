@@ -10,6 +10,7 @@ import fr.cla.jam.exampledomain.*;
 import fr.cla.jam.nonblocking.completionstage.CsJiraApi;
 import fr.cla.jam.nonblocking.completionstage.exampledomain.FakeCsJiraApi;
 import fr.cla.jam.nonblocking.completionstage.exampledomain.LatentCsJiraApi;
+import fr.cla.jam.nonblocking.promise.exampledomain.FakePromiseJiraApi;
 import fr.cla.jam.nonblocking.promise.exampledomain.PromiseJiraApi;
 import org.assertj.core.api.Assertions;
 import org.junit.FixMethodOrder;
@@ -155,7 +156,7 @@ public class QuasarCollectPromiseApiIntoCfJenkinsPluginTest extends MeasuringTes
     @Test
     public void should_4_find_the_right_nunmber_of_jira_components() {
         JenkinsPlugin sut = new QuasarCollectPromiseApiIntoCfJenkinsPlugin(
-            new LatentPromiseJiraApi(new FakePromiseJiraApi()),
+            new NonBlockingLatentPromiseJiraApi(new FakePromiseJiraApi()),
             newCachedThreadPool()
         );
 
@@ -170,7 +171,7 @@ public class QuasarCollectPromiseApiIntoCfJenkinsPluginTest extends MeasuringTes
     @Test
     public void should_5_be_chainable() {
         CfJenkinsPlugin sut = new QuasarCollectPromiseApiIntoCfJenkinsPlugin(
-            new LatentPromiseJiraApi(new FakePromiseJiraApi()),
+            new NonBlockingLatentPromiseJiraApi(new FakePromiseJiraApi()),
             newCachedThreadPool()
         );
 
@@ -217,7 +218,7 @@ public class QuasarCollectPromiseApiIntoCfJenkinsPluginTest extends MeasuringTes
 
         SyncJiraApi blockingSrv = new LatentSyncJiraApi(new FakeSyncJiraApi());
         CsJiraApi nonBlockingSrv = new LatentCsJiraApi(new FakeCsJiraApi());
-        PromiseJiraApi promiseNonBlockingSrv = new LatentPromiseJiraApi(new FakePromiseJiraApi());
+        PromiseJiraApi promiseNonBlockingSrv = new NonBlockingLatentPromiseJiraApi(new FakePromiseJiraApi());
 
         List<Function<Executor, JenkinsPlugin>> allPlugins = new ArrayList<>();
         allPlugins.addAll(blockingPlugins.stream().map(curry(blockingSrv)).collect(toList()));

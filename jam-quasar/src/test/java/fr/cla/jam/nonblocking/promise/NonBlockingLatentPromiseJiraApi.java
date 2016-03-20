@@ -1,25 +1,26 @@
-package fr.cla.jam.nonblocking.callback;
+package fr.cla.jam.nonblocking.promise;
 
 import co.paralleluniverse.fibers.Fiber;
 import co.paralleluniverse.fibers.FiberExecutorScheduler;
 import co.paralleluniverse.fibers.FiberScheduler;
 import co.paralleluniverse.fibers.SuspendExecution;
 import co.paralleluniverse.strands.Strand;
-import fr.cla.jam.nonblocking.callback.exampledomain.AbstractLatentCallbackJiraApi;
-import fr.cla.jam.nonblocking.callback.exampledomain.CallbackJiraApi;
+import fr.cla.jam.nonblocking.promise.exampledomain.AbstractLatentPromiseJiraApi;
+import fr.cla.jam.nonblocking.promise.exampledomain.PromiseJiraApi;
 
-public class NonBlockingLatentCallbackJiraApi extends AbstractLatentCallbackJiraApi {
+public class NonBlockingLatentPromiseJiraApi extends AbstractLatentPromiseJiraApi implements PromiseJiraApi {
+
     private static final FiberScheduler delayScheduler = new FiberExecutorScheduler("delay scheduler", delayExecutor);
 
-    public NonBlockingLatentCallbackJiraApi(CallbackJiraApi jira) {
+    public NonBlockingLatentPromiseJiraApi(PromiseJiraApi jira) {
         super(jira);
     }
 
     @Override
-    protected <I, O> void sleepThenPropagateSuccess(I i, O success, Callback<O> c) {
-        new Fiber<Void>(delayScheduler, () -> {
+    protected <I, O> void sleepThenPropagateSuccess(I i, O success, CompletablePromise<O> c) {
+        new Fiber<>(delayScheduler, () -> {
             doSleepRandomlyForRequest(i);
-            c.onSuccess(success);
+            c.complete(success);
         }).start();
     }
 
