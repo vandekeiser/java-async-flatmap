@@ -1,5 +1,6 @@
 package fr.cla.jam.blocking;
 
+import fr.cla.jam.CollectionSupplier;
 import fr.cla.jam.Sets;
 
 import java.util.Collection;
@@ -15,8 +16,6 @@ import static java.util.stream.Collectors.toSet;
 
 public final class BlockingAsyncCollectionsWithGenericAsyncifier {
 
-    public interface CollectionSupplier<E, Es extends Collection<E>> extends Supplier<Es> {}
-    
     public static <E, F> CompletableFuture<Set<F>> flatMapSetAsync(
         Set<E> inputs,
         Function<E, Set<F>> mapper,

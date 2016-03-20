@@ -1,7 +1,5 @@
 package fr.cla.jam;
 
-import fr.cla.jam.blocking.BlockingAsyncCollectionsWithGenericAsyncifier;
-
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
@@ -24,17 +22,17 @@ public class FlatteningCollectionCollector<F, Fs extends Collection<F>> implemen
     CompletableFuture<Fs>
 > {
 
-    private final BlockingAsyncCollectionsWithGenericAsyncifier.CollectionSupplier<F, Fs> collectionSupplier;
+    private final CollectionSupplier<F, Fs> collectionSupplier;
     private final BinaryOperator<Fs> collectionUnion;
 
-    private FlatteningCollectionCollector(BlockingAsyncCollectionsWithGenericAsyncifier.CollectionSupplier<F, Fs> collectionSupplier, BinaryOperator<Fs> collectionUnion) {
+    private FlatteningCollectionCollector(CollectionSupplier<F, Fs> collectionSupplier, BinaryOperator<Fs> collectionUnion) {
         this.collectionSupplier = requireNonNull(collectionSupplier);
         this.collectionUnion = requireNonNull(collectionUnion);
     }
 
     public static <F, Fs extends Collection<F>>
     Collector<CompletableFuture<Fs>, ?, CompletableFuture<Fs>> flattening(
-        BlockingAsyncCollectionsWithGenericAsyncifier.CollectionSupplier<F, Fs> collectionSupplier,
+        CollectionSupplier<F, Fs> collectionSupplier,
         BinaryOperator<Fs> collectionUnion
     ) {
         return new FlatteningCollectionCollector<>(collectionSupplier, collectionUnion);
