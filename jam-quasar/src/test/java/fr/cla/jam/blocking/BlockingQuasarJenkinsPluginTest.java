@@ -19,6 +19,8 @@ import java.util.concurrent.*;
 import java.util.function.BiFunction;
 import java.util.stream.IntStream;
 
+import static fr.cla.jam.FakeApi.NB_OF_BUNDLES_PER_NAME;
+import static fr.cla.jam.FakeApi.NB_OF_COMPONENTS_PER_BUNDLE;
 import static java.lang.System.out;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
@@ -109,7 +111,7 @@ public class BlockingQuasarJenkinsPluginTest extends MeasuringTest {
             out.println("i: " + i);
             assertThat(
                     sut.findComponentsByBundleName("toto59")
-            ).hasSize(FakeBlockingJiraServer.NB_OF_BUNDLES_PER_NAME * FakeBlockingJiraServer.NB_OF_COMPONENTS_PER_BUNDLE);
+            ).hasSize(NB_OF_BUNDLES_PER_NAME * NB_OF_COMPONENTS_PER_BUNDLE);
         });
     }
     
@@ -152,7 +154,7 @@ public class BlockingQuasarJenkinsPluginTest extends MeasuringTest {
      
         assertThat(
             sut.findComponentsByBundleName("toto59")
-        ).hasSize(FakeBlockingJiraServer.NB_OF_BUNDLES_PER_NAME * FakeBlockingJiraServer.NB_OF_COMPONENTS_PER_BUNDLE);
+        ).hasSize(NB_OF_BUNDLES_PER_NAME * NB_OF_COMPONENTS_PER_BUNDLE);
     }
     
 }

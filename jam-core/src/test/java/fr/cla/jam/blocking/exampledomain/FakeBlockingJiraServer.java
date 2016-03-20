@@ -6,12 +6,11 @@ import fr.cla.jam.exampledomain.JiraComponent;
 import java.util.Set;
 import java.util.stream.IntStream;
 
+import static fr.cla.jam.FakeApi.NB_OF_BUNDLES_PER_NAME;
+import static fr.cla.jam.FakeApi.NB_OF_COMPONENTS_PER_BUNDLE;
 import static java.util.stream.Collectors.toSet;
 
 public class FakeBlockingJiraServer implements BlockingJiraServer {
-    public static final int 
-            NB_OF_BUNDLES_PER_NAME = 100,
-            NB_OF_COMPONENTS_PER_BUNDLE = 3;
 
     @Override
     public Set<JiraBundle> findBundlesByName(String bundleName) {

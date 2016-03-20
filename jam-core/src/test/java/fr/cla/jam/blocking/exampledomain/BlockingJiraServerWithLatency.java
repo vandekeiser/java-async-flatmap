@@ -9,12 +9,11 @@ import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
+import static fr.cla.jam.FakeApi.MAX_SLEEP;
+import static fr.cla.jam.FakeApi.MIN_SLEEP;
+
 public class BlockingJiraServerWithLatency implements BlockingJiraServer {
-    //private static final long MIN_SLEEP = 1000, MAX_SLEEP = 10_000;
-    //private static final long MIN_SLEEP = 1000, MAX_SLEEP = 3000;
-    //private static final long MIN_SLEEP = 0, MAX_SLEEP = 500;
-    private static final long MIN_SLEEP = 10, MAX_SLEEP = 500;
-    //private static final long MIN_SLEEP = 0, MAX_SLEEP = 1;
+
     private final BlockingJiraServer jira;
     private final Map<Object, Long> sleeps = new HashMap<>();
 

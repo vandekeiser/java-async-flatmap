@@ -28,6 +28,8 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 
+import static fr.cla.jam.FakeApi.NB_OF_BUNDLES_PER_NAME;
+import static fr.cla.jam.FakeApi.NB_OF_COMPONENTS_PER_BUNDLE;
 import static fr.cla.jam.Functions.curry;
 import static java.lang.System.out;
 import static java.util.Collections.emptySet;
@@ -155,7 +157,7 @@ public class QuasarCallbackJenkinsPluginTest extends MeasuringTest {
             out.println("i: " + i);
             assertThat(
                 sut.findComponentsByBundleName("toto59")
-            ).hasSize(FakeNonBlockingJiraServer.NB_OF_BUNDLES_PER_NAME * FakeNonBlockingJiraServer.NB_OF_COMPONENTS_PER_BUNDLE);
+            ).hasSize(NB_OF_BUNDLES_PER_NAME * NB_OF_COMPONENTS_PER_BUNDLE);
         });
     }
     

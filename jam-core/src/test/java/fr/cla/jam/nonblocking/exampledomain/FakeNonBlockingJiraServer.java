@@ -8,14 +8,13 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.IntStream;
 
+import static fr.cla.jam.FakeApi.NB_OF_BUNDLES_PER_NAME;
+import static fr.cla.jam.FakeApi.NB_OF_COMPONENTS_PER_BUNDLE;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.stream.Collectors.toSet;
 
 public class FakeNonBlockingJiraServer implements NonBlockingJiraServer {
-    public static final int 
-            NB_OF_BUNDLES_PER_NAME = 100,
-            NB_OF_COMPONENTS_PER_BUNDLE = 3;
 
     @Override
     public CompletableFuture<Set<JiraBundle>> findBundlesByName(String bundleName) {

@@ -12,12 +12,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.BiConsumer;
 
+import static fr.cla.jam.FakeApi.MAX_SLEEP;
+import static fr.cla.jam.FakeApi.MIN_SLEEP;
+
 public abstract class AbstractCallbackJiraServerWithLatency implements CallbackJiraServer {
-    //protected static final long MIN_SLEEP = 1000, MAX_SLEEP = 10_000;
-    //protected static final long MIN_SLEEP = 1000, MAX_SLEEP = 3000;
-    //protected static final long MIN_SLEEP = 0, MAX_SLEEP = 500;
-    protected static final long MIN_SLEEP = 10, MAX_SLEEP = 500;
-    //protected static final long MIN_SLEEP = 0, MAX_SLEEP = 1;
 
     protected static final Executor delayExecutor = Executors.newFixedThreadPool(1);
 

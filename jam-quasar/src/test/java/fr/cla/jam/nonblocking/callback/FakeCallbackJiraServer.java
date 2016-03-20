@@ -7,14 +7,12 @@ import fr.cla.jam.nonblocking.callback.exampledomain.CallbackJiraServer;
 import java.util.Set;
 import java.util.stream.IntStream;
 
+import static fr.cla.jam.FakeApi.NB_OF_BUNDLES_PER_NAME;
+import static fr.cla.jam.FakeApi.NB_OF_COMPONENTS_PER_BUNDLE;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toSet;
 
 public class FakeCallbackJiraServer implements CallbackJiraServer {
-
-    public static final int
-        NB_OF_BUNDLES_PER_NAME = 100,
-        NB_OF_COMPONENTS_PER_BUNDLE = 3;
 
     @Override
     public void findBundlesByName(String bundleName, Callback<Set<JiraBundle>> callback) {
