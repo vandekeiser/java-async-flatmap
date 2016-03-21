@@ -72,9 +72,9 @@ public class QuasarCollectCallbackApiIntoCfJenkinsPluginTest extends AbstractJen
 //            CollectCallbackApiIntoCfJenkinsPlugin::new,
 //            QuasarCollectCallbackApiIntoCfJenkinsPlugin::new
 
-                CollectCallbackApiIntoCfJenkinsPlugin::new
+//                CollectCallbackApiIntoCfJenkinsPlugin::new
 
-//                QuasarCollectCallbackApiIntoCfJenkinsPlugin::new
+                QuasarCollectCallbackApiIntoCfJenkinsPlugin::new
         );
 
         SyncJiraApi syncApi = new LatentSyncJiraApi(new FakeSyncJiraApi());
@@ -138,7 +138,71 @@ public class QuasarCollectCallbackApiIntoCfJenkinsPluginTest extends AbstractJen
     *   nonBlockingCallbackApi(thread.sleep) + QuasarCollectCallbackApiIntoCfJenkinsPlugin = "QUASAR WARNING" , jamais
     *
     * Je remet le delaypool a 1, en fait son but etait justement d'eviter ca:
+    * (CollectCallbackApiIntoCfJenkinsPlugin)
     *   -avec l'agent c'est long, mais on voit defiler les after xxx a 13s, puis OutOfMemoryError: GC overhead limit exceeded
      *  -sans l'agent c'est long, mais on voit defiler les after xxx a 1mn, puis OutOfMemoryError: GC overhead limit exceeded
+     *
+     * idem avec QuasarCollectCallbackApiIntoCfJenkinsPlugin:
+     *  OutOfMemoryError: GC overhead limit exceeded
+     *Faire un -XX: dump on oome?
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *  Exception in thread "pool-6-thread-3709" java.util.concurrent.CompletionException: java.lang.OutOfMemoryError: GC overhead limit exceeded
+	at java.util.concurrent.CompletableFuture.internalComplete(CompletableFuture.java:205)
+	at java.util.concurrent.CompletableFuture$ThenCompose.run(CompletableFuture.java:1487)
+	at java.util.concurrent.CompletableFuture.postComplete(CompletableFuture.java:193)
+	at java.util.concurrent.CompletableFuture.complete(CompletableFuture.java:2345)
+	at fr.cla.jam.apitypes.callback.CallbackApi2CfApi$1.onSuccess(CallbackApi2CfApi.java:25)
+	at fr.cla.jam.apitypes.callback.NonBlockingLatentCallbackJiraApi.lambda$sleepThenPropagateSuccess$bf9cda6e$1(NonBlockingLatentCallbackJiraApi.java:26)
+	at fr.cla.jam.apitypes.callback.NonBlockingLatentCallbackJiraApi$$Lambda$25/500448553.run(Unknown Source)
+	at co.paralleluniverse.strands.SuspendableUtils$VoidSuspendableCallable.run(SuspendableUtils.java:44)
+	at co.paralleluniverse.strands.SuspendableUtils$VoidSuspendableCallable.run(SuspendableUtils.java:32)
+	at co.paralleluniverse.fibers.Fiber.run(Fiber.java:1026)
+	at co.paralleluniverse.fibers.Fiber.run1(Fiber.java:1021)
+	at co.paralleluniverse.fibers.Fiber.exec(Fiber.java:732)
+	at co.paralleluniverse.fibers.RunnableFiberTask.doExec(RunnableFiberTask.java:94)
+	at co.paralleluniverse.fibers.RunnableFiberTask.run(RunnableFiberTask.java:85)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: java.lang.OutOfMemoryError: GC overhead limit exceeded
+	at java.util.Arrays.copyOf(Arrays.java:3332)
+	at java.lang.AbstractStringBuilder.expandCapacity(AbstractStringBuilder.java:137)
+	at java.lang.AbstractStringBuilder.ensureCapacityInternal(AbstractStringBuilder.java:121)
+	at java.lang.AbstractStringBuilder.append(AbstractStringBuilder.java:421)
+	at java.lang.StringBuilder.append(StringBuilder.java:136)
+	at co.paralleluniverse.fibers.Fiber.setName(Fiber.java:287)
+	at co.paralleluniverse.fibers.Fiber.<init>(Fiber.java:172)
+	at co.paralleluniverse.fibers.Fiber.<init>(Fiber.java:348)
+	at co.paralleluniverse.fibers.Fiber.<init>(Fiber.java:375)
+	at fr.cla.jam.apitypes.callback.NonBlockingLatentCallbackJiraApi.sleepThenPropagateSuccess(NonBlockingLatentCallbackJiraApi.java:23)
+	at fr.cla.jam.apitypes.callback.exampledomain.AbstractLatentCallbackJiraApi$1.onSuccess(AbstractLatentCallbackJiraApi.java:49)
+	at fr.cla.jam.apitypes.callback.exampledomain.FakeCallbackJiraApi.findComponentsByBundle(FakeCallbackJiraApi.java:30)
+	at fr.cla.jam.apitypes.callback.exampledomain.AbstractLatentCallbackJiraApi$$Lambda$28/209128072.accept(Unknown Source)
+	at fr.cla.jam.apitypes.callback.exampledomain.AbstractLatentCallbackJiraApi.lambda$delay$0(AbstractLatentCallbackJiraApi.java:46)
+	at fr.cla.jam.apitypes.callback.exampledomain.AbstractLatentCallbackJiraApi$$Lambda$20/1918461242.accept(Unknown Source)
+	at fr.cla.jam.apitypes.callback.exampledomain.AbstractLatentCallbackJiraApi.findComponentsByBundle(AbstractLatentCallbackJiraApi.java:41)
+	at fr.cla.jam.apitypes.callback.exampledomain.CollectCallbackApiIntoCfJenkinsPlugin$$Lambda$27/1568587390.accept(Unknown Source)
+	at fr.cla.jam.apitypes.callback.CallbackApi2CfApi.cfThatWaitsToBeCalledBack(CallbackApi2CfApi.java:22)
+	at fr.cla.jam.apitypes.callback.CallbackApi2CfApi.lambda$null$47(CallbackApi2CfApi.java:13)
+	at fr.cla.jam.apitypes.callback.CallbackApi2CfApi$$Lambda$12/1325808650.apply(Unknown Source)
+	at java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:193)
+	at java.util.HashMap$KeySpliterator.forEachRemaining(HashMap.java:1540)
+	at java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:512)
+	at java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:502)
+	at java.util.stream.ReduceOps$ReduceOp.evaluateSequential(ReduceOps.java:708)
+	at java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+	at java.util.stream.ReferencePipeline.collect(ReferencePipeline.java:499)
+	at fr.cla.jam.apitypes.callback.CollectCallbackApiIntoCf.flatMapCallbackAsync(CollectCallbackApiIntoCf.java:23)
+	at fr.cla.jam.apitypes.callback.exampledomain.CollectCallbackApiIntoCfJenkinsPlugin.lambda$new$28(CollectCallbackApiIntoCfJenkinsPlugin.java:25)
+	at fr.cla.jam.apitypes.callback.exampledomain.CollectCallbackApiIntoCfJenkinsPlugin$$Lambda$13/510464020.apply(Unknown Source)
+	at java.util.concurrent.CompletableFuture$ThenCompose.run(CompletableFuture.java:1453)
+	at java.util.concurrent.CompletableFuture.postComplete(CompletableFuture.java:193)
+     *
     * */
 }
