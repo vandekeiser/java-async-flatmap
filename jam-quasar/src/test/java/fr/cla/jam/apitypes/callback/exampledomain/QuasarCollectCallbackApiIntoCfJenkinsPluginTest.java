@@ -59,7 +59,7 @@ public class QuasarCollectCallbackApiIntoCfJenkinsPluginTest extends AbstractJen
 
     @Override
     protected int scalabilityTestConcurrency() {
-        return 10000;
+        return 1000;
     }
 
     @Override
@@ -69,12 +69,12 @@ public class QuasarCollectCallbackApiIntoCfJenkinsPluginTest extends AbstractJen
         List<BiFunction<CsJiraApi, Executor, JenkinsPlugin>> csPlugins = Arrays.asList(
         );
         List<BiFunction<CallbackJiraApi, Executor, JenkinsPlugin>> callbackPlugins = Arrays.asList(
-//            CollectCallbackApiIntoCfJenkinsPlugin::new,
-//            QuasarCollectCallbackApiIntoCfJenkinsPlugin::new
+            CollectCallbackApiIntoCfJenkinsPlugin::new,
+            QuasarCollectCallbackApiIntoCfJenkinsPlugin::new
 
 //                CollectCallbackApiIntoCfJenkinsPlugin::new
 
-                QuasarCollectCallbackApiIntoCfJenkinsPlugin::new
+//                QuasarCollectCallbackApiIntoCfJenkinsPlugin::new
         );
 
         SyncJiraApi syncApi = new LatentSyncJiraApi(new FakeSyncJiraApi());
@@ -209,7 +209,13 @@ Caused by: java.lang.OutOfMemoryError: GC overhead limit exceeded
      *Faire un -XX: dump on oome?
      *
      *
+     *avec un PARALLESIM de 10, ca change rien
+     * avec un PARALLESIM de 100, ca change rien
      *
+     *c'est pe les cf qui prenne la place et pas les thread?
+     * -combien de threads?
+     * -combien de fibers? utiliser les mbeans programmatiquement si le debug veut pas marcher
+     * -analyser le dump
      *
      *
      *
