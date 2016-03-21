@@ -142,17 +142,7 @@ public class QuasarCollectCallbackApiIntoCfJenkinsPluginTest extends AbstractJen
     *   -avec l'agent c'est long, mais on voit defiler les after xxx a 13s, puis OutOfMemoryError: GC overhead limit exceeded
      *  -sans l'agent c'est long, mais on voit defiler les after xxx a 1mn, puis OutOfMemoryError: GC overhead limit exceeded
      *
-     * idem avec QuasarCollectCallbackApiIntoCfJenkinsPlugin:
-     *  OutOfMemoryError: GC overhead limit exceeded
-     *Faire un -XX: dump on oome?
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *  Exception in thread "pool-6-thread-3709" java.util.concurrent.CompletionException: java.lang.OutOfMemoryError: GC overhead limit exceeded
+     * *  Exception in thread "pool-6-thread-3709" java.util.concurrent.CompletionException: java.lang.OutOfMemoryError: GC overhead limit exceeded
 	at java.util.concurrent.CompletableFuture.internalComplete(CompletableFuture.java:205)
 	at java.util.concurrent.CompletableFuture$ThenCompose.run(CompletableFuture.java:1487)
 	at java.util.concurrent.CompletableFuture.postComplete(CompletableFuture.java:193)
@@ -203,6 +193,28 @@ Caused by: java.lang.OutOfMemoryError: GC overhead limit exceeded
 	at fr.cla.jam.apitypes.callback.exampledomain.CollectCallbackApiIntoCfJenkinsPlugin$$Lambda$13/510464020.apply(Unknown Source)
 	at java.util.concurrent.CompletableFuture$ThenCompose.run(CompletableFuture.java:1453)
 	at java.util.concurrent.CompletableFuture.postComplete(CompletableFuture.java:193)
+     *
+     *
+     * idem avec QuasarCollectCallbackApiIntoCfJenkinsPlugin:
+     *  OutOfMemoryError: GC overhead limit exceeded
+     *  Exception in thread "Timer-0" Exception in thread "FiberTimedScheduler-default-fiber-pool" Exception in thread "pool-7-thread-7020" java.lang.OutOfMemoryError: GC overhead limit exceeded
+	at java.util.TimerTask.<init>(TimerTask.java:40)
+	at javax.management.timer.TimerAlarmClock.<init>(TimerAlarmClock.java:50)
+	at javax.management.timer.Timer.updateTimerTable(Timer.java:1105)
+	at javax.management.timer.Timer.notifyAlarmClock(Timer.java:1202)
+	at javax.management.timer.TimerAlarmClock.run(TimerAlarmClock.java:74)
+	at java.util.TimerThread.mainLoop(Timer.java:555)
+	at java.util.TimerThread.run(Timer.java:505)
+     *
+     *Faire un -XX: dump on oome?
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+
      *
     * */
 }
