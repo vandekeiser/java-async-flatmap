@@ -10,10 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.Function;
 import java.util.stream.IntStream;
@@ -126,20 +123,26 @@ public abstract class AbstractJenkinsPluginTest extends MeasuringTest {
         CountDownLatch endGate = new CountDownLatch(nAtATime);
         Instant b = Instant.now();
         out.println("STARTING measuring " + p);
+        Set<Long> durations = new ConcurrentSkipListSet<>();
 
         IntStream.range(0, nAtATime).forEach(i -> {
             out.println("BEFORE " + i);
             clientsPool.execute(() -> {
                 await(startGate);
+                long before = System.nanoTime();
                 r.run();
+                durations.add(System.nanoTime() - before);
                 endGate.countDown();
                 out.println("AFTER " + i);
             });
         });
 
+
         startGate.countDown();
         await(endGate);
-        oout.printf("DONE measuring %-90s %-12s%n", p + ":", Duration.between(b, Instant.now()));
+
+        LongSummaryStatistics stats = durations.stream().mapToLong(Long::longValue).summaryStatistics();
+        oout.printf("DONE measuring %-90s %-12s avg=%.2fms(%d->%d) %n", p + ":", Duration.between(b, Instant.now()), stats.getAverage()/1_000_000, stats.getMin()/1_000_000, stats.getMax()/1_000_000);
     }
 
     private static void await(CountDownLatch startGate) {

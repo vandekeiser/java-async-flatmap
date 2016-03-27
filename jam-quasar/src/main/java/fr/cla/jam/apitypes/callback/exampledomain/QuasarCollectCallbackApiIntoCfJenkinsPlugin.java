@@ -1,8 +1,9 @@
 package fr.cla.jam.apitypes.callback.exampledomain;
 
 import co.paralleluniverse.common.monitoring.MonitorType;
-import co.paralleluniverse.fibers.FiberExecutorScheduler;
-import co.paralleluniverse.fibers.FiberScheduler;
+import co.paralleluniverse.fibers.*;
+import co.paralleluniverse.strands.SuspendableCallable;
+import fr.cla.jam.apitypes.callback.CallbackApi2CfApi;
 import fr.cla.jam.apitypes.callback.CollectCallbackApiIntoCf;
 import fr.cla.jam.apitypes.callback.QuasarCallbackApi2CfApi;
 import fr.cla.jam.exampledomain.AbstractJenkinsPlugin;
@@ -10,39 +11,36 @@ import fr.cla.jam.exampledomain.CfJenkinsPlugin;
 import fr.cla.jam.exampledomain.JiraBundle;
 import fr.cla.jam.exampledomain.JiraComponent;
 
+import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static java.util.Collections.emptySet;
+
 public class QuasarCollectCallbackApiIntoCfJenkinsPlugin extends AbstractJenkinsPlugin implements CfJenkinsPlugin {
     
     private final Function<String, CompletableFuture<Set<JiraComponent>>> findComponentsByBundleNameAsync;
     private final static AtomicInteger callInFiberSchedulerCounter = new AtomicInteger(0);
-    //private final static AtomicReference<FiberScheduler> callInFiberSchedulerCounter = new AtomicReference<>();
+    private final FiberExecutorScheduler dedicatedScheduler;
 
     public QuasarCollectCallbackApiIntoCfJenkinsPlugin(CallbackJiraApi srv, Executor dedicatedPool) {
-        FiberScheduler dedicatedScheduler = dedicatedScheduler(dedicatedPool);
+        this.dedicatedScheduler = dedicatedScheduler(dedicatedPool);
 
-//        try {
-//            System.out.println("SLEEP!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-//            Thread.sleep(Long.MAX_VALUE);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-        
         Function<String, CompletableFuture<Set<JiraBundle>>> findBundlesByNameAsync =
-            QuasarCallbackApi2CfApi.<String, Set<JiraBundle>>usingFiberScheduler(dedicatedScheduler)
+            CallbackApi2CfApi.<String, Set<JiraBundle>>waitToBeCalledBack()
             .apply(srv::findBundlesByName);
 
         Function<Set<JiraBundle>, CompletableFuture<Set<JiraComponent>>> 
         findComponentsByBundlesAsync = bundles -> CollectCallbackApiIntoCf.flatMapCallbackAsync(
             bundles,
             srv::findComponentsByBundle,
-            QuasarCallbackApi2CfApi.usingFiberScheduler(dedicatedScheduler)
+            CallbackApi2CfApi.waitToBeCalledBack()
         );
 
         this.findComponentsByBundleNameAsync = findBundlesByNameAsync.andThen(
@@ -54,13 +52,41 @@ public class QuasarCollectCallbackApiIntoCfJenkinsPlugin extends AbstractJenkins
         return new FiberExecutorScheduler("QuasarCollectCallbackApiIntoCfJenkinsPlugin scheduler-" + callInFiberSchedulerCounter.incrementAndGet() , dedicatedPool, MonitorType.JMX, true);
     }
 
-    //doesn't help, what is costly is the schedulers creating fibers
-//    private FiberScheduler dedicatedScheduler(Executor dedicatedPool) {
-//        return callInFiberSchedulerCounter.updateAndGet(fs -> {
-//            if(fs != null) return fs;
-//            else return new FiberExecutorScheduler("QuasarCollectCallbackApiIntoCfJenkinsPlugin scheduler", dedicatedPool, MonitorType.JMX, true);
-//        });
-//    }
+
+    @Override public Set<JiraComponent> findComponentsByBundleName(String bundleName) {
+        CompletableFuture<Set<JiraComponent>> future = findComponentsByBundleNameAsync.apply(bundleName);
+
+        //1. Direct CF join
+        return future.join();
+
+        //2. CF join in a Fiber
+//        Fiber<Set<JiraComponent>> f = new Fiber<>(dedicatedScheduler, ()->{
+//            return future.join();
+//        }).start();
+//
+//        try {
+//            return f.get();
+//        } catch (ExecutionException e) {
+//            throw new RuntimeException(e);
+//        } catch (InterruptedException e) {
+//            Thread.currentThread().interrupt();
+//            return emptySet();
+//        }
+
+        //3. CF join in a FiberAsync
+//        Fiber<Set<JiraComponent>> f = new Fiber<>(dedicatedScheduler, () ->
+//            new CfFiberAsync<>(bundleName, findComponentsByBundleNameAsync).run()
+//        ).start();
+//
+//        try {
+//            return f.get();
+//        } catch (ExecutionException e) {
+//            throw new RuntimeException(e.getCause());
+//        } catch (InterruptedException e) {
+//            Thread.currentThread().interrupt();
+//            return emptySet();
+//        }
+    }
 
     @Override
     public CompletableFuture<Set<JiraComponent>> findComponentsByBundleNameAsync(String bundleName) {

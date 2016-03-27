@@ -65,7 +65,7 @@ public class QuasarCollectPromiseApiIntoCfJenkinsPluginTest extends AbstractJenk
 
     @Override
     protected int scalabilityTestConcurrency() {
-        return 1000;
+        return 1_000;
     }
 
     @Override
@@ -75,7 +75,7 @@ public class QuasarCollectPromiseApiIntoCfJenkinsPluginTest extends AbstractJenk
         List<BiFunction<CsJiraApi, Executor, JenkinsPlugin>> csPlugins = Arrays.asList(
         );
         List<BiFunction<PromiseJiraApi, Executor, JenkinsPlugin>> promisePlugins = Arrays.asList(
-            CollectPromiseApiIntoCfJenkinsPlugin::new,
+//            CollectPromiseApiIntoCfJenkinsPlugin::new,
             QuasarCollectPromiseApiIntoCfJenkinsPlugin::new
         );
 

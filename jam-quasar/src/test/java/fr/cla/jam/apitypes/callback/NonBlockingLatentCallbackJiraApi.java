@@ -45,12 +45,12 @@ public class NonBlockingLatentCallbackJiraApi extends AbstractLatentCallbackJira
         }
     }
 
-    private void oldsleep(long sleepInMillis) throws SuspendExecution {
-        try {
-            Thread.sleep(sleepInMillis);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-    }
+//    private void oldsleep(long sleepInMillis) throws SuspendExecution {
+//        try {
+//            Thread.sleep(sleepInMillis);
+//        } catch (InterruptedException e) {
+//            Thread.currentThread().interrupt();
+//        }
+//    }
 
 }

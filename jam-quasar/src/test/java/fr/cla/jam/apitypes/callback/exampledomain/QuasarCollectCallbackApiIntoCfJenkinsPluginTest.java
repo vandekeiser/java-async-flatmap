@@ -77,9 +77,9 @@ public class QuasarCollectCallbackApiIntoCfJenkinsPluginTest extends AbstractJen
 //            CollectCallbackApiIntoCfJenkinsPlugin::new,
 //            QuasarCollectCallbackApiIntoCfJenkinsPlugin::new
 
-                CollectCallbackApiIntoCfJenkinsPlugin::new
-
-//                QuasarCollectCallbackApiIntoCfJenkinsPlugin::new
+//                CollectCallbackApiIntoCfJenkinsPlugin::new
+//
+                QuasarCollectCallbackApiIntoCfJenkinsPlugin::new
         );
 
         SyncJiraApi syncApi = new LatentSyncJiraApi(new FakeSyncJiraApi());
