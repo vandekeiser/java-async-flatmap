@@ -41,23 +41,26 @@ public abstract class AbstractLatentCallbackJiraApi implements CallbackJiraApi {
         delayedCall.accept(bundle, callback);
     }
 
-    private <I, O> BiConsumer<I, Callback<O>> delay(BiConsumer<I, Callback<O>> instant) {
-        return (i, c) -> {
-            instant.accept(i, new Callback<O>() {
-                @Override
-                public void onSuccess(O success) {
-                    sleepThenPropagateSuccess(i, success, c);
-                }
+    //provokes memory retention of the success value by the fiber
+//    private <I, O> BiConsumer<I, Callback<O>> delay(BiConsumer<I, Callback<O>> instant) {
+//        return (i, c) -> {
+//            instant.accept(i, new Callback<O>() {
+//                @Override
+//                public void onSuccess(O success) {
+//                    sleepThenPropagateSuccess(i, success, c);
+//                }
+//
+//                @Override
+//                public void onFailure(Throwable failure) {
+//                    c.onFailure(failure);
+//                }
+//            });
+//        };
+//    }
+//protected abstract <I, O> void sleepThenPropagateSuccess(I i, O success, Callback<O> c);
 
-                @Override
-                public void onFailure(Throwable failure) {
-                    c.onFailure(failure);
-                }
-            });
-        };
-    }
 
-    protected abstract <I, O> void sleepThenPropagateSuccess(I i, O success, Callback<O> c);
+    protected abstract  <I, O> BiConsumer<I, Callback<O>> delay(BiConsumer<I, Callback<O>> instant);
 
     protected long sleepDuration(Object request) {
         return sleeps.computeIfAbsent(

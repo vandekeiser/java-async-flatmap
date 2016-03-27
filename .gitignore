@@ -2,6 +2,8 @@
 **/target/*
 ~*
 *.iml
+**/*.hprof
+**/*.png
 
 completable-future-live-coding/*
 quasar-archetype/*

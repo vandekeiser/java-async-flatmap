@@ -114,7 +114,7 @@ public abstract class AbstractJenkinsPluginTest extends MeasuringTest {
                     Set<JiraComponent> answers = p.findComponentsByBundleName("toto59");
 
                     printResult(out, p, before, answers);
-                    blackHole.addAll(answers);
+                    //blackHole.addAll(answers);
                 }));
         }
         System.out.println(blackHole);

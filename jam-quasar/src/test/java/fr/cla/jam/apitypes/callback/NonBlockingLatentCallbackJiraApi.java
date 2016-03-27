@@ -10,6 +10,7 @@ import fr.cla.jam.apitypes.callback.exampledomain.CallbackJiraApi;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.function.BiConsumer;
 
 public class NonBlockingLatentCallbackJiraApi extends AbstractLatentCallbackJiraApi {
     private static final FiberScheduler delayScheduler = new FiberExecutorScheduler("delay scheduler", delayExecutor);
@@ -19,13 +20,16 @@ public class NonBlockingLatentCallbackJiraApi extends AbstractLatentCallbackJira
     }
 
     @Override
-    protected <I, O> void sleepThenPropagateSuccess(I i, O success, Callback<O> c) {
-        new Fiber<Void>(delayScheduler, () -> {
-            //Instant beforeSleep = Instant.now();
-            doSleepRandomlyForRequest(i);
-            c.onSuccess(success);
-            //System.out.println("____realSleep: " + Duration.between(beforeSleep, Instant.now()));
-        }).start();
+    protected <I, O> BiConsumer<I, Callback<O>> delay(BiConsumer<I, Callback<O>> instant) {
+        return (i, c) -> {
+            new Fiber<Void>(delayScheduler, () -> {
+                doSleepRandomlyForRequest(i);
+                instant.accept(i, new Callback<O>() {
+                    @Override public void onSuccess(O success) { c.onSuccess(success); }
+                    @Override public void onFailure(Throwable failure) { c.onFailure(failure); }
+                });
+            }).start();
+        };
     }
 
     private void doSleepRandomlyForRequest(Object request) throws SuspendExecution {
@@ -41,12 +45,12 @@ public class NonBlockingLatentCallbackJiraApi extends AbstractLatentCallbackJira
         }
     }
 
-//    private void oldsleep(long sleepInMillis) throws SuspendExecution {
-//        try {
-//            Thread.sleep(sleepInMillis);
-//        } catch (InterruptedException e) {
-//            Thread.currentThread().interrupt();
-//        }
-//    }
+    private void oldsleep(long sleepInMillis) throws SuspendExecution {
+        try {
+            Thread.sleep(sleepInMillis);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
 
 }

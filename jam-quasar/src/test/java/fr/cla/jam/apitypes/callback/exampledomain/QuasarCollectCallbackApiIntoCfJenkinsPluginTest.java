@@ -56,10 +56,15 @@ public class QuasarCollectCallbackApiIntoCfJenkinsPluginTest extends AbstractJen
     protected int scalabilityTestParallelism() {
         return 1;
     }
+//-XX:+HeapDumpOnOutOfMemoryError -javaagent:"C:\Users\User\.m2\repository\co\paralleluniverse\quasar-core\0.7.4\quasar-core-0.7.4-jdk8.jar" -Dco.paralleluniverse.fibers.verifyInstrumentation=false
+//-XX:+HeapDumpOnOutOfMemoryError
+//    java.lang.OutOfMemoryError: GC overhead limit exceeded
+//    Dumping heap to java_pid46936.hprof ...
+//    Heap dump file created [1284154277 bytes in 79.619 secs]
 
     @Override
     protected int scalabilityTestConcurrency() {
-        return 1000;
+        return 1_000;
     }
 
     @Override
@@ -69,10 +74,10 @@ public class QuasarCollectCallbackApiIntoCfJenkinsPluginTest extends AbstractJen
         List<BiFunction<CsJiraApi, Executor, JenkinsPlugin>> csPlugins = Arrays.asList(
         );
         List<BiFunction<CallbackJiraApi, Executor, JenkinsPlugin>> callbackPlugins = Arrays.asList(
-            CollectCallbackApiIntoCfJenkinsPlugin::new,
-            QuasarCollectCallbackApiIntoCfJenkinsPlugin::new
+//            CollectCallbackApiIntoCfJenkinsPlugin::new,
+//            QuasarCollectCallbackApiIntoCfJenkinsPlugin::new
 
-//                CollectCallbackApiIntoCfJenkinsPlugin::new
+                CollectCallbackApiIntoCfJenkinsPlugin::new
 
 //                QuasarCollectCallbackApiIntoCfJenkinsPlugin::new
         );

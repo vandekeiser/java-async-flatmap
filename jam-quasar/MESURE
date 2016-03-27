@@ -1,0 +1,142 @@
+char[]       20%
+String       19.8% 
+HashMap$Node 18.2%
+JiraBundle   16.5% ()
+
+ex d'objs:
+fiber-delay scheduler-10042870
+BUNDLE-toto59360
+
+JiraBundle tenus par NonBlockingLatentCallbackJiraApi
+    -->
+    //        return sleeps.computeIfAbsent(
+    //            request,
+    //            k -> ThreadLocalRandom.current().nextLong(MIN_SLEEP, MAX_SLEEP)
+    //        );
+            return ThreadLocalRandom.current().nextLong(MIN_SLEEP, MAX_SLEEP);
+        }
+
+maintenant ils sont sont tenus par des Fiber...         
+    idem mm au niveau char[]
+
+1 String = 100bytes 
+1 JiraBundle = 1 name
+10 000 * 100 = 10^6 bundles
+donc au minumum 100Mo
+
+**********
+co.paralleluniverse:name=MonitoringServices
+co.paralleluniverse.common.monitoring.MonitoringServicesMXBean
+
+************
+ObjectName=
+co.paralleluniverse:type=Fibers,name=QuasarCollectCallbackApiIntoCfJenkinsPlugin scheduler-1
+
+ClassName
+co.paralleluniverse.fibers.JMXFibersMonitor
+
+AllFiberIds
+MeanTimedWakeupLatency 0
+NumActiveFibers    400_000
+NumRunnableFibers  400_000
+NumWaitingFibers   0
+RunawayFibers      
+TimedQueueLength   0
+
+
+*****************
+avec les chgts suivants:
+    -return ThreadLocalRandom.current().nextLong(MIN_SLEEP, MAX_SLEEP);
+    -//blackHole.addAll(answers);
+    - QuasarCollectCallbackApiIntoCfJenkinsPlugin::new, nonblocking
+ET les flags VM: 
+    -XX:+HeapDumpOnOutOfMemoryError -javaagent:"C:\Users\Claisse\.m2\repository\co\paralleluniverse\quasar-core\0.7.4\quasar-core-0.7.4-jdk8.jar" -Dco.paralleluniverse.fibers.verifyInstrumentation=false
+--> CA PASSE!
+-----------------------------CORES=4, FJP SIZE=3, DEDICATED POOL SIZE=1, CONCURRENCY=10000------------------------------
+DONE measuring apitypes.callback.exampledomain.QuasarCollectCallbackApiIntoCfJenkinsPlugin:               
+    PT8M10.89S
+mais les infviduels sont lents
+    apitypes.callback.exampledomain.QuasarCollectCallbackApiIntoCfJenkinsPlugin:               
+        took PT7M28.262S  (found 300)
+
+si je change rien sauf enlever l'agent:         
+-XX:+HeapDumpOnOutOfMemoryError  -Dco.paralleluniverse.fibers.verifyInstrumentation=false 
+-----------------------------CORES=4, FJP SIZE=3, DEDICATED POOL SIZE=1, CONCURRENCY=10000------------------------------
+DONE measuring apitypes.callback.exampledomain.QuasarCollectCallbackApiIntoCfJenkinsPlugin:               PT2M39.427S 
+ca va mm plus vite!!!!!!
+
+je remet l'agent pour voir ce qui fixait l'OOME:
+turn sleeps.computeIfAbsent(
+            request,
+            k -> ThreadLocalRandom.current().nextLong(MIN_SLEEP, MAX_SLEEP)
+        );
+
+-----------------------------CORES=4, FJP SIZE=3, DEDICATED POOL SIZE=1, CONCURRENCY=10000------------------------------
+DONE measuring apitypes.callback.exampledomain.QuasarCollectCallbackApiIntoCfJenkinsPlugin:               PT2M52.086S 
+donc c'est pas le sleep        
+
+conc = 10
+
+----------------------------------CORES=2, FJP SIZE=1, DEDICATED POOL SIZE=newCachedThreadPool, CONCURRENCY=10-----------------------------------
+DONE measuring blocking.exampledomain.BlockingJenkinsPlugin_SequentialStream:                             PT28.828S   
+DONE measuring blocking.exampledomain.BlockingJenkinsPlugin_ParallelStream:                               PT2M26.621S 
+DONE measuring blocking.exampledomain.BlockingJenkinsPlugin_Collect:                                      PT4M16.263S 
+DONE measuring blocking.exampledomain.BlockingJenkinsPlugin_GenericCollect_Quasar:                        PT2M5.043S  
+DONE measuring nonblocking.completionstage.exampledomain.NonBlockingJenkinsPlugin_Collect:                PT1.128S    
+DONE measuring nonblocking.completionstage.exampledomain.NonBlockingJenkinsPlugin_Collect_Quasar:         PT1.254S    
+
+-----------------------------CORES=2, FJP SIZE=1, DEDICATED POOL SIZE=newCachedThreadPool, CONCURRENCY=100------------------------------
+DONE measuring blocking.exampledomain.BlockingJenkinsPlugin_SequentialStream:                             PT29.638S   
+DONE measuring blocking.exampledomain.BlockingJenkinsPlugin_ParallelStream:                               PT30M38.765S
+DONE measuring blocking.exampledomain.BlockingJenkinsPlugin_Collect:                                      PT42M37.908S
+DONE measuring blocking.exampledomain.BlockingJenkinsPlugin_GenericCollect_Quasar:                        PT6H8M39.151S
+DONE measuring nonblocking.completionstage.exampledomain.NonBlockingJenkinsPlugin_Collect:                PT4.614S    
+DONE measuring nonblocking.completionstage.exampledomain.NonBlockingJenkinsPlugin_Collect_Quasar:         PT10.028S   
+
+-faut le faire dans QuasarCallbackJenkinsPluginTest!!!!
+-factor tests
+
+-on a bien des fiber mm sans instrumentation!
+-c'est le Latent qui provoque le OOME, d'ou l'interet d'avoir un srv sur une autre machine
+-ne pas invoquer l'api fake avant de sleeper pour ne pas faire de retention ds la fibre
+    -oome ailleurs mais tjrs ds les fiber
+        -essai avec tjrs mm volumetrie: 10_000*100=10^6, 
+        mais comme 1m par thread ca fait bcp, on met 100 threads -> 10_000 fibers par thread
+            -tjrs oome, pe que je mets juste pas assez de mem? (1.7)        
+            -et donc qu'avec cette memoire, 
+             il faudrait plutot comparer les perfs avec conc=1000
+             entre avec quasar et sans?
+                -mais on a vu que ca changeait rien!
+                    -a reverifier
+                    - ou plutot ne serait ce pas logique que ca change rien?
+                     cf. CallbackApi2CfApi: le callback est deja non bloquant
+                    -on peut plutot le presenter comme: 
+
+liens:
+
+core:
+1/prog fonctionnelle avec une nouvelle monade: le cf<set> ou plus generalement cf<containerofmany>
+5/todo: 
+    5a/ autres operations monadiques map, filter, ..
+    5b/ renommer pour faire apparaitre le nommage constructuer(ou plus java)/flatmap
+
+quasar:
+1a/ utiliser une api non-bloquante permet de pousser plus loin le fwk!     
+1b/ par contre si l'api est bloquante on peut pas la rendre magiquemnt non-bloquante
+1c/attendre la completion du cf total n'est pas bloquant??    
+pas clair ce qui est bloqué, au moins le client
+3/ les fibers de quasar
+    4a/ prennent pas mal de memoire
+    4b/ quel est leur vrai use case a part un sleep non-blocant?
+    4c/ marchent sans instrumentation?? c'est parce qu'on ne join pas? 
+    en tt cas sleep->oldsleep change tt! en tt cas avec un pool fixed(1)..
+    et on les voit apparaitre ds le heapdump
+5/ todo
+    5a/ voyons avec vertx? (quoi?)
+    5b/ utiliser comsat->ws? 
+    ca a l'air de rendre une api de callback req/resp avec FiberAsync 
+    ("straightforward fiber-blocking code", 
+    "have the disadvantage of introducing a cumbersome, infectious programming style 
+    and don’t interoperate with imperative control flow constructs built into a language")
+
+cf thencompose = flatmap
