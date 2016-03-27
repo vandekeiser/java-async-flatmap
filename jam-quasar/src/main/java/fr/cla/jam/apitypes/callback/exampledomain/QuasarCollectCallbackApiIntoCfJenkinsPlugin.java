@@ -57,7 +57,7 @@ public class QuasarCollectCallbackApiIntoCfJenkinsPlugin extends AbstractJenkins
         CompletableFuture<Set<JiraComponent>> future = findComponentsByBundleNameAsync.apply(bundleName);
 
         //1. Direct CF join
-        return future.join();
+//        return future.join();
 
         //2. CF join in a Fiber
 //        Fiber<Set<JiraComponent>> f = new Fiber<>(dedicatedScheduler, ()->{
@@ -74,18 +74,18 @@ public class QuasarCollectCallbackApiIntoCfJenkinsPlugin extends AbstractJenkins
 //        }
 
         //3. CF join in a FiberAsync
-//        Fiber<Set<JiraComponent>> f = new Fiber<>(dedicatedScheduler, () ->
-//            new CfFiberAsync<>(bundleName, findComponentsByBundleNameAsync).run()
-//        ).start();
-//
-//        try {
-//            return f.get();
-//        } catch (ExecutionException e) {
-//            throw new RuntimeException(e.getCause());
-//        } catch (InterruptedException e) {
-//            Thread.currentThread().interrupt();
-//            return emptySet();
-//        }
+        Fiber<Set<JiraComponent>> f = new Fiber<>(dedicatedScheduler, () ->
+            new CfFiberAsync<>(bundleName, findComponentsByBundleNameAsync).run()
+        ).start();
+
+        try {
+            return f.get();
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e.getCause());
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return emptySet();
+        }
     }
 
     @Override

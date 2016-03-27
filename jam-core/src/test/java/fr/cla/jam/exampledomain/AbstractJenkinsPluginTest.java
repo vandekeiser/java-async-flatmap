@@ -121,10 +121,11 @@ public abstract class AbstractJenkinsPluginTest extends MeasuringTest {
         Executor clientsPool = newCachedThreadPool();
         CountDownLatch startGate = new CountDownLatch(1);
         CountDownLatch endGate = new CountDownLatch(nAtATime);
-        Instant b = Instant.now();
         out.println("STARTING measuring " + p);
         Set<Long> durations = new ConcurrentSkipListSet<>();
+        System.gc();System.gc();System.gc();sleep(5000);
 
+        Instant b = Instant.now();
         IntStream.range(0, nAtATime).forEach(i -> {
             out.println("BEFORE " + i);
             clientsPool.execute(() -> {
@@ -136,13 +137,19 @@ public abstract class AbstractJenkinsPluginTest extends MeasuringTest {
                 out.println("AFTER " + i);
             });
         });
-
-
         startGate.countDown();
         await(endGate);
 
         LongSummaryStatistics stats = durations.stream().mapToLong(Long::longValue).summaryStatistics();
-        oout.printf("DONE measuring %-90s %-12s avg=%.2fms(%d->%d) %n", p + ":", Duration.between(b, Instant.now()), stats.getAverage()/1_000_000, stats.getMin()/1_000_000, stats.getMax()/1_000_000);
+        oout.printf("DONE measuring %-90s %-12s avg=%.0fms(%d->%d) %n", p + ":", Duration.between(b, Instant.now()), stats.getAverage()/1_000_000, stats.getMin()/1_000_000, stats.getMax()/1_000_000);
+    }
+
+    private static void sleep(int i) {
+        try {
+            Thread.sleep(i);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     private static void await(CountDownLatch startGate) {

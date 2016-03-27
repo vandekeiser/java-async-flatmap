@@ -24,10 +24,7 @@ public class NonBlockingLatentCallbackJiraApi extends AbstractLatentCallbackJira
         return (i, c) -> {
             new Fiber<Void>(delayScheduler, () -> {
                 doSleepRandomlyForRequest(i);
-                instant.accept(i, new Callback<O>() {
-                    @Override public void onSuccess(O success) { c.onSuccess(success); }
-                    @Override public void onFailure(Throwable failure) { c.onFailure(failure); }
-                });
+                instant.accept(i, c);
             }).start();
         };
     }

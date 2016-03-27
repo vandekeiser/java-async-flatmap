@@ -25,8 +25,8 @@ import static java.util.stream.Collectors.toList;
 //deepneural4j
 
 //Run with
-// -javaagent:"C:\Users\Claisse\.m2\repository\co\paralleluniverse\quasar-core\0.7.4\quasar-core-0.7.4-jdk8.jar" -Dco.paralleluniverse.fibers.verifyInstrumentation=false
-// -javaagent:"C:\Users\User\.m2\repository\co\paralleluniverse\quasar-core\0.7.4\quasar-core-0.7.4-jdk8.jar" -Dco.paralleluniverse.fibers.verifyInstrumentation=false
+// -javaagent:"C:\Users\Claisse\.m2\repository\co\paralleluniverse\quasar-core\0.7.4\quasar-core-0.7.4-jdk8.jar" -Dco.paralleluniverse.fibers.verifyInstrumentation=false -XX:+HeapDumpOnOutOfMemoryError -mx2G
+// -javaagent:"C:\Users\User\.m2\repository\co\paralleluniverse\quasar-core\0.7.4\quasar-core-0.7.4-jdk8.jar" -Dco.paralleluniverse.fibers.verifyInstrumentation=false -XX:+HeapDumpOnOutOfMemoryError -mx2G
 
 //TODO:
 // -tester scalabilite avec JMH
@@ -64,7 +64,7 @@ public class QuasarCollectCallbackApiIntoCfJenkinsPluginTest extends AbstractJen
 
     @Override
     protected int scalabilityTestConcurrency() {
-        return 1_000;
+        return 3_000;
     }
 
     @Override
@@ -74,12 +74,12 @@ public class QuasarCollectCallbackApiIntoCfJenkinsPluginTest extends AbstractJen
         List<BiFunction<CsJiraApi, Executor, JenkinsPlugin>> csPlugins = Arrays.asList(
         );
         List<BiFunction<CallbackJiraApi, Executor, JenkinsPlugin>> callbackPlugins = Arrays.asList(
-//            CollectCallbackApiIntoCfJenkinsPlugin::new,
-//            QuasarCollectCallbackApiIntoCfJenkinsPlugin::new
+                QuasarCollectCallbackApiIntoCfJenkinsPlugin::new,
+                CollectCallbackApiIntoCfJenkinsPlugin::new
 
 //                CollectCallbackApiIntoCfJenkinsPlugin::new
 //
-                QuasarCollectCallbackApiIntoCfJenkinsPlugin::new
+//                QuasarCollectCallbackApiIntoCfJenkinsPlugin::new
         );
 
         SyncJiraApi syncApi = new LatentSyncJiraApi(new FakeSyncJiraApi());

@@ -146,5 +146,6 @@ pas clair ce qui est bloqué, au moins le client
     "have the disadvantage of introducing a cumbersome, infectious programming style 
     and don’t interoperate with imperative control flow constructs built into a language")
     5c/ utiliser quasar pour faire cf.join!
+        ca change rien
 
 cf thencompose = flatmap
