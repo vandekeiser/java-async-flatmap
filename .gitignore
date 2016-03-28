@@ -4,6 +4,7 @@
 *.iml
 **/*.hprof
 **/*.png
+**/AWS
 
 completable-future-live-coding/*
 quasar-archetype/*

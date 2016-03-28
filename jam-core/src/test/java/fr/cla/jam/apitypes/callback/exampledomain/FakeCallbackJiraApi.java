@@ -33,5 +33,9 @@ public class FakeCallbackJiraApi implements CallbackJiraApi {
                 .collect(toSet())
         );
     }
-    
+
+    @Override public String description() {
+        return getClass().getSimpleName();
+    }
+
 }

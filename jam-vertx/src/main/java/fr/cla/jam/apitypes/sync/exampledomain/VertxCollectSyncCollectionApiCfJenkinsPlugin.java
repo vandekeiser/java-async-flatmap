@@ -20,6 +20,7 @@ public class VertxCollectSyncCollectionApiCfJenkinsPlugin extends AbstractJenkin
     private final Function<String, CompletableFuture<Set<JiraComponent>>> findComponentsByBundleNameAsync;
 
     public VertxCollectSyncCollectionApiCfJenkinsPlugin(SyncJiraApi srv, Executor dedicatedPool) {
+        super(srv);
         Function<String, CompletableFuture<Set<JiraBundle>>> findBundlesByNameAsync =
             SyncApi2CfApi.asyncify(srv::findBundlesByName, VertxSyncApi2CfApi.supplyVertx());
         

@@ -22,6 +22,7 @@ public class QuasarCollectPromiseApiIntoCfJenkinsPlugin extends AbstractJenkinsP
     private final static AtomicInteger callInFiberSchedulerCounter = new AtomicInteger(0);
 
     public QuasarCollectPromiseApiIntoCfJenkinsPlugin(PromiseJiraApi srv, Executor dedicatedPool) {
+        super(srv);
         FiberScheduler dedicatedScheduler = dedicatedScheduler(dedicatedPool);
 
         Function<String, CompletableFuture<Set<JiraBundle>>> findBundlesByNameAsync =

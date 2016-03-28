@@ -17,7 +17,8 @@ public class ReduceSyncApiCfJenkinsPlugin extends AbstractJenkinsPlugin implemen
     private final Function<String, CompletableFuture<Set<JiraComponent>>> findComponentsByBundleNameAsync;
 
     public ReduceSyncApiCfJenkinsPlugin(SyncJiraApi srv, Executor dedicatedPool) {
-        Function<String, CompletableFuture<Set<JiraBundle>>> findBundlesByNameAsync = 
+        super(srv);
+        Function<String, CompletableFuture<Set<JiraBundle>>> findBundlesByNameAsync =
             SyncApi2CfApi.asyncifyWithPool(srv::findBundlesByName, dedicatedPool);
         
         Function<Set<JiraBundle>, CompletableFuture<Set<JiraComponent>>> findComponentsByBundlesAsync = 
@@ -31,5 +32,5 @@ public class ReduceSyncApiCfJenkinsPlugin extends AbstractJenkinsPlugin implemen
     public CompletableFuture<Set<JiraComponent>> findComponentsByBundleNameAsync(String bundleName) {
         return findComponentsByBundleNameAsync.apply(bundleName);
     }
-    
+
 }

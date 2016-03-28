@@ -8,6 +8,7 @@ import fr.cla.jam.exampledomain.JiraComponent;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
@@ -19,7 +20,7 @@ import static fr.cla.jam.util.FakeApi.MIN_SLEEP;
 public abstract class AbstractLatentPromiseJiraApi implements PromiseJiraApi {
 
     private final PromiseJiraApi jira;
-    private final Map<Object, Long> sleeps = new HashMap<>();
+    private final Map<Object, Long> sleeps = new ConcurrentHashMap<>();
 
     protected static final Executor delayExecutor = Executors.newCachedThreadPool();
 

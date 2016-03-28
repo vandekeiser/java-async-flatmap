@@ -28,4 +28,8 @@ public class BlockingLatentPromiseJiraApi extends AbstractLatentPromiseJiraApi i
         }
     }
 
+    @Override public String description() {
+        return getClass().getSimpleName();
+    }
+
 }

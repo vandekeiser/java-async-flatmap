@@ -7,6 +7,7 @@ import fr.cla.jam.exampledomain.JiraComponent;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
@@ -21,7 +22,7 @@ public abstract class AbstractLatentCallbackJiraApi implements CallbackJiraApi {
 //    protected static final Executor delayExecutor = Executors.newCachedThreadPool();
 
     private final CallbackJiraApi jira;
-    protected final Map<Object, Long> sleeps = new HashMap<>();
+    protected final Map<Object, Long> sleeps = new ConcurrentHashMap<>();
 
     public AbstractLatentCallbackJiraApi(CallbackJiraApi jira) {
         this.jira = jira;

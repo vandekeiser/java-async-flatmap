@@ -198,5 +198,13 @@ public abstract class AbstractJenkinsPluginTest extends MeasuringTest {
             e.printStackTrace();
         } 
     }
-    
+
+    protected boolean useRealServer() {
+        return getRealServer() != null;
+    }
+
+    protected String getRealServer() {
+        return System.getProperty("ec2instance");
+    }
+
 }

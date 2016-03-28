@@ -11,12 +11,12 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
-
 public class CollectSyncApiCfJenkinsPlugin extends AbstractJenkinsPlugin implements CfJenkinsPlugin {
     
     private final Function<String, CompletableFuture<Set<JiraComponent>>> findComponentsByBundleNameAsync;
 
     public CollectSyncApiCfJenkinsPlugin(SyncJiraApi srv, Executor dedicatedPool) {
+        super(srv);
         Function<String, CompletableFuture<Set<JiraBundle>>> findBundlesByNameAsync =
             SyncApi2CfApi.asyncifyWithPool(srv::findBundlesByName, dedicatedPool);
         
@@ -31,5 +31,5 @@ public class CollectSyncApiCfJenkinsPlugin extends AbstractJenkinsPlugin impleme
     public CompletableFuture<Set<JiraComponent>> findComponentsByBundleNameAsync(String bundleName) {
         return findComponentsByBundleNameAsync.apply(bundleName);
     }
-    
+
 }

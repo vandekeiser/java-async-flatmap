@@ -19,4 +19,8 @@ public class DefectiveCallbackJiraApi implements CallbackJiraApi {
         callback.onFailure(new JiraApiException());
     }
 
+    @Override public String description() {
+        return getClass().getSimpleName();
+    }
+
 }

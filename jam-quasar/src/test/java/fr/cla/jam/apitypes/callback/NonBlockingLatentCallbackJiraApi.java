@@ -50,4 +50,8 @@ public class NonBlockingLatentCallbackJiraApi extends AbstractLatentCallbackJira
 //        }
 //    }
 
+    @Override public String description() {
+        return getClass().getSimpleName();
+    }
+
 }

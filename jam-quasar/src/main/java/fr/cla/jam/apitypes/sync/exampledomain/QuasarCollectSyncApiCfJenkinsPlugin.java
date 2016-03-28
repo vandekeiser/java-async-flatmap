@@ -20,7 +20,8 @@ public class QuasarCollectSyncApiCfJenkinsPlugin extends AbstractJenkinsPlugin i
     private final Function<String, CompletableFuture<Set<JiraComponent>>> findComponentsByBundleNameAsync;
 
     public QuasarCollectSyncApiCfJenkinsPlugin(SyncJiraApi srv, Executor dedicatedPool) {
-        Function<String, CompletableFuture<Set<JiraBundle>>> findBundlesByNameAsync = 
+        super(srv);
+        Function<String, CompletableFuture<Set<JiraBundle>>> findBundlesByNameAsync =
             SyncApi2CfApi.asyncify(srv::findBundlesByName, QuasarSyncApi2CfApi.supplyQuasar());
         
         Function<Set<JiraBundle>, CompletableFuture<Set<JiraComponent>>> findComponentsByBundlesAsync = 

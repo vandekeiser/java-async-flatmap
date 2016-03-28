@@ -6,6 +6,7 @@ import fr.cla.jam.exampledomain.JiraComponent;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
@@ -15,7 +16,7 @@ import static fr.cla.jam.util.FakeApi.MIN_SLEEP;
 public class LatentSyncJiraApi implements SyncJiraApi {
 
     private final SyncJiraApi jira;
-    private final Map<Object, Long> sleeps = new HashMap<>();
+    private final Map<Object, Long> sleeps = new ConcurrentHashMap<>();
 
     public LatentSyncJiraApi(SyncJiraApi jira) {
         this.jira = jira;
@@ -47,5 +48,9 @@ public class LatentSyncJiraApi implements SyncJiraApi {
             Thread.currentThread().interrupt();
         }
     }
-    
+
+    @Override public String description() {
+        return getClass().getSimpleName();
+    }
+
 }

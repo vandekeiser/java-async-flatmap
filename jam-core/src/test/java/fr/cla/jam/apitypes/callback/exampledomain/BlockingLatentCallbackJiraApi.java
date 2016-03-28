@@ -46,4 +46,8 @@ public class BlockingLatentCallbackJiraApi extends AbstractLatentCallbackJiraApi
         }
     }
 
+    @Override public String description() {
+        return getClass().getSimpleName();
+    }
+
 }

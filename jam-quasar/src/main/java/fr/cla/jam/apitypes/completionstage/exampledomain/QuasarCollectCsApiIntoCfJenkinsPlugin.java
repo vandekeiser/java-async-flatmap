@@ -17,6 +17,7 @@ public class QuasarCollectCsApiIntoCfJenkinsPlugin extends AbstractJenkinsPlugin
     private final Function<String, CompletableFuture<Set<JiraComponent>>> findComponentsByBundleNameAsync;
 
     public QuasarCollectCsApiIntoCfJenkinsPlugin(CsJiraApi srv, Executor dedicatedPool) {
+        super(srv);
         Function<String, CompletableFuture<Set<JiraBundle>>> findBundlesByNameAsync =
             QuasarCsApi2CfApi.<String, Set<JiraBundle>>usingPool(dedicatedPool)
             .apply(srv::findBundlesByName);

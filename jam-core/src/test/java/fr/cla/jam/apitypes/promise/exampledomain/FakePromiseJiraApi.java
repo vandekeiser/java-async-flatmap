@@ -41,4 +41,8 @@ public class FakePromiseJiraApi implements PromiseJiraApi {
         return ret;
     }
 
+    @Override public String description() {
+        return getClass().getSimpleName();
+    }
+
 }

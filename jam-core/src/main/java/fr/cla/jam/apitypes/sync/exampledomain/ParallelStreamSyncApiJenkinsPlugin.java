@@ -15,6 +15,7 @@ public class ParallelStreamSyncApiJenkinsPlugin extends AbstractJenkinsPlugin im
     private final Function<String, Set<JiraComponent>> findComponentsByBundleName;
 
     public ParallelStreamSyncApiJenkinsPlugin(SyncJiraApi srv, Executor dedicatedPool) {
+        super(srv);
         findComponentsByBundleName = bundleName -> srv.findBundlesByName(bundleName)
             .stream().parallel()
             .flatMap(b -> srv.findComponentsByBundle(b).stream())

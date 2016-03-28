@@ -2,24 +2,20 @@ package fr.cla.jam.apitypes.callback.exampledomain;
 
 import co.paralleluniverse.common.monitoring.MonitorType;
 import co.paralleluniverse.fibers.*;
-import co.paralleluniverse.strands.SuspendableCallable;
 import fr.cla.jam.apitypes.callback.CallbackApi2CfApi;
 import fr.cla.jam.apitypes.callback.CollectCallbackApiIntoCf;
-import fr.cla.jam.apitypes.callback.QuasarCallbackApi2CfApi;
 import fr.cla.jam.exampledomain.AbstractJenkinsPlugin;
 import fr.cla.jam.exampledomain.CfJenkinsPlugin;
 import fr.cla.jam.exampledomain.JiraBundle;
 import fr.cla.jam.exampledomain.JiraComponent;
 
-import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import static java.util.Collections.emptySet;
 
@@ -30,6 +26,7 @@ public class QuasarCollectCallbackApiIntoCfJenkinsPlugin extends AbstractJenkins
     private final FiberExecutorScheduler dedicatedScheduler;
 
     public QuasarCollectCallbackApiIntoCfJenkinsPlugin(CallbackJiraApi srv, Executor dedicatedPool) {
+        super(srv);
         this.dedicatedScheduler = dedicatedScheduler(dedicatedPool);
 
         Function<String, CompletableFuture<Set<JiraBundle>>> findBundlesByNameAsync =
@@ -81,7 +78,9 @@ public class QuasarCollectCallbackApiIntoCfJenkinsPlugin extends AbstractJenkins
         try {
             return f.get();
         } catch (ExecutionException e) {
-            throw new RuntimeException(e.getCause());
+            Throwable cause = e.getCause();
+            if(cause instanceof CompletionException) throw (CompletionException)cause;
+            throw new RuntimeException(cause);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             return emptySet();

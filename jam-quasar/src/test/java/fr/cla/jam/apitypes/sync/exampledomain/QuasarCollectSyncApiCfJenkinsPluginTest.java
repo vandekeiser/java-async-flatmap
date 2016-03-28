@@ -63,10 +63,16 @@ public class QuasarCollectSyncApiCfJenkinsPluginTest extends AbstractJenkinsPlug
             CollectSyncApiCfJenkinsPlugin::new
         );
 
-        SyncJiraApi syncApi = new LatentSyncJiraApi(new FakeSyncJiraApi());
-
         List<Function<Executor,JenkinsPlugin>> allPlugins = new ArrayList<>();
+
+        SyncJiraApi syncApi = new LatentSyncJiraApi(new FakeSyncJiraApi());
         allPlugins.addAll(syncPlugins.stream().map(curry(syncApi)).collect(toList()));
+
+        if(useRealServer()) {
+            SyncJiraApi realServerSyncApi = new RealServerLatencySyncApi(new FakeSyncJiraApi(), getRealServer());
+            allPlugins.addAll(syncPlugins.stream().map(curry(realServerSyncApi)).collect(toList()));
+        }
+
         return allPlugins;
     }
 

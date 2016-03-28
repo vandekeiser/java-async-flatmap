@@ -17,6 +17,7 @@ public class CollectCallbackApiIntoCfJenkinsPlugin extends AbstractJenkinsPlugin
     private final Function<String, CompletableFuture<Set<JiraComponent>>> findComponentsByBundleNameAsync;
 
     public CollectCallbackApiIntoCfJenkinsPlugin(CallbackJiraApi srv, Executor dedicatedPool) {
+        super(srv);
         Function<String, CompletableFuture<Set<JiraBundle>>> findBundlesByNameAsync =
             CallbackApi2CfApi.<String, Set<JiraBundle>>waitToBeCalledBack()
             .apply(srv::findBundlesByName);
@@ -37,5 +38,5 @@ public class CollectCallbackApiIntoCfJenkinsPlugin extends AbstractJenkinsPlugin
     public CompletableFuture<Set<JiraComponent>> findComponentsByBundleNameAsync(String bundleName) {
         return findComponentsByBundleNameAsync.apply(bundleName);
     }
-    
+
 }

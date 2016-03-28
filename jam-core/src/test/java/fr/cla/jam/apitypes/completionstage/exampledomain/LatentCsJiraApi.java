@@ -14,7 +14,7 @@ import static fr.cla.jam.util.FakeApi.MIN_SLEEP;
 public class LatentCsJiraApi implements CsJiraApi {
 
     private final CsJiraApi jira;
-    private final Map<Object, Long> sleeps = new HashMap<>();
+    private final Map<Object, Long> sleeps = new ConcurrentHashMap<>();
 
     public LatentCsJiraApi(CsJiraApi jira) {
         this.jira = jira;
@@ -56,5 +56,9 @@ public class LatentCsJiraApi implements CsJiraApi {
             Thread.currentThread().interrupt();
         }
     }
-    
+
+    @Override public String description() {
+        return getClass().getSimpleName();
+    }
+
 }

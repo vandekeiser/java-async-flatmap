@@ -15,6 +15,7 @@ public class SequentialStreamSyncApiJenkinsPlugin extends AbstractJenkinsPlugin 
     private final Function<String, Set<JiraComponent>> findComponentsByBundleName;
 
     public SequentialStreamSyncApiJenkinsPlugin(SyncJiraApi srv, Executor dedicatedPool) {
+        super(srv);
         findComponentsByBundleName = bundleName -> srv.findBundlesByName(bundleName)
             .stream()
             .flatMap(b -> srv.findComponentsByBundle(b).stream())

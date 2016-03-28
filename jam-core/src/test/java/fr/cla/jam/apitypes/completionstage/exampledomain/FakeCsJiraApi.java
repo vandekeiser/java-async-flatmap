@@ -34,5 +34,9 @@ public class FakeCsJiraApi implements CsJiraApi {
                 .collect(toSet())
         );
     }
-    
+
+    @Override public String description() {
+        return getClass().getSimpleName();
+    }
+
 }

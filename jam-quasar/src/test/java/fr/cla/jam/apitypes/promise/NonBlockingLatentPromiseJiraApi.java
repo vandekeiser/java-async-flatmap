@@ -36,4 +36,8 @@ public class NonBlockingLatentPromiseJiraApi extends AbstractLatentPromiseJiraAp
         }
     }
 
+    @Override public String description() {
+        return getClass().getSimpleName();
+    }
+
 }

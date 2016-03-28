@@ -19,6 +19,7 @@ public class CollectPromiseApiIntoCfJenkinsPlugin extends AbstractJenkinsPlugin 
     private final static AtomicInteger callInFiberSchedulerCounter = new AtomicInteger(0);
 
     public CollectPromiseApiIntoCfJenkinsPlugin(PromiseJiraApi srv, Executor dedicatedPool) {
+        super(srv);
         Function<String, CompletableFuture<Set<JiraBundle>>> findBundlesByNameAsync =
             PromiseApi2CfApi.<String, Set<JiraBundle>>waitToBeCalledBack(dedicatedPool)
             .apply(srv::findBundlesByName);
@@ -39,6 +40,5 @@ public class CollectPromiseApiIntoCfJenkinsPlugin extends AbstractJenkinsPlugin 
     public CompletableFuture<Set<JiraComponent>> findComponentsByBundleNameAsync(String bundleName) {
         return findComponentsByBundleNameAsync.apply(bundleName);
     }
-
 
 }

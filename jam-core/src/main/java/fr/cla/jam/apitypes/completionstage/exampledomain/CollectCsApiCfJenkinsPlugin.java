@@ -17,6 +17,7 @@ public class CollectCsApiCfJenkinsPlugin extends AbstractJenkinsPlugin implement
     private final Function<String, CompletableFuture<Set<JiraComponent>>> findComponentsByBundleNameAsync;
 
     public CollectCsApiCfJenkinsPlugin(CsJiraApi srv, Executor dedicatedPool) {
+        super(srv);
         Function<String, CompletableFuture<Set<JiraBundle>>>
                 findBundlesByNameAsync = CsApi2CfApi.placeInPoolWhenComplete(srv::findBundlesByName, dedicatedPool);
         
@@ -32,5 +33,5 @@ public class CollectCsApiCfJenkinsPlugin extends AbstractJenkinsPlugin implement
     public CompletableFuture<Set<JiraComponent>> findComponentsByBundleNameAsync(String bundleName) {
         return findComponentsByBundleNameAsync.apply(bundleName);
     }
-    
+
 }

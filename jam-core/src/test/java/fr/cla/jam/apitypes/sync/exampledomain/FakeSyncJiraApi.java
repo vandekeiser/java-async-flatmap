@@ -25,4 +25,8 @@ public class FakeSyncJiraApi implements SyncJiraApi {
             .mapToObj(i -> new JiraComponent(bundle.toString() + i))
             .collect(toSet());
     }
+
+    @Override public String description() {
+        return getClass().getSimpleName();
+    }
 }

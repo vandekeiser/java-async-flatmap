@@ -113,12 +113,24 @@ DONE measuring nonblocking.completionstage.exampledomain.NonBlockingJenkinsPlugi
                     -on peut plutot le presenter comme: 
 
 liens:****************
+
+http://docs.paralleluniverse.co/quasar/
+
+bench block/nonblock (REST):
+http://blog.paralleluniverse.co/2014/05/29/cascading-failures/
+
+ex. de srv non-blocant simple(FiberServerSocketChannel)
+http://blog.paralleluniverse.co/2014/05/01/modern-java/
+
 http://zeroturnaround.com/rebellabs/what-are-fibers-and-why-you-should-care/
 
 Curry On: Ron Pressler - Pull Push: Please stop polluting our imperative languages with pure concepts-Curry On 
 https://www.youtube.com/watch?v=449j7oKQVkc
 
 http://blog.paralleluniverse.co/2015/08/07/scoped-continuations/
+
+http://www.larsan.net/2014/07/12/java-8-light-weight-threads/
+http://blog.takipi.com/java-io-benchmark-quasar-vs-async-forkjoinpool-vs-managedblock/
 ***********
 
 core:
@@ -147,5 +159,11 @@ pas clair ce qui est bloqué, au moins le client
     and don’t interoperate with imperative control flow constructs built into a language")
     5c/ utiliser quasar pour faire cf.join!
         ca change rien
+    5d/ vrai serveur
+        aws s2 crash VM oome sans dump.. a 256 alors que je devrais avoir 1G!
+        activer JMX?
+    --> IO locale avec API de fichier non blocante? AsynchronousFileChannel/ CompletionHandler
+        bof: "NIO.2's asynchronous channel APIs provide a convenient and standard way of performing asynchronous operations platform-independently. They allow application developers to write programs that use asynchronous I/O in a clear manner, without having to define their own Java threads and, in addition, may give performance improvements by using the asynchronous support on the underlying OS. As with many Java APIs, the amount that the API can exploit an OS's native asynchronous capabilities will depend on the support for that platform." 
+    -->srv en localhost?
 
 cf thencompose = flatmap
