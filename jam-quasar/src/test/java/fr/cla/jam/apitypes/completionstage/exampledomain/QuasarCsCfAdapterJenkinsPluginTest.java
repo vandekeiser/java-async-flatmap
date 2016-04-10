@@ -1,5 +1,8 @@
 package fr.cla.jam.apitypes.completionstage.exampledomain;
 
+import co.paralleluniverse.common.monitoring.MonitorType;
+import co.paralleluniverse.fibers.FiberExecutorScheduler;
+import fr.cla.jam.apitypes.AbstractQuasarJenkinsPluginTest;
 import fr.cla.jam.apitypes.sync.exampledomain.FakeSyncJiraApi;
 import fr.cla.jam.apitypes.sync.exampledomain.LatentSyncJiraApi;
 import fr.cla.jam.apitypes.sync.exampledomain.SyncCfJenkinsPlugin;
@@ -33,13 +36,13 @@ import static org.mockito.Mockito.when;
 // -javaagent:"C:\Users\User\.m2\repository\co\paralleluniverse\quasar-core\0.7.4\quasar-core-0.7.4-jdk8.jar" -Dco.paralleluniverse.fibers.verifyInstrumentation=false
 @Ignore
 @FixMethodOrder(NAME_ASCENDING)
-public class QuasarCsCfAdapterJenkinsPluginTest extends AbstractJenkinsPluginTest {
+public class QuasarCsCfAdapterJenkinsPluginTest extends AbstractQuasarJenkinsPluginTest {
 
     @Override
     protected CfJenkinsPlugin defectiveSut() {
         CsJiraApi jira = mock(CsJiraApi.class);
         when(jira.findBundlesByName(any())).thenReturn(failure());
-        return new QuasarCsCfJenkinsPlugin(jira, newCachedThreadPool());
+        return new QuasarCsCfJenkinsPlugin(jira, dedicatedScheduler(latencyMeasurementPool));
     }
 
     @Override
@@ -49,14 +52,14 @@ public class QuasarCsCfAdapterJenkinsPluginTest extends AbstractJenkinsPluginTes
             completedFuture(singleton(new JiraBundle("the bundle")))
         );
         when(jira.findComponentsByBundle(any())).thenReturn(failure());
-        return new QuasarCsCfJenkinsPlugin(jira, newCachedThreadPool());
+        return new QuasarCsCfJenkinsPlugin(jira, dedicatedScheduler(latencyMeasurementPool));
     }
 
     @Override
     protected CfJenkinsPlugin latentSut() {
         return new QuasarCsCfJenkinsPlugin(
             new LatentCsJiraApi(new FakeCsJiraApi()),
-            newCachedThreadPool()
+            dedicatedScheduler(latencyMeasurementPool)
         );
     }
 
@@ -76,7 +79,7 @@ public class QuasarCsCfAdapterJenkinsPluginTest extends AbstractJenkinsPluginTes
 
         return Arrays.asList(
             new CsCfJenkinsPlugin(csApi, measurementPool),
-            new QuasarCsCfJenkinsPlugin(csApi, measurementPool)
+            new QuasarCsCfJenkinsPlugin(csApi, dedicatedScheduler(measurementPool))
         );
     }
 

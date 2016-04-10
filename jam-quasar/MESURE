@@ -182,3 +182,5 @@ cf thencompose = flatmap
     -il faudrait d'abord simplifier les tests en remplacant les ::new par autre chose
     -PromiseCfAdapter.adaptFlatMap pas normal, remplacer par un QuasarPromiseCfAdapter plus simple
 -curry pour le passage des poll/sched?
+
+-suppr generic hint ds QuasarCsCfJenkinsPlugin

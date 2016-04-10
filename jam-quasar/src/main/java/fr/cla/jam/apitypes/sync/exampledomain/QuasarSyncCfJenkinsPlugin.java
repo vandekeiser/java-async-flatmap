@@ -1,5 +1,6 @@
 package fr.cla.jam.apitypes.sync.exampledomain;
 
+import co.paralleluniverse.fibers.FiberExecutorScheduler;
 import fr.cla.jam.apitypes.sync.CollectionSyncCfAdapter;
 import fr.cla.jam.apitypes.sync.QuasarSyncCfAdapter;
 import fr.cla.jam.apitypes.sync.SyncCfAdapter;
@@ -12,7 +13,7 @@ import java.util.concurrent.Executor;
 
 public class QuasarSyncCfJenkinsPlugin extends AbstractCfJenkinsPlugin implements CfJenkinsPlugin {
     
-    public QuasarSyncCfJenkinsPlugin(SyncJiraApi srv, Executor dedicatedPool) {
+    public QuasarSyncCfJenkinsPlugin(SyncJiraApi srv, FiberExecutorScheduler dedicatedScheduler) {
         super(
             srv,
             SyncCfAdapter.adapt(srv::findBundlesByName, QuasarSyncCfAdapter.adapt()),

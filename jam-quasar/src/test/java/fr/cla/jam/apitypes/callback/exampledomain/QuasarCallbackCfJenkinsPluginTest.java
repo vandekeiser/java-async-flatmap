@@ -1,5 +1,8 @@
 package fr.cla.jam.apitypes.callback.exampledomain;
 
+import co.paralleluniverse.common.monitoring.MonitorType;
+import co.paralleluniverse.fibers.FiberExecutorScheduler;
+import fr.cla.jam.apitypes.AbstractQuasarJenkinsPluginTest;
 import fr.cla.jam.apitypes.callback.NonBlockingLatentCallbackJiraApi;
 import fr.cla.jam.apitypes.completionstage.exampledomain.CsJiraApi;
 import fr.cla.jam.apitypes.completionstage.exampledomain.FakeCsJiraApi;
@@ -14,6 +17,8 @@ import fr.cla.jam.apitypes.sync.exampledomain.SyncJiraApi;
 import fr.cla.jam.exampledomain.AbstractJenkinsPluginTest;
 import fr.cla.jam.exampledomain.CfJenkinsPlugin;
 import fr.cla.jam.exampledomain.JenkinsPlugin;
+import org.junit.After;
+import org.junit.Before;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,6 +30,7 @@ import java.util.function.Function;
 
 import static fr.cla.jam.util.functions.Functions.curry;
 import static java.util.concurrent.Executors.newCachedThreadPool;
+import static java.util.concurrent.Executors.newFixedThreadPool;
 import static java.util.stream.Collectors.toList;
 
 //deepneural4j
@@ -37,23 +43,23 @@ import static java.util.stream.Collectors.toList;
 // -tester scalabilite avec JMH
 // -factor nb de resultats
 // -separer modules fwk et domain
-public class QuasarCallbackCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
+public class QuasarCallbackCfJenkinsPluginTest extends AbstractQuasarJenkinsPluginTest {
 
     @Override
     protected CfJenkinsPlugin defectiveSut() {
-        return new QuasarCallbackCfJenkinsPlugin(new DefectiveCallbackJiraApi(), newCachedThreadPool());
+        return new QuasarCallbackCfJenkinsPlugin(new DefectiveCallbackJiraApi(), dedicatedScheduler(latencyMeasurementPool));
     }
 
     @Override
     protected CfJenkinsPlugin halfDefectiveSut() {
-        return new QuasarCallbackCfJenkinsPlugin(new HalfDefectiveCallbackJiraApi(), newCachedThreadPool());
+        return new QuasarCallbackCfJenkinsPlugin(new HalfDefectiveCallbackJiraApi(), dedicatedScheduler(latencyMeasurementPool));
     }
 
     @Override
     protected CfJenkinsPlugin latentSut() {
         return new QuasarCallbackCfJenkinsPlugin(
             new NonBlockingLatentCallbackJiraApi(new FakeCallbackJiraApi()),
-            newCachedThreadPool()
+            dedicatedScheduler(latencyMeasurementPool)
         );
     }
 
@@ -78,9 +84,10 @@ public class QuasarCallbackCfJenkinsPluginTest extends AbstractJenkinsPluginTest
 
         return Arrays.asList(
             new CallbackCfJenkinsPlugin(nonBlockingCallbackApi, measurementPool),
-            new QuasarCallbackCfJenkinsPlugin(nonBlockingCallbackApi, measurementPool)
+            new QuasarCallbackCfJenkinsPlugin(nonBlockingCallbackApi, dedicatedScheduler(measurementPool))
         );
     }
+
 
     /*
     * AVEC -javaagent

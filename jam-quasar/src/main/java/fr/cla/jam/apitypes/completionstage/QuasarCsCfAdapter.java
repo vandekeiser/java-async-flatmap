@@ -13,14 +13,11 @@ import java.util.function.Function;
 
 public class QuasarCsCfAdapter {
 
-    private final static AtomicInteger callInFiberSchedulerCounter = new AtomicInteger(0);
-
     public static <T, U> Function<
         Function<T, CompletionStage<U>>,
         Function<T, CompletableFuture<U>>
-    > usingPool(Executor dedicatedPool) {
+    > adapt(FiberScheduler scheduler) {
         return adaptee -> input -> {
-            FiberScheduler scheduler = new FiberExecutorScheduler("QuasarCsCfAdapter scheduler" + callInFiberSchedulerCounter.incrementAndGet() , dedicatedPool, MonitorType.JMX, true);
             CompletableFuture<U> fiberCf = new CompletableFuture<>();
 
             new Fiber<>(scheduler, () -> {

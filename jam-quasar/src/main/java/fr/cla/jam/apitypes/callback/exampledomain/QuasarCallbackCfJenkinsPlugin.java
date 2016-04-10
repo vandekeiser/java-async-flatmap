@@ -1,20 +1,15 @@
 package fr.cla.jam.apitypes.callback.exampledomain;
 
-import co.paralleluniverse.common.monitoring.MonitorType;
 import co.paralleluniverse.fibers.FiberExecutorScheduler;
 import fr.cla.jam.apitypes.callback.CallbackCfAdapter;
 import fr.cla.jam.exampledomain.AbstractCfJenkinsPlugin;
 import fr.cla.jam.exampledomain.CfJenkinsPlugin;
 
-import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class QuasarCallbackCfJenkinsPlugin extends AbstractCfJenkinsPlugin implements CfJenkinsPlugin {
     
-    private final static AtomicInteger callInFiberSchedulerCounter = new AtomicInteger(0);
-    private final FiberExecutorScheduler dedicatedScheduler;
-
-    public QuasarCallbackCfJenkinsPlugin(CallbackJiraApi srv, Executor dedicatedPool) {
+    public QuasarCallbackCfJenkinsPlugin(CallbackJiraApi srv, FiberExecutorScheduler dedicatedScheduler) {
         super(
             srv,
             CallbackCfAdapter.adapt(srv::findBundlesByName),
@@ -23,11 +18,6 @@ public class QuasarCallbackCfJenkinsPlugin extends AbstractCfJenkinsPlugin imple
                 srv::findComponentsByBundle
             )
         );
-        this.dedicatedScheduler = dedicatedScheduler(dedicatedPool);
-    }
-
-    private FiberExecutorScheduler dedicatedScheduler(Executor dedicatedPool) {
-        return new FiberExecutorScheduler("QuasarCallbackCfJenkinsPlugin scheduler-" + callInFiberSchedulerCounter.incrementAndGet() , dedicatedPool, MonitorType.JMX, true);
     }
 
 

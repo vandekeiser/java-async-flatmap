@@ -1,5 +1,8 @@
 package fr.cla.jam.apitypes.promise.exampledomain;
 
+import co.paralleluniverse.common.monitoring.MonitorType;
+import co.paralleluniverse.fibers.FiberExecutorScheduler;
+import fr.cla.jam.apitypes.AbstractQuasarJenkinsPluginTest;
 import fr.cla.jam.apitypes.completionstage.exampledomain.*;
 import fr.cla.jam.apitypes.promise.NonBlockingLatentPromiseJiraApi;
 import fr.cla.jam.apitypes.sync.exampledomain.FakeSyncJiraApi;
@@ -26,7 +29,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @FixMethodOrder(NAME_ASCENDING)
-public class QuasarPromiseCfAdapterJenkinsPluginTest extends AbstractJenkinsPluginTest {
+public class QuasarPromiseCfAdapterJenkinsPluginTest extends AbstractQuasarJenkinsPluginTest {
 
     @Override
     protected CfJenkinsPlugin defectiveSut() {
@@ -34,7 +37,7 @@ public class QuasarPromiseCfAdapterJenkinsPluginTest extends AbstractJenkinsPlug
         when(jira.findBundlesByName(any())).thenReturn(
             (onSuccess, onFailure) -> onFailure.accept(new JiraApiException())
         );
-        return new QuasarPromiseCfJenkinsPlugin(jira, newCachedThreadPool());
+        return new QuasarPromiseCfJenkinsPlugin(jira, dedicatedScheduler(latencyMeasurementPool));
     }
 
     @Override
@@ -46,14 +49,14 @@ public class QuasarPromiseCfAdapterJenkinsPluginTest extends AbstractJenkinsPlug
         when(jira.findComponentsByBundle(any())).thenReturn(
             (onSuccess, onFailure) -> onFailure.accept(new JiraApiException())
         );
-        return new QuasarPromiseCfJenkinsPlugin(jira, newCachedThreadPool());
+        return new QuasarPromiseCfJenkinsPlugin(jira, dedicatedScheduler(latencyMeasurementPool));
     }
 
     @Override
     protected CfJenkinsPlugin latentSut() {
         return new QuasarPromiseCfJenkinsPlugin(
             new NonBlockingLatentPromiseJiraApi(new FakePromiseJiraApi()),
-            newCachedThreadPool()
+            dedicatedScheduler(latencyMeasurementPool)
         );
     }
 
@@ -72,7 +75,7 @@ public class QuasarPromiseCfAdapterJenkinsPluginTest extends AbstractJenkinsPlug
         PromiseJiraApi promiseApi = new NonBlockingLatentPromiseJiraApi(new FakePromiseJiraApi());
 
         return Arrays.asList(
-            new QuasarPromiseCfJenkinsPlugin(promiseApi, measurementPool)
+            new QuasarPromiseCfJenkinsPlugin(promiseApi, dedicatedScheduler(measurementPool))
         );
     }
 

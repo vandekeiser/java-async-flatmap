@@ -1,5 +1,8 @@
 package fr.cla.jam.apitypes.sync.exampledomain;
 
+import co.paralleluniverse.common.monitoring.MonitorType;
+import co.paralleluniverse.fibers.FiberExecutorScheduler;
+import fr.cla.jam.apitypes.AbstractQuasarJenkinsPluginTest;
 import fr.cla.jam.apitypes.callback.exampledomain.BlockingLatentCallbackJiraApi;
 import fr.cla.jam.apitypes.callback.exampledomain.CallbackCfJenkinsPlugin;
 import fr.cla.jam.apitypes.callback.exampledomain.CallbackJiraApi;
@@ -27,13 +30,13 @@ import static org.mockito.Mockito.when;
 //Run with 
 // -javaagent:"C:\Users\Claisse\.m2\repository\co\paralleluniverse\quasar-core\0.7.4\quasar-core-0.7.4-jdk8.jar" -Dco.paralleluniverse.fibers.verifyInstrumentation=false
 @FixMethodOrder(NAME_ASCENDING)
-public class QuasarSyncCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
+public class QuasarSyncCfJenkinsPluginTest extends AbstractQuasarJenkinsPluginTest {
 
     @Override
     protected CfJenkinsPlugin defectiveSut() {
         SyncJiraApi jira = mock(SyncJiraApi.class);
         when(jira.findBundlesByName(any())).thenThrow(new JiraApiException());
-        return new QuasarSyncCfJenkinsPlugin(jira, newCachedThreadPool());
+        return new QuasarSyncCfJenkinsPlugin(jira, dedicatedScheduler(latencyMeasurementPool));
     }
 
     @Override
@@ -41,14 +44,14 @@ public class QuasarSyncCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
         SyncJiraApi jira = mock(SyncJiraApi.class);
         when(jira.findBundlesByName(any())).thenReturn(singleton(new JiraBundle("the bundle")));
         when(jira.findComponentsByBundle(any())).thenThrow(new JiraApiException());
-        return new QuasarSyncCfJenkinsPlugin(jira, newCachedThreadPool());
+        return new QuasarSyncCfJenkinsPlugin(jira, dedicatedScheduler(latencyMeasurementPool));
     }
 
     @Override
     protected CfJenkinsPlugin latentSut() {
         return new QuasarSyncCfJenkinsPlugin(
             new LatentSyncJiraApi(new FakeSyncJiraApi()),
-            newCachedThreadPool()
+            dedicatedScheduler(latencyMeasurementPool)
         );
     }
 
@@ -71,7 +74,7 @@ public class QuasarSyncCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
 
         if(useRealServer()) {
             SyncJiraApi realServerSyncApi = new RealServerLatencySyncApi(new FakeSyncJiraApi(), getRealServer());
-            all.add(new SyncCfJenkinsPlugin(realServerSyncApi, measurementPool));
+            all.add(new SyncCfJenkinsPlugin(realServerSyncApi, dedicatedScheduler(measurementPool)));
         }
 
         return all;
