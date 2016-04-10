@@ -11,11 +11,7 @@ public class QuasarPromiseCfJenkinsPlugin extends AbstractCfJenkinsPlugin implem
         super(
             srv,
             QuasarPromiseCfAdapter.adapt(srv::findBundlesByName, dedicatedScheduler),
-            bundles -> QuasarPromiseCfAdapter.adaptFlatMap(
-                bundles,
-                srv::findComponentsByBundle,
-                dedicatedScheduler
-            )
+            bundles -> QuasarPromiseCfAdapter.adaptFlatMap(bundles, srv::findComponentsByBundle, dedicatedScheduler)
         );
     }
 

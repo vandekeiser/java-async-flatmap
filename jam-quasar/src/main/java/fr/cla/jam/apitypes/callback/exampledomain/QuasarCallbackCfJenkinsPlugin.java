@@ -13,10 +13,7 @@ public class QuasarCallbackCfJenkinsPlugin extends AbstractCfJenkinsPlugin imple
         super(
             srv,
             CallbackCfAdapter.adapt(srv::findBundlesByName),
-            bundles -> CallbackCfAdapter.flatMapAdapt(
-                bundles,
-                srv::findComponentsByBundle
-            )
+            bundles -> CallbackCfAdapter.flatMapAdapt(bundles, srv::findComponentsByBundle)
         );
     }
 
