@@ -22,10 +22,10 @@ public class QuasarPromiseCfJenkinsPlugin extends AbstractCfJenkinsPlugin implem
         super(
             srv,
             QuasarPromiseCfAdapter.adapt(srv::findBundlesByName, dedicatedScheduler(dedicatedPool)),
-            bundles -> PromiseCfAdapter.adaptFlatMap(
+            bundles -> QuasarPromiseCfAdapter.adaptFlatMap(
                 bundles,
                 srv::findComponentsByBundle,
-                mapper -> QuasarPromiseCfAdapter.adapt(mapper, dedicatedScheduler(dedicatedPool))
+                dedicatedScheduler(dedicatedPool)
             )
         );
     }
