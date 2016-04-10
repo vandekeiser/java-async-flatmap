@@ -3,17 +3,12 @@ package fr.cla.jam.apitypes.sync.exampledomain;
 import fr.cla.jam.exampledomain.*;
 import org.junit.FixMethodOrder;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.function.BiFunction;
-import java.util.function.Function;
+import java.util.concurrent.ExecutorService;
 
-import static fr.cla.jam.util.functions.Functions.curry;
 import static java.util.Collections.singleton;
 import static java.util.concurrent.Executors.newCachedThreadPool;
-import static java.util.stream.Collectors.toList;
 import static org.junit.runners.MethodSorters.NAME_ASCENDING;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -47,7 +42,7 @@ public class SyncCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
 
     @Override
     protected int scalabilityTestParallelism() {
-        return 1000;
+        return 1_000;
     }
 
     @Override
@@ -56,30 +51,29 @@ public class SyncCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
     }
 
     @Override
-    protected List<Function<Executor, JenkinsPlugin>> allPluginsForLatencyMeasurement() {
-        List<BiFunction<SyncJiraApi, Executor, JenkinsPlugin>> syncPlugins = Arrays.asList(
-            SeqStreamJenkinsPlugin::new,
-            ParStreamJenkinsPlugin::new,
-            SyncCfJenkinsPlugin::new
-        );
-
+    protected List<JenkinsPlugin> allPluginsForLatencyMeasurement() {
         SyncJiraApi syncApi = new LatentSyncJiraApi(new FakeSyncJiraApi());
 
-        List<Function<Executor, JenkinsPlugin>> allPlugins = new ArrayList<>();
-        allPlugins.addAll(syncPlugins.stream().map(curry(syncApi)).collect(toList()));
-        return allPlugins;
+        return Arrays.asList(
+            new SeqStreamJenkinsPlugin(syncApi, latencyMeasurementPool),
+            new ParStreamJenkinsPlugin(syncApi, latencyMeasurementPool),
+            new SyncCfJenkinsPlugin(syncApi, latencyMeasurementPool)
+        );
     }
 
     @Override
-    protected List<Function<Executor, JenkinsPlugin>> allPluginsForScalabilityMeasurement() {
-        List<BiFunction<SyncJiraApi, Executor, JenkinsPlugin>> syncPlugins = Arrays.asList(
-            SyncCfJenkinsPlugin::new
-        );
-
+    protected List<JenkinsPlugin> allPluginsForScalabilityMeasurement() {
         SyncJiraApi syncApi = new LatentSyncJiraApi(new FakeSyncJiraApi());
 
-        List<Function<Executor, JenkinsPlugin>> allPlugins = new ArrayList<>();
-        allPlugins.addAll(syncPlugins.stream().map(curry(syncApi)).collect(toList()));
-        return allPlugins;
+        return Arrays.asList(
+            new SyncCfJenkinsPlugin(syncApi, scalabilityMeasurementPool)
+        );
     }
+
+
+    @Override
+    protected List<JenkinsPlugin> allPlugins(ExecutorService measurementPool) {
+        throw new UnsupportedOperationException("different plugins for latency and scalability measurement here");
+    }
+
 }

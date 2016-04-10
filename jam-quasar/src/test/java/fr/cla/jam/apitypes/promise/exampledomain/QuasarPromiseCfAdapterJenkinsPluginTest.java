@@ -1,8 +1,6 @@
 package fr.cla.jam.apitypes.promise.exampledomain;
 
-import fr.cla.jam.apitypes.completionstage.exampledomain.CsJiraApi;
-import fr.cla.jam.apitypes.completionstage.exampledomain.FakeCsJiraApi;
-import fr.cla.jam.apitypes.completionstage.exampledomain.LatentCsJiraApi;
+import fr.cla.jam.apitypes.completionstage.exampledomain.*;
 import fr.cla.jam.apitypes.promise.NonBlockingLatentPromiseJiraApi;
 import fr.cla.jam.apitypes.sync.exampledomain.FakeSyncJiraApi;
 import fr.cla.jam.apitypes.sync.exampledomain.LatentSyncJiraApi;
@@ -14,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -69,25 +68,12 @@ public class QuasarPromiseCfAdapterJenkinsPluginTest extends AbstractJenkinsPlug
     }
 
     @Override
-    protected List<Function<Executor, JenkinsPlugin>> allPluginsForLatencyMeasurement() {
-        List<BiFunction<SyncJiraApi, Executor, JenkinsPlugin>> syncPlugins = Arrays.asList(
-        );
-        List<BiFunction<CsJiraApi, Executor, JenkinsPlugin>> csPlugins = Arrays.asList(
-        );
-        List<BiFunction<PromiseJiraApi, Executor, JenkinsPlugin>> promisePlugins = Arrays.asList(
-//            PromiseCfJenkinsPlugin::new,
-            QuasarPromiseCfJenkinsPlugin::new
-        );
-
-        SyncJiraApi syncApi = new LatentSyncJiraApi(new FakeSyncJiraApi());
-        CsJiraApi csApi = new LatentCsJiraApi(new FakeCsJiraApi());
+    protected List<JenkinsPlugin> allPlugins(ExecutorService measurementPool) {
         PromiseJiraApi promiseApi = new NonBlockingLatentPromiseJiraApi(new FakePromiseJiraApi());
 
-        List<Function<Executor, JenkinsPlugin>> allPlugins = new ArrayList<>();
-        allPlugins.addAll(syncPlugins.stream().map(curry(syncApi)).collect(toList()));
-        allPlugins.addAll(csPlugins.stream().map(curry(csApi)).collect(toList()));
-        allPlugins.addAll(promisePlugins.stream().map(curry(promiseApi)).collect(toList()));
-        return allPlugins;
+        return Arrays.asList(
+            new QuasarPromiseCfJenkinsPlugin(promiseApi, measurementPool)
+        );
     }
 
 }

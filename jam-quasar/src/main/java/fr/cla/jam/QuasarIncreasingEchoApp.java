@@ -25,7 +25,7 @@ public class QuasarIncreasingEchoApp {
 
             int curr = 0;
             for (int i = 0; i < 10 ; i++) {
-                Fiber.sleep(1000);
+                Fiber.sleep(1_000);
                 System.out.println("INCREASER sending: " + curr);
                 increasingToEcho.send(curr);
                 curr = echoToIncreasing.receive();
@@ -41,7 +41,7 @@ public class QuasarIncreasingEchoApp {
         Fiber<Void> echo = new Fiber<Void>("ECHO", new SuspendableRunnable() { @Override public void run() throws SuspendExecution, InterruptedException {
             Integer curr;
             while (true) {
-                Fiber.sleep(1000);
+                Fiber.sleep(1_000);
                 curr = increasingToEcho.receive();
                 System.out.println("ECHO received: " + curr);
 

@@ -1,5 +1,9 @@
 package fr.cla.jam.apitypes.sync.exampledomain;
 
+import fr.cla.jam.apitypes.callback.exampledomain.BlockingLatentCallbackJiraApi;
+import fr.cla.jam.apitypes.callback.exampledomain.CallbackCfJenkinsPlugin;
+import fr.cla.jam.apitypes.callback.exampledomain.CallbackJiraApi;
+import fr.cla.jam.apitypes.callback.exampledomain.FakeCallbackJiraApi;
 import fr.cla.jam.exampledomain.*;
 import org.junit.FixMethodOrder;
 
@@ -7,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -49,7 +54,7 @@ public class QuasarSyncCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
 
     @Override
     protected int scalabilityTestParallelism() {
-        return 1000;
+        return 1_000;
     }
 
     @Override
@@ -58,22 +63,18 @@ public class QuasarSyncCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
     }
 
     @Override
-    protected List<Function<Executor, JenkinsPlugin>> allPluginsForLatencyMeasurement() {
-        List<BiFunction<SyncJiraApi, Executor, JenkinsPlugin>> syncPlugins = Arrays.asList(
-            SyncCfJenkinsPlugin::new
-        );
-
-        List<Function<Executor,JenkinsPlugin>> allPlugins = new ArrayList<>();
-
+    protected List<JenkinsPlugin> allPlugins(ExecutorService measurementPool) {
         SyncJiraApi syncApi = new LatentSyncJiraApi(new FakeSyncJiraApi());
-        allPlugins.addAll(syncPlugins.stream().map(curry(syncApi)).collect(toList()));
+        List<JenkinsPlugin> all = new ArrayList<>();
+
+        all.add(new SyncCfJenkinsPlugin(syncApi, measurementPool));
 
         if(useRealServer()) {
             SyncJiraApi realServerSyncApi = new RealServerLatencySyncApi(new FakeSyncJiraApi(), getRealServer());
-            allPlugins.addAll(syncPlugins.stream().map(curry(realServerSyncApi)).collect(toList()));
+            all.add(new SyncCfJenkinsPlugin(realServerSyncApi, measurementPool));
         }
 
-        return allPlugins;
+        return all;
     }
 
 }

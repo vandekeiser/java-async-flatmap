@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -59,7 +60,7 @@ public class PromiseCfAdapterJenkinsPluginTest extends AbstractJenkinsPluginTest
 
     @Override
     protected int scalabilityTestParallelism() {
-        return 1000;
+        return 1_000;
     }
 
     @Override
@@ -68,24 +69,12 @@ public class PromiseCfAdapterJenkinsPluginTest extends AbstractJenkinsPluginTest
     }
 
     @Override
-    protected List<Function<Executor, JenkinsPlugin>> allPluginsForLatencyMeasurement() {
-        List<BiFunction<SyncJiraApi, Executor, JenkinsPlugin>> syncPlugins = Arrays.asList(
-        );
-        List<BiFunction<CsJiraApi, Executor, JenkinsPlugin>> csPlugins = Arrays.asList(
-        );
-        List<BiFunction<PromiseJiraApi, Executor, JenkinsPlugin>> promisePlugins = Arrays.asList(
-            PromiseCfJenkinsPlugin::new
-        );
-
-        SyncJiraApi syncApi = new LatentSyncJiraApi(new FakeSyncJiraApi());
-        CsJiraApi csApi = new LatentCsJiraApi(new FakeCsJiraApi());
+    protected List<JenkinsPlugin> allPlugins(ExecutorService measurementPool) {
         PromiseJiraApi promiseApi = new BlockingLatentPromiseJiraApi(new FakePromiseJiraApi());
 
-        List<Function<Executor, JenkinsPlugin>> allPlugins = new ArrayList<>();
-        allPlugins.addAll(syncPlugins.stream().map(curry(syncApi)).collect(toList()));
-        allPlugins.addAll(csPlugins.stream().map(curry(csApi)).collect(toList()));
-        allPlugins.addAll(promisePlugins.stream().map(curry(promiseApi)).collect(toList()));
-        return allPlugins;
+        return Arrays.asList(
+            new PromiseCfJenkinsPlugin(promiseApi, measurementPool)
+        );
     }
 
 }

@@ -4,6 +4,10 @@ import fr.cla.jam.apitypes.callback.NonBlockingLatentCallbackJiraApi;
 import fr.cla.jam.apitypes.completionstage.exampledomain.CsJiraApi;
 import fr.cla.jam.apitypes.completionstage.exampledomain.FakeCsJiraApi;
 import fr.cla.jam.apitypes.completionstage.exampledomain.LatentCsJiraApi;
+import fr.cla.jam.apitypes.promise.NonBlockingLatentPromiseJiraApi;
+import fr.cla.jam.apitypes.promise.exampledomain.FakePromiseJiraApi;
+import fr.cla.jam.apitypes.promise.exampledomain.PromiseJiraApi;
+import fr.cla.jam.apitypes.promise.exampledomain.QuasarPromiseCfJenkinsPlugin;
 import fr.cla.jam.apitypes.sync.exampledomain.FakeSyncJiraApi;
 import fr.cla.jam.apitypes.sync.exampledomain.LatentSyncJiraApi;
 import fr.cla.jam.apitypes.sync.exampledomain.SyncJiraApi;
@@ -15,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -64,35 +69,17 @@ public class QuasarCallbackCfJenkinsPluginTest extends AbstractJenkinsPluginTest
 
     @Override
     protected int scalabilityTestConcurrency() {
-        return 3_000;
+        return 1_000;
     }
 
     @Override
-    protected List<Function<Executor, JenkinsPlugin>> allPluginsForLatencyMeasurement() {
-        List<BiFunction<SyncJiraApi, Executor, JenkinsPlugin>> syncPlugins = Arrays.asList(
-        );
-        List<BiFunction<CsJiraApi, Executor, JenkinsPlugin>> csPlugins = Arrays.asList(
-        );
-        List<BiFunction<CallbackJiraApi, Executor, JenkinsPlugin>> callbackPlugins = Arrays.asList(
-                QuasarCallbackCfJenkinsPlugin::new,
-                CallbackCfJenkinsPlugin::new
-
-//                CallbackCfJenkinsPlugin::new
-//
-//                QuasarCallbackCfJenkinsPlugin::new
-        );
-
-        SyncJiraApi syncApi = new LatentSyncJiraApi(new FakeSyncJiraApi());
-        CsJiraApi csApi = new LatentCsJiraApi(new FakeCsJiraApi());
-//        CallbackJiraApi blockingCallbackApi = new BlockingLatentCallbackJiraApi(new FakeCallbackJiraApi());
+    protected List<JenkinsPlugin> allPlugins(ExecutorService measurementPool) {
         CallbackJiraApi nonBlockingCallbackApi = new NonBlockingLatentCallbackJiraApi(new FakeCallbackJiraApi());
 
-        List<Function<Executor,JenkinsPlugin>> allPlugins = new ArrayList<>();
-        allPlugins.addAll(syncPlugins.stream().map(curry(syncApi)).collect(toList()));
-        allPlugins.addAll(csPlugins.stream().map(curry(csApi)).collect(toList()));
-//        allPlugins.addAll(callbackPlugins.stream().map(curry(blockingCallbackApi)).collect(toList()));
-        allPlugins.addAll(callbackPlugins.stream().map(curry(nonBlockingCallbackApi)).collect(toList()));
-        return allPlugins;
+        return Arrays.asList(
+            new CallbackCfJenkinsPlugin(nonBlockingCallbackApi, measurementPool),
+            new QuasarCallbackCfJenkinsPlugin(nonBlockingCallbackApi, measurementPool)
+        );
     }
 
     /*

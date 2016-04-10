@@ -181,3 +181,4 @@ cf thencompose = flatmap
     et preparerait une hierarchie d'adapter?
     -il faudrait d'abord simplifier les tests en remplacant les ::new par autre chose
     -PromiseCfAdapter.adaptFlatMap pas normal, remplacer par un QuasarPromiseCfAdapter plus simple
+-curry pour le passage des poll/sched?

@@ -3,6 +3,8 @@ package fr.cla.jam.exampledomain;
 import com.jasongoodwin.monads.Try;
 import fr.cla.jam.util.ConsolePlusFile;
 import fr.cla.jam.util.MeasuringTest;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 
@@ -76,14 +78,15 @@ public abstract class AbstractJenkinsPluginTest extends MeasuringTest {
         }
     }
 
-    protected abstract List<Function<Executor,JenkinsPlugin>> allPluginsForLatencyMeasurement();
+    protected List<JenkinsPlugin> allPluginsForLatencyMeasurement() {
+        return allPlugins(latencyMeasurementPool);
+    }
+    protected abstract List<JenkinsPlugin> allPlugins(ExecutorService measurementPool);
 
-    private static final Executor latencyMeasurementPool = newCachedThreadPool();
     @Test public void should_3_be_fast() throws FileNotFoundException {
         try(PrintStream oout = new ConsolePlusFile("comparaison-latences.txt")) {
             printEnv(oout, latencyMeasurementPool);
-            allPluginsForLatencyMeasurement().stream().forEach(pluginBuilder -> {
-                JenkinsPlugin plugin = pluginBuilder.apply(latencyMeasurementPool);
+            allPluginsForLatencyMeasurement().stream().forEach(plugin -> {
                 Instant before = Instant.now();
                 Set<JiraComponent> answers = plugin.findComponentsByBundleName("toto59");
                 printResult(oout, plugin, before, answers);
@@ -93,28 +96,23 @@ public abstract class AbstractJenkinsPluginTest extends MeasuringTest {
 
     protected abstract int scalabilityTestParallelism();
     protected abstract int scalabilityTestConcurrency();
-    protected List<Function<Executor,JenkinsPlugin>> allPluginsForScalabilityMeasurement() {
-        return allPluginsForLatencyMeasurement();
+    protected List<JenkinsPlugin> allPluginsForScalabilityMeasurement() {
+        return allPlugins(scalabilityMeasurementPool);
     }
 
     @Test public void should_3bis_scale() throws FileNotFoundException {
-        int CONCURRENCY = scalabilityTestConcurrency(), PARALLELISM = scalabilityTestParallelism();
-        Executor scalabilityMeasurementPool = newFixedThreadPool(PARALLELISM);
-        Set<JiraComponent> blackHole = new HashSet<>();
+        int CONCURRENCY = scalabilityTestConcurrency();
 
         try(PrintStream oout = new ConsolePlusFile("comparaison-scalabilite.txt")) {
             printEnv(oout, scalabilityMeasurementPool, CONCURRENCY);
             allPluginsForScalabilityMeasurement().stream()
-                .map(p -> p.apply(scalabilityMeasurementPool))
                 .forEach(p -> nAtATime(CONCURRENCY, oout, p, () -> {
                     Instant before = Instant.now();
                     Set<JiraComponent> answers = p.findComponentsByBundleName("toto59");
 
                     printResult(out, p, before, answers);
-                    //blackHole.addAll(answers);
                 }));
         }
-        System.out.println(blackHole);
     }
 
     private static void nAtATime(int nAtATime, PrintStream oout, JenkinsPlugin p, Runnable r) {
@@ -205,6 +203,16 @@ public abstract class AbstractJenkinsPluginTest extends MeasuringTest {
 
     protected String getRealServer() {
         return System.getProperty("ec2instance");
+    }
+
+    protected ExecutorService latencyMeasurementPool, scalabilityMeasurementPool;
+    @Before public void setupPools() {
+        latencyMeasurementPool = newCachedThreadPool();
+        scalabilityMeasurementPool = newFixedThreadPool(scalabilityTestParallelism());
+    }
+    @After public void tearDownPools() {
+        latencyMeasurementPool.shutdownNow();
+        scalabilityMeasurementPool.shutdownNow();
     }
 
 }

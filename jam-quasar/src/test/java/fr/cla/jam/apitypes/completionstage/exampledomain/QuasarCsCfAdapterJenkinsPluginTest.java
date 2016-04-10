@@ -2,6 +2,7 @@ package fr.cla.jam.apitypes.completionstage.exampledomain;
 
 import fr.cla.jam.apitypes.sync.exampledomain.FakeSyncJiraApi;
 import fr.cla.jam.apitypes.sync.exampledomain.LatentSyncJiraApi;
+import fr.cla.jam.apitypes.sync.exampledomain.SyncCfJenkinsPlugin;
 import fr.cla.jam.apitypes.sync.exampledomain.SyncJiraApi;
 import fr.cla.jam.exampledomain.*;
 import org.junit.FixMethodOrder;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -60,7 +62,7 @@ public class QuasarCsCfAdapterJenkinsPluginTest extends AbstractJenkinsPluginTes
 
     @Override
     protected int scalabilityTestParallelism() {
-        return 1000;
+        return 1_000;
     }
 
     @Override
@@ -69,21 +71,13 @@ public class QuasarCsCfAdapterJenkinsPluginTest extends AbstractJenkinsPluginTes
     }
 
     @Override
-    protected List<Function<Executor, JenkinsPlugin>> allPluginsForLatencyMeasurement() {
-        List<BiFunction<SyncJiraApi, Executor, JenkinsPlugin>> syncPlugins = Arrays.asList(
-        );
-        List<BiFunction<CsJiraApi, Executor, JenkinsPlugin>> csPlugins = Arrays.asList(
-            CsCfJenkinsPlugin::new,
-            QuasarCsCfJenkinsPlugin::new
-        );
-
-        SyncJiraApi syncApi = new LatentSyncJiraApi(new FakeSyncJiraApi());
+    protected List<JenkinsPlugin> allPlugins(ExecutorService measurementPool) {
         CsJiraApi csApi = new LatentCsJiraApi(new FakeCsJiraApi());
 
-        List<Function<Executor,JenkinsPlugin>> allPlugins = new ArrayList<>();
-        allPlugins.addAll(syncPlugins.stream().map(curry(syncApi)).collect(toList()));
-        allPlugins.addAll(csPlugins.stream().map(curry(csApi)).collect(toList()));
-        return allPlugins;
+        return Arrays.asList(
+            new CsCfJenkinsPlugin(csApi, measurementPool),
+            new QuasarCsCfJenkinsPlugin(csApi, measurementPool)
+        );
     }
 
     private static <T> CompletionStage<T> failure() {
