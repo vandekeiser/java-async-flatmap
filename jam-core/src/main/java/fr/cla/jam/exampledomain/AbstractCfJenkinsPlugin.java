@@ -9,9 +9,10 @@ public abstract class AbstractCfJenkinsPlugin extends AbstractJenkinsPlugin impl
     private final Function<String, CompletableFuture<Set<JiraComponent>>> findComponentsByBundleNameAsync;
 
     public AbstractCfJenkinsPlugin(
-            JiraApi srv,
-            Function<String, CompletableFuture<Set<JiraBundle>>> findBundlesByNameAsync,
-            Function<Set<JiraBundle>, CompletableFuture<Set<JiraComponent>>> findComponentsByBundlesAsync) {
+        JiraApi srv,
+        Function<String, CompletableFuture<Set<JiraBundle>>> findBundlesByNameAsync,
+        Function<Set<JiraBundle>, CompletableFuture<Set<JiraComponent>>> findComponentsByBundlesAsync
+    ) {
         super(srv);
 
         this.findComponentsByBundleNameAsync = findBundlesByNameAsync.andThen(
