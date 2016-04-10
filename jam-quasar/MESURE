@@ -170,17 +170,10 @@ pas clair ce qui est bloqué, au moins le client
 cf thencompose = flatmap
 
 
-**************
--adapt sans ET avec pool? 
+**************refactors TODO***********
 -repasser sur AbstractCfJenkinsPlugin, on peut pas generifier plus?
 -QuasarCallbackCfJenkinsPlugin est bizarre, trop de methodes
 -QuasarSyncCfAdapter a l'air craignos (bloque+utilise mm pas le pool+revoir methode commentee)
--QuasarCsCfAdapter.<String, Set<JiraBundle>>usingPool louche 
-    on devrait plus avoit besoin de ca avec les adapters
--passer un scheduler au cstr de QuasarPromiseCfAdapter permettrait d'utiliser une methodref,
-    et preparerait une hierarchie d'adapter?
-    -il faudrait d'abord simplifier les tests en remplacant les ::new par autre chose
-    -PromiseCfAdapter.adaptFlatMap pas normal, remplacer par un QuasarPromiseCfAdapter plus simple
--curry pour le passage des poll/sched?
 -repasser sur les plugins pour vf s'ils utilisent le bon adapter. 
+    -adapt sans ET avec pool? 
     -Si pool/sched inutile le baser en faisant gaffe/splitter en adapter avec-sans pool, ou autre..
