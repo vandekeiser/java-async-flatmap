@@ -23,14 +23,10 @@ public final class CallbackCfAdapter {
 
     public static <E, F> CompletableFuture<Set<F>> flatMapAdapt(
         Set<E> inputs,
-        BiConsumer<E, Callback<Set<F>>> adaptee,
-        Function<
-            BiConsumer<E, Callback<Set<F>>>,
-            Function<E, CompletableFuture<Set<F>>>
-        > asyncifier
+        BiConsumer<E, Callback<Set<F>>> adaptee
     ) {
         return inputs.stream()
-            .map(asyncifier.apply(adaptee))
+            .map(adapt(adaptee))
             .collect(toSet())
             .stream()
             .collect(flattening());

@@ -1,7 +1,6 @@
 package fr.cla.jam.apitypes.sync;
 
 import co.paralleluniverse.fibers.Fiber;
-import co.paralleluniverse.fibers.SuspendExecution;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;

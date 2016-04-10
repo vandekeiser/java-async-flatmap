@@ -172,7 +172,7 @@ cf thencompose = flatmap
 
 **************
 adapt sans ET avec pool? 
-callback avec 2 args
 generifier les plugins et introduire abstract pour utiliser les adapters
 QuasarCallbackCfJenkinsPlugin est bizarre, trop de methodes
 QuasarSyncCfAdapter a l'air craignos (bloque+utilise mm pas le pool)
+QuasarCsCfAdapter.<String, Set<JiraBundle>>usingPool louche on devrait plus avoit besoin de ca avec les adapters

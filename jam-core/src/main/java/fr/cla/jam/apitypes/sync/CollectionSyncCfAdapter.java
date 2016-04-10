@@ -1,11 +1,8 @@
 package fr.cla.jam.apitypes.sync;
 
 import fr.cla.jam.util.containers.CollectionSupplier;
-import fr.cla.jam.util.containers.Sets;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.BinaryOperator;

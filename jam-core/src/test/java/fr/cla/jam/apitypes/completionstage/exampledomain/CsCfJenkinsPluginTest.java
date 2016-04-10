@@ -1,8 +1,8 @@
 package fr.cla.jam.apitypes.completionstage.exampledomain;
 
-import fr.cla.jam.apitypes.sync.exampledomain.SyncCfJenkinsPlugin;
 import fr.cla.jam.apitypes.sync.exampledomain.FakeSyncJiraApi;
 import fr.cla.jam.apitypes.sync.exampledomain.LatentSyncJiraApi;
+import fr.cla.jam.apitypes.sync.exampledomain.SyncCfJenkinsPlugin;
 import fr.cla.jam.apitypes.sync.exampledomain.SyncJiraApi;
 import fr.cla.jam.exampledomain.*;
 import org.junit.FixMethodOrder;

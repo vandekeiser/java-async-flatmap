@@ -8,8 +8,6 @@ import co.paralleluniverse.strands.Strand;
 import fr.cla.jam.apitypes.callback.exampledomain.AbstractLatentCallbackJiraApi;
 import fr.cla.jam.apitypes.callback.exampledomain.CallbackJiraApi;
 
-import java.time.Duration;
-import java.time.Instant;
 import java.util.function.BiConsumer;
 
 public class NonBlockingLatentCallbackJiraApi extends AbstractLatentCallbackJiraApi {
