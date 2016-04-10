@@ -60,7 +60,6 @@ public class PoolAndCollectCfJenkinsPluginTest extends AbstractJenkinsPluginTest
         List<BiFunction<SyncJiraApi, Executor, JenkinsPlugin>> syncPlugins = Arrays.asList(
             SeqStreamJenkinsPlugin::new,
             ParStreamJenkinsPlugin::new,
-            PoolAndReduceCfJenkinsPlugin::new,
             PoolAndCollectCfJenkinsPlugin::new
         );
 

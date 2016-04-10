@@ -1,6 +1,6 @@
 package fr.cla.jam.apitypes.sync.exampledomain;
 
-import fr.cla.jam.apitypes.sync.CollectSyncApiIntoCf;
+import fr.cla.jam.apitypes.sync.SetSyncCfAdapter;
 import fr.cla.jam.apitypes.sync.SyncCfAdapter;
 import fr.cla.jam.exampledomain.AbstractJenkinsPlugin;
 import fr.cla.jam.exampledomain.CfJenkinsPlugin;
@@ -21,7 +21,7 @@ public class PoolAndCollectCfJenkinsPlugin extends AbstractJenkinsPlugin impleme
             SyncCfAdapter.adaptUsingPool(srv::findBundlesByName, dedicatedPool);
         
         Function<Set<JiraBundle>, CompletableFuture<Set<JiraComponent>>> findComponentsByBundlesAsync =
-            bundles -> CollectSyncApiIntoCf.flatMapSetAsync(bundles, srv::findComponentsByBundle, dedicatedPool);
+            bundles -> SetSyncCfAdapter.flatMapAdaptUsingPool(bundles, srv::findComponentsByBundle, dedicatedPool);
                 
         this.findComponentsByBundleNameAsync = findBundlesByNameAsync.andThen(
             bundlesFuture -> bundlesFuture.thenCompose(findComponentsByBundlesAsync)

@@ -11,26 +11,15 @@ import static fr.cla.jam.util.collectors.FlatteningContainerOfManyCollector.flat
 import static java.util.stream.Collectors.toSet;
 
 /**
- * Async (as in CompletableFuture) operationson monads of type "containers of many", 
- *  which are more general than Stream/Collection.
- *
- * For now, this class only works if the "container of many" is insensitive to order.
- *  A typical use case is when the source and target are Sets,
- *  but this class can cope with the case of a mapping operation that provides a List (or Stream, or other),
- *  or a consumer that requires a List (or Stream, or other).
+ * This class only works if the "container of many" is insensitive to order.
  *  Generalizing it to order-dependant results doesn't seem worth the effort for now,
- *  because most operations that can be optimized by parallelezing them don't require order
- *  (this is not an absolute and could be done if required).
+ *  because most operations that can be optimized by parallelezing them don't require order.
  */
-public final class CollectSyncContainersOfManyApiIntoCf {
+public final class ManySyncCfAdapter {
 
     /**
-     * This will rarely be called by classes outside of this package,
-     *  but is still provided for (maybe premature..) generality.
-     * The mapping operation is launched before returning, but is probably not completed. 
-     * 
      * @param inputs The mapped elements
-     * @param mapper The mapping function, which returns many target elements for each source element
+     * @param mapper The mapping function, which returns many target elements for each source element.
      * @param parallelisationPool The thread pool specifically used to make the flatMap operation parallel.
      * @param containerSupplier Instantiates an empty containers of target elements
      * @param containerUnion Merges 2 containers of target elements, following the deduplication semantics determined by the type of the target container
@@ -38,10 +27,10 @@ public final class CollectSyncContainersOfManyApiIntoCf {
      * @param <Es> Container type of the source of mapper()
      * @param <F> Element type of the target of mapper()
      * @param <Fs> Container type of the target of mapper()
-     * @return The result of applying the mapper, but flattened to a single level of Container.
+     * @return The result of applying the mapper, but flattened to a single level of Container. The mapping operation is launched before returning, but is probably not completed.
      */
     public static <E, Es extends ContainerOfMany<E>, F, Fs extends ContainerOfMany<F>> 
-    CompletableFuture<Fs> flatMapAsync(
+    CompletableFuture<Fs> flatMapAdaptUsingPool(
         Es inputs,
         Function<E, Fs> mapper,
         Executor parallelisationPool,

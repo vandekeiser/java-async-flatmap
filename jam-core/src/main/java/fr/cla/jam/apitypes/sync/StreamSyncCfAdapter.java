@@ -10,30 +10,20 @@ import java.util.stream.Stream;
 import static fr.cla.jam.util.collectors.FlatteningStreamCollector.flattening;
 import static java.util.stream.Collectors.toSet;
 
-public final class CollectSyncStreamApiIntoCf {
+public final class StreamSyncCfAdapter {
 
     public interface StreamSupplier<E, Es extends Stream<E>> extends Supplier<Es> {}
     
-    public static <E, F> CompletableFuture<Stream<F>> adapt(
+    public static <E, F> CompletableFuture<Stream<F>> adaptUsingPool(
         Stream<E> inputs,
         Function<E, Stream<F>> mapper,
         Executor parallelisationPool
-    ) {
-        return CollectSyncStreamApiIntoCf.adapt(inputs, mapper, parallelisationPool, Stream::empty, Stream::concat);
-    }
-    
-    public static <E, Es extends Stream<E>, F, Fs extends Stream<F>> CompletableFuture<Fs> adapt(
-        Es inputs,
-        Function<E, Fs> mapper,
-        Executor parallelisationPool,
-        StreamSupplier<F, Fs> streamSupplier,
-        BinaryOperator<Fs> streamUnion
     ) {
         return inputs
             .map(SyncCfAdapter.adaptUsingPool(mapper, parallelisationPool))
             .collect(toSet())
             .stream()
-            .collect(flattening(streamSupplier, streamUnion));    
+            .collect(flattening(Stream::empty, Stream::concat));
     }
-
+    
 }

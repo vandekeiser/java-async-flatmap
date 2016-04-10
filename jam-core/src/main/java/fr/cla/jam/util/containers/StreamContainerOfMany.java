@@ -1,6 +1,5 @@
 package fr.cla.jam.util.containers;
 
-import fr.cla.jam.apitypes.sync.BlockingAsyncStreams_Factor;
 
 import java.util.function.BinaryOperator;
 import java.util.stream.Stream;
@@ -27,7 +26,7 @@ implements ContainerOfMany<E> {
 
     public static <F, Fs extends Stream<F>>
     BinaryOperator<StreamContainerOfMany<F, Fs>> containerUnion(
-            BinaryOperator<Fs> streamUnion
+        BinaryOperator<Fs> streamUnion
     ) {
         return (c1, c2) -> new StreamContainerOfMany<>(streamUnion.apply(
             c1.underlyingContainer(), c2.underlyingContainer()
@@ -36,7 +35,7 @@ implements ContainerOfMany<E> {
 
     public static <F, Fs extends Stream<F>>
     ContainerSupplier<F, StreamContainerOfMany<F, Fs>> containerSupplier(
-            BlockingAsyncStreams_Factor.StreamSupplier<F, Fs> streamSupplier
+        StreamSupplier<F, Fs> streamSupplier
     ) {
         return () -> new StreamContainerOfMany<>(streamSupplier.get());
     }
