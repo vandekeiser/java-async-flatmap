@@ -13,14 +13,10 @@ public final class CallbackCfAdapter {
     public static <T, U> Function<T, CompletableFuture<U>> adapt(BiConsumer<T, Callback<U>> adaptee) {
         return input -> {
             CompletableFuture<U> cf = new CompletableFuture<>();
-            adaptee.accept(input, new Callback<U>() {
-                @Override public void onSuccess(U success) {
-                    cf.complete(success);
-                }
-                @Override public void onFailure(Throwable failure) {
-                    cf.completeExceptionally(failure);
-                }
-            });
+            adaptee.accept(input, Callback.either(
+                s -> cf.complete(s),
+                f -> cf.completeExceptionally(f)
+            ));
             return cf;
         };
     }

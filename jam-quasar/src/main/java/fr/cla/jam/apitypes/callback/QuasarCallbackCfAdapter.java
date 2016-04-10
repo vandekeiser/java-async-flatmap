@@ -13,18 +13,16 @@ public class QuasarCallbackCfAdapter {
         BiConsumer<T, Callback<U>>,
         Function<T, CompletableFuture<U>>
     > adapt(FiberScheduler dedicatedScheduler) {
-        return callback -> input -> {
+        return adaptee -> input -> {
             CompletableFuture<U> cf = new CompletableFuture<>();
+
             new Fiber<>(dedicatedScheduler, () -> {
-                callback.accept(input, new Callback<U>() {
-                    @Override public void onSuccess(U success) {
-                        cf.complete(success);
-                    }
-                    @Override public void onFailure(Throwable failure) {
-                        cf.completeExceptionally(failure);
-                    }
-                });
+                adaptee.accept(input, Callback.either(
+                    s -> cf.complete(s),
+                    f -> cf.completeExceptionally(f)
+                ));
             }).start();
+
             return cf;
         };
     }
