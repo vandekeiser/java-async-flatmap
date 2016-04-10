@@ -19,16 +19,14 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-//Run with 
-// -javaagent:"C:\Users\Claisse\.m2\repository\co\paralleluniverse\quasar-core\0.7.4\quasar-core-0.7.4-jdk8.jar" -Dco.paralleluniverse.fibers.verifyInstrumentation=false
 @FixMethodOrder(NAME_ASCENDING)
-public class QuasarPoolAndCollectCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
+public class SyncCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
 
     @Override
     protected CfJenkinsPlugin defectiveSut() {
         SyncJiraApi jira = mock(SyncJiraApi.class);
         when(jira.findBundlesByName(any())).thenThrow(new JiraApiException());
-        return new QuasarCollectSyncApiCfJenkinsPlugin(jira, newCachedThreadPool());
+        return new SyncCfJenkinsPlugin(jira, newCachedThreadPool());
     }
 
     @Override
@@ -36,12 +34,12 @@ public class QuasarPoolAndCollectCfJenkinsPluginTest extends AbstractJenkinsPlug
         SyncJiraApi jira = mock(SyncJiraApi.class);
         when(jira.findBundlesByName(any())).thenReturn(singleton(new JiraBundle("the bundle")));
         when(jira.findComponentsByBundle(any())).thenThrow(new JiraApiException());
-        return new QuasarCollectSyncApiCfJenkinsPlugin(jira, newCachedThreadPool());
+        return new SyncCfJenkinsPlugin(jira, newCachedThreadPool());
     }
 
     @Override
     protected CfJenkinsPlugin latentSut() {
-        return new QuasarCollectSyncApiCfJenkinsPlugin(
+        return new SyncCfJenkinsPlugin(
             new LatentSyncJiraApi(new FakeSyncJiraApi()),
             newCachedThreadPool()
         );
@@ -60,20 +58,28 @@ public class QuasarPoolAndCollectCfJenkinsPluginTest extends AbstractJenkinsPlug
     @Override
     protected List<Function<Executor, JenkinsPlugin>> allPluginsForLatencyMeasurement() {
         List<BiFunction<SyncJiraApi, Executor, JenkinsPlugin>> syncPlugins = Arrays.asList(
-            PoolAndCollectCfJenkinsPlugin::new
+            SeqStreamJenkinsPlugin::new,
+            ParStreamJenkinsPlugin::new,
+            SyncCfJenkinsPlugin::new
         );
 
-        List<Function<Executor,JenkinsPlugin>> allPlugins = new ArrayList<>();
-
         SyncJiraApi syncApi = new LatentSyncJiraApi(new FakeSyncJiraApi());
+
+        List<Function<Executor, JenkinsPlugin>> allPlugins = new ArrayList<>();
         allPlugins.addAll(syncPlugins.stream().map(curry(syncApi)).collect(toList()));
-
-        if(useRealServer()) {
-            SyncJiraApi realServerSyncApi = new RealServerLatencySyncApi(new FakeSyncJiraApi(), getRealServer());
-            allPlugins.addAll(syncPlugins.stream().map(curry(realServerSyncApi)).collect(toList()));
-        }
-
         return allPlugins;
     }
 
+    @Override
+    protected List<Function<Executor, JenkinsPlugin>> allPluginsForScalabilityMeasurement() {
+        List<BiFunction<SyncJiraApi, Executor, JenkinsPlugin>> syncPlugins = Arrays.asList(
+            SyncCfJenkinsPlugin::new
+        );
+
+        SyncJiraApi syncApi = new LatentSyncJiraApi(new FakeSyncJiraApi());
+
+        List<Function<Executor, JenkinsPlugin>> allPlugins = new ArrayList<>();
+        allPlugins.addAll(syncPlugins.stream().map(curry(syncApi)).collect(toList()));
+        return allPlugins;
+    }
 }

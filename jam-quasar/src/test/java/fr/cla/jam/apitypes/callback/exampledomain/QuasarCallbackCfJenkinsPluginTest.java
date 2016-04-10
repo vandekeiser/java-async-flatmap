@@ -36,17 +36,17 @@ public class QuasarCallbackCfJenkinsPluginTest extends AbstractJenkinsPluginTest
 
     @Override
     protected CfJenkinsPlugin defectiveSut() {
-        return new QuasarCollectCallbackApiIntoCfJenkinsPlugin(new DefectiveCallbackJiraApi(), newCachedThreadPool());
+        return new QuasarCallbackCfJenkinsPlugin(new DefectiveCallbackJiraApi(), newCachedThreadPool());
     }
 
     @Override
     protected CfJenkinsPlugin halfDefectiveSut() {
-        return new QuasarCollectCallbackApiIntoCfJenkinsPlugin(new HalfDefectiveCallbackJiraApi(), newCachedThreadPool());
+        return new QuasarCallbackCfJenkinsPlugin(new HalfDefectiveCallbackJiraApi(), newCachedThreadPool());
     }
 
     @Override
     protected CfJenkinsPlugin latentSut() {
-        return new QuasarCollectCallbackApiIntoCfJenkinsPlugin(
+        return new QuasarCallbackCfJenkinsPlugin(
             new NonBlockingLatentCallbackJiraApi(new FakeCallbackJiraApi()),
             newCachedThreadPool()
         );
@@ -74,12 +74,12 @@ public class QuasarCallbackCfJenkinsPluginTest extends AbstractJenkinsPluginTest
         List<BiFunction<CsJiraApi, Executor, JenkinsPlugin>> csPlugins = Arrays.asList(
         );
         List<BiFunction<CallbackJiraApi, Executor, JenkinsPlugin>> callbackPlugins = Arrays.asList(
-                QuasarCollectCallbackApiIntoCfJenkinsPlugin::new,
+                QuasarCallbackCfJenkinsPlugin::new,
                 CallbackCfJenkinsPlugin::new
 
 //                CallbackCfJenkinsPlugin::new
 //
-//                QuasarCollectCallbackApiIntoCfJenkinsPlugin::new
+//                QuasarCallbackCfJenkinsPlugin::new
         );
 
         SyncJiraApi syncApi = new LatentSyncJiraApi(new FakeSyncJiraApi());
@@ -98,15 +98,15 @@ public class QuasarCallbackCfJenkinsPluginTest extends AbstractJenkinsPluginTest
     /*
     * AVEC -javaagent
     *   blockingCallbackApi + CallbackCfJenkinsPlugin = jamais
-    *   blockingCallbackApi + QuasarCollectCallbackApiIntoCfJenkinsPlugin = jamais
+    *   blockingCallbackApi + QuasarCallbackCfJenkinsPlugin = jamais
     *   nonBlockingCallbackApi + CallbackCfJenkinsPlugin = PT6.957S
-    *   nonBlockingCallbackApi + QuasarCollectCallbackApiIntoCfJenkinsPlugin = PT10.04S
+    *   nonBlockingCallbackApi + QuasarCallbackCfJenkinsPlugin = PT10.04S
     *
     * SANS -javaagent
     *   blockingCallbackApi + CallbackCfJenkinsPlugin = jamais
-    *   blockingCallbackApi + QuasarCollectCallbackApiIntoCfJenkinsPlugin = "QUASAR WARNING" , jamais
+    *   blockingCallbackApi + QuasarCallbackCfJenkinsPlugin = "QUASAR WARNING" , jamais
     *   nonBlockingCallbackApi + CallbackCfJenkinsPlugin = "QUASAR WARNING" , PT8.659S
-    *   nonBlockingCallbackApi + QuasarCollectCallbackApiIntoCfJenkinsPlugin = "QUASAR WARNING" , PT6.268S
+    *   nonBlockingCallbackApi + QuasarCallbackCfJenkinsPlugin = "QUASAR WARNING" , PT6.268S
     *
     * -->la presence de l'agent ne change rien!!
     * -->l'utilisation de l'api blocking/nonblocking fait toute la difference
@@ -114,7 +114,7 @@ public class QuasarCallbackCfJenkinsPluginTest extends AbstractJenkinsPluginTest
     *
     * SANS -javaagent, remplace fiber.sleep par thread.sleep dans nonBlockingCallbackApi
     *   nonBlockingCallbackApi(thread.sleep) + CallbackCfJenkinsPlugin = "QUASAR WARNING" , jamais
-    *   nonBlockingCallbackApi(thread.sleep) + QuasarCollectCallbackApiIntoCfJenkinsPlugin = "QUASAR WARNING" , jamais
+    *   nonBlockingCallbackApi(thread.sleep) + QuasarCallbackCfJenkinsPlugin = "QUASAR WARNING" , jamais
     * donc c'est bien ca
     *
     * Par contre, il y avait un truc bizarre ds AbstractLatentCallbackJiraApi:
@@ -124,23 +124,23 @@ public class QuasarCallbackCfJenkinsPluginTest extends AbstractJenkinsPluginTest
     *
     * Ca donne:
     *   nonBlockingCallbackApi(thread.sleep) + CallbackCfJenkinsPlugin = "QUASAR WARNING" ,  PT7.197S
-    *   nonBlockingCallbackApi(thread.sleep) + QuasarCollectCallbackApiIntoCfJenkinsPlugin = "QUASAR WARNING" ,  PT14.858S
+    *   nonBlockingCallbackApi(thread.sleep) + QuasarCallbackCfJenkinsPlugin = "QUASAR WARNING" ,  PT14.858S
     *
     * C'est uniquement le ralentissement du sleep qui cause ca
     * On passe CONCURRENCY à 10_000 pour voir si l'api cesse d'etre capable d'etre nonblocking et que ca s'effondre qd on depasse le nb de threads possibles:
     *
     *Ca donne:
     *   nonBlockingCallbackApi(thread.sleep) + CallbackCfJenkinsPlugin = "QUASAR WARNING" , PT1M34.403S
-    *   nonBlockingCallbackApi(thread.sleep) + QuasarCollectCallbackApiIntoCfJenkinsPlugin = "QUASAR WARNING" , PT3M57.857S
+    *   nonBlockingCallbackApi(thread.sleep) + QuasarCallbackCfJenkinsPlugin = "QUASAR WARNING" , PT3M57.857S
     *
     * Je repasse en fiber.sleep pour voir si ca arrange (le delay executor est tjrs newCached):
     *   nonBlockingCallbackApi(thread.sleep) + CallbackCfJenkinsPlugin = "QUASAR WARNING" , PT1M50.697S
-    *   nonBlockingCallbackApi(thread.sleep) + QuasarCollectCallbackApiIntoCfJenkinsPlugin = "QUASAR WARNING" , PT2M9.132S
+    *   nonBlockingCallbackApi(thread.sleep) + QuasarCallbackCfJenkinsPlugin = "QUASAR WARNING" , PT2M9.132S
     *Ca change rien..
     *
     * Je remet l'agent:
     *   nonBlockingCallbackApi(thread.sleep) + CallbackCfJenkinsPlugin = "QUASAR WARNING" , jamais
-    *   nonBlockingCallbackApi(thread.sleep) + QuasarCollectCallbackApiIntoCfJenkinsPlugin = "QUASAR WARNING" , jamais
+    *   nonBlockingCallbackApi(thread.sleep) + QuasarCallbackCfJenkinsPlugin = "QUASAR WARNING" , jamais
     *
     * Je remet le delaypool a 1, en fait son but etait justement d'eviter ca:
     * (CallbackCfJenkinsPlugin)
@@ -193,14 +193,14 @@ Caused by: java.lang.OutOfMemoryError: GC overhead limit exceeded
 	at java.util.stream.ReduceOps$ReduceOp.evaluateSequential(ReduceOps.java:708)
 	at java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
 	at java.util.stream.ReferencePipeline.collect(ReferencePipeline.java:499)
-	at fr.cla.jam.apitypes.callback.CallbackCfAdapter.flatMapCallbackAsync(CallbackCfAdapter.java:23)
+	at fr.cla.jam.apitypes.callback.CallbackCfAdapter.flatMapAdapt(CallbackCfAdapter.java:23)
 	at fr.cla.jam.apitypes.callback.exampledomain.CallbackCfJenkinsPlugin.lambda$new$28(CallbackCfJenkinsPlugin.java:25)
 	at fr.cla.jam.apitypes.callback.exampledomain.CallbackCfJenkinsPlugin$$Lambda$13/510464020.apply(Unknown Source)
 	at java.util.concurrent.CompletableFuture$ThenCompose.run(CompletableFuture.java:1453)
 	at java.util.concurrent.CompletableFuture.postComplete(CompletableFuture.java:193)
      *
      *
-     * idem avec QuasarCollectCallbackApiIntoCfJenkinsPlugin:
+     * idem avec QuasarCallbackCfJenkinsPlugin:
      *  OutOfMemoryError: GC overhead limit exceeded
      *  Exception in thread "Timer-0" Exception in thread "FiberTimedScheduler-default-fiber-pool" Exception in thread "pool-7-thread-7020" java.lang.OutOfMemoryError: GC overhead limit exceeded
 	at java.util.TimerTask.<init>(TimerTask.java:40)

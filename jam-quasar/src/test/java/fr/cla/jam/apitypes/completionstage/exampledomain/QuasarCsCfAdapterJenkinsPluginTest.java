@@ -37,7 +37,7 @@ public class QuasarCsCfAdapterJenkinsPluginTest extends AbstractJenkinsPluginTes
     protected CfJenkinsPlugin defectiveSut() {
         CsJiraApi jira = mock(CsJiraApi.class);
         when(jira.findBundlesByName(any())).thenReturn(failure());
-        return new QuasarCollectCsApiIntoCfJenkinsPlugin(jira, newCachedThreadPool());
+        return new QuasarCsCfJenkinsPlugin(jira, newCachedThreadPool());
     }
 
     @Override
@@ -47,12 +47,12 @@ public class QuasarCsCfAdapterJenkinsPluginTest extends AbstractJenkinsPluginTes
             completedFuture(singleton(new JiraBundle("the bundle")))
         );
         when(jira.findComponentsByBundle(any())).thenReturn(failure());
-        return new QuasarCollectCsApiIntoCfJenkinsPlugin(jira, newCachedThreadPool());
+        return new QuasarCsCfJenkinsPlugin(jira, newCachedThreadPool());
     }
 
     @Override
     protected CfJenkinsPlugin latentSut() {
-        return new QuasarCollectCsApiIntoCfJenkinsPlugin(
+        return new QuasarCsCfJenkinsPlugin(
             new LatentCsJiraApi(new FakeCsJiraApi()),
             newCachedThreadPool()
         );
@@ -74,7 +74,7 @@ public class QuasarCsCfAdapterJenkinsPluginTest extends AbstractJenkinsPluginTes
         );
         List<BiFunction<CsJiraApi, Executor, JenkinsPlugin>> csPlugins = Arrays.asList(
             CsCfJenkinsPlugin::new,
-            QuasarCollectCsApiIntoCfJenkinsPlugin::new
+            QuasarCsCfJenkinsPlugin::new
         );
 
         SyncJiraApi syncApi = new LatentSyncJiraApi(new FakeSyncJiraApi());

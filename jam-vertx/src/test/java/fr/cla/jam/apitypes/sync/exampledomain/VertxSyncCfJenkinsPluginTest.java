@@ -33,13 +33,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @FixMethodOrder(NAME_ASCENDING)
-public class VertxCollectSyncCollectionApiCfJenkinsPluginTest extends MeasuringTest {
+public class VertxSyncCfJenkinsPluginTest extends MeasuringTest {
 
     @Test
     public void should_1_report_bundles_errors() {
         SyncJiraApi jira = mock(SyncJiraApi.class);
         when(jira.findBundlesByName(any())).thenThrow(new JiraApiException());
-        JenkinsPlugin sut = new VertxCollectSyncCollectionApiCfJenkinsPlugin(jira, newCachedThreadPool());
+        JenkinsPlugin sut = new VertxSyncCfJenkinsPlugin(jira, newCachedThreadPool());
         
         try {
             sut.findComponentsByBundleName("foo");
@@ -54,7 +54,7 @@ public class VertxCollectSyncCollectionApiCfJenkinsPluginTest extends MeasuringT
     @Test
     public void should_2_report_components_errors() {
         SyncJiraApi jira = mock(SyncJiraApi.class);
-        JenkinsPlugin sut = new VertxCollectSyncCollectionApiCfJenkinsPlugin(jira, newCachedThreadPool());
+        JenkinsPlugin sut = new VertxSyncCfJenkinsPlugin(jira, newCachedThreadPool());
         when(jira.findBundlesByName(any())).thenReturn(singleton(new JiraBundle("the bundle")));
         when(jira.findComponentsByBundle(any())).thenThrow(new JiraApiException());
         
@@ -70,13 +70,13 @@ public class VertxCollectSyncCollectionApiCfJenkinsPluginTest extends MeasuringT
     
     @Test public void should_3_be_fast() throws FileNotFoundException {
         List<BiFunction<SyncJiraApi, Executor, JenkinsPlugin>> plugins = Arrays.asList(
-            PoolAndCollectCfJenkinsPlugin::new,
-            PoolAndCollectCfJenkinsPlugin::new,
-            PoolAndCollectCfJenkinsPlugin::new,
-            PoolAndCollectCfJenkinsPlugin::new,
-            PoolAndCollectCfJenkinsPlugin::new,
-            PoolAndCollectCfJenkinsPlugin::new,
-            PoolAndCollectCfJenkinsPlugin::new
+            SyncCfJenkinsPlugin::new,
+            SyncCfJenkinsPlugin::new,
+            SyncCfJenkinsPlugin::new,
+            SyncCfJenkinsPlugin::new,
+            SyncCfJenkinsPlugin::new,
+            SyncCfJenkinsPlugin::new,
+            SyncCfJenkinsPlugin::new
         );
 
         SyncJiraApi srv = new LatentSyncJiraApi(new FakeSyncJiraApi());
@@ -96,7 +96,7 @@ public class VertxCollectSyncCollectionApiCfJenkinsPluginTest extends MeasuringT
     }
     
     @Test public void should_4_find_the_right_nunmber_of_jira_components() {
-        JenkinsPlugin sut = new VertxCollectSyncCollectionApiCfJenkinsPlugin(
+        JenkinsPlugin sut = new VertxSyncCfJenkinsPlugin(
                 new LatentSyncJiraApi(new FakeSyncJiraApi()),
                 newCachedThreadPool()
         );
@@ -110,7 +110,7 @@ public class VertxCollectSyncCollectionApiCfJenkinsPluginTest extends MeasuringT
     }
     
     @Test public void should_5_be_chainable() {
-        CfJenkinsPlugin sut = new VertxCollectSyncCollectionApiCfJenkinsPlugin(
+        CfJenkinsPlugin sut = new VertxSyncCfJenkinsPlugin(
             new LatentSyncJiraApi(new FakeSyncJiraApi()),
             newCachedThreadPool()
         );
@@ -141,7 +141,7 @@ public class VertxCollectSyncCollectionApiCfJenkinsPluginTest extends MeasuringT
     }
     
     @Test public void should_6_work_with_other_collections() {
-        JenkinsPlugin sut = new VertxCollectSyncCollectionApiCfJenkinsPlugin(
+        JenkinsPlugin sut = new VertxSyncCfJenkinsPlugin(
             new LatentSyncJiraApi(new FakeSyncJiraApi()),
             newCachedThreadPool()
         );

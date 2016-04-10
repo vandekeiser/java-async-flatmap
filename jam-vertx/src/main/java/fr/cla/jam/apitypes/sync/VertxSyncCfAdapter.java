@@ -11,7 +11,7 @@ import java.util.function.Supplier;
  * This impl is not satisfying at all since the call is sync and doesn't use the event loop.
  * Apparently node/vertx can only adapt a given set of calls (ws requests, ..)
  */
-public class VertxSyncApi2CfApi {
+public class VertxSyncCfAdapter {
 
     private static final Vertx vertx =  Vertx.vertx();
     

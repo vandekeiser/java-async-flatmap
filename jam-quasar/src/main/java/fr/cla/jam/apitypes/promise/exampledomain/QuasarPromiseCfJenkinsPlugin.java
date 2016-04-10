@@ -4,7 +4,7 @@ import co.paralleluniverse.common.monitoring.MonitorType;
 import co.paralleluniverse.fibers.FiberExecutorScheduler;
 import co.paralleluniverse.fibers.FiberScheduler;
 import fr.cla.jam.apitypes.promise.PromiseCfAdapter;
-import fr.cla.jam.apitypes.promise.QuasarPromiseApi2CfApi;
+import fr.cla.jam.apitypes.promise.QuasarPromiseCfAdapter;
 import fr.cla.jam.exampledomain.AbstractJenkinsPlugin;
 import fr.cla.jam.exampledomain.CfJenkinsPlugin;
 import fr.cla.jam.exampledomain.JiraBundle;
@@ -16,24 +16,24 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
-public class QuasarCollectPromiseApiIntoCfJenkinsPlugin extends AbstractJenkinsPlugin implements CfJenkinsPlugin {
+public class QuasarPromiseCfJenkinsPlugin extends AbstractJenkinsPlugin implements CfJenkinsPlugin {
 
     private final Function<String, CompletableFuture<Set<JiraComponent>>> findComponentsByBundleNameAsync;
     private final static AtomicInteger callInFiberSchedulerCounter = new AtomicInteger(0);
 
-    public QuasarCollectPromiseApiIntoCfJenkinsPlugin(PromiseJiraApi srv, Executor dedicatedPool) {
+    public QuasarPromiseCfJenkinsPlugin(PromiseJiraApi srv, Executor dedicatedPool) {
         super(srv);
         FiberScheduler dedicatedScheduler = dedicatedScheduler(dedicatedPool);
 
         Function<String, CompletableFuture<Set<JiraBundle>>> findBundlesByNameAsync =
-            QuasarPromiseApi2CfApi.<String, Set<JiraBundle>>usingFiberScheduler(dedicatedScheduler)
+            QuasarPromiseCfAdapter.<String, Set<JiraBundle>>usingFiberScheduler(dedicatedScheduler)
             .apply(srv::findBundlesByName);
 
         Function<Set<JiraBundle>, CompletableFuture<Set<JiraComponent>>>
         findComponentsByBundlesAsync = bundles -> PromiseCfAdapter.adaptFlatMap(
             bundles,
             srv::findComponentsByBundle,
-            QuasarPromiseApi2CfApi.usingFiberScheduler(dedicatedScheduler)
+            QuasarPromiseCfAdapter.usingFiberScheduler(dedicatedScheduler)
         );
 
         this.findComponentsByBundleNameAsync = findBundlesByNameAsync.andThen(
@@ -42,7 +42,7 @@ public class QuasarCollectPromiseApiIntoCfJenkinsPlugin extends AbstractJenkinsP
     }
 
     private FiberExecutorScheduler dedicatedScheduler(Executor dedicatedPool) {
-        return new FiberExecutorScheduler("QuasarCollectPromiseApiIntoCfJenkinsPlugin scheduler-" + callInFiberSchedulerCounter.incrementAndGet() , dedicatedPool, MonitorType.JMX, true);
+        return new FiberExecutorScheduler("QuasarPromiseCfJenkinsPlugin scheduler-" + callInFiberSchedulerCounter.incrementAndGet() , dedicatedPool, MonitorType.JMX, true);
     }
 
     @Override

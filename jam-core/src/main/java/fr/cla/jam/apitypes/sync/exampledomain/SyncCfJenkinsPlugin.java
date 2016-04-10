@@ -11,11 +11,11 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
-public class PoolAndCollectCfJenkinsPlugin extends AbstractJenkinsPlugin implements CfJenkinsPlugin {
+public class SyncCfJenkinsPlugin extends AbstractJenkinsPlugin implements CfJenkinsPlugin {
     
     private final Function<String, CompletableFuture<Set<JiraComponent>>> findComponentsByBundleNameAsync;
 
-    public PoolAndCollectCfJenkinsPlugin(SyncJiraApi srv, Executor dedicatedPool) {
+    public SyncCfJenkinsPlugin(SyncJiraApi srv, Executor dedicatedPool) {
         super(srv);
         Function<String, CompletableFuture<Set<JiraBundle>>> findBundlesByNameAsync =
             SyncCfAdapter.adaptUsingPool(srv::findBundlesByName, dedicatedPool);

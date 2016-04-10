@@ -1,6 +1,6 @@
 package fr.cla.jam.apitypes.completionstage.exampledomain;
 
-import fr.cla.jam.apitypes.sync.exampledomain.PoolAndCollectCfJenkinsPlugin;
+import fr.cla.jam.apitypes.sync.exampledomain.SyncCfJenkinsPlugin;
 import fr.cla.jam.apitypes.sync.exampledomain.FakeSyncJiraApi;
 import fr.cla.jam.apitypes.sync.exampledomain.LatentSyncJiraApi;
 import fr.cla.jam.apitypes.sync.exampledomain.SyncJiraApi;
@@ -65,7 +65,7 @@ public class CsCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
     @Override
     protected List<Function<Executor, JenkinsPlugin>> allPluginsForLatencyMeasurement() {
         List<BiFunction<SyncJiraApi, Executor, JenkinsPlugin>> syncPlugins = Arrays.asList(
-            PoolAndCollectCfJenkinsPlugin::new
+            SyncCfJenkinsPlugin::new
         );
         List<BiFunction<CsJiraApi, Executor, JenkinsPlugin>> csPlugins = Arrays.asList(
             CsCfJenkinsPlugin::new

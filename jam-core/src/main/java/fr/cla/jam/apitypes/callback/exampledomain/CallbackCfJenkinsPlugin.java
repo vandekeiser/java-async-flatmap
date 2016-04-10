@@ -21,7 +21,7 @@ public class CallbackCfJenkinsPlugin extends AbstractJenkinsPlugin implements Cf
             CallbackCfAdapter.adapt(srv::findBundlesByName);
 
         Function<Set<JiraBundle>, CompletableFuture<Set<JiraComponent>>> 
-        findComponentsByBundlesAsync = bundles -> CallbackCfAdapter.flatMapCallbackAsync(
+        findComponentsByBundlesAsync = bundles -> CallbackCfAdapter.flatMapAdapt(
             bundles,
             srv::findComponentsByBundle,
             CallbackCfAdapter::adapt

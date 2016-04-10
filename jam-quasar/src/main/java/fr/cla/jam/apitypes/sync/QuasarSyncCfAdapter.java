@@ -10,6 +10,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
+ * POOR USE OF QUASAR, since it blocks
+ *
  * http://docs.paralleluniverse.co/quasar/
  * Quasar’s chief contribution is that of the lightweight thread, called fiber in Quasar.
  * Fibers provide functionality similar to threads, and a similar API, but they’re not managed by the OS. 
@@ -30,18 +32,14 @@ import java.util.function.Supplier;
  * whether they’re sync the thread or hogging the CPU, and gives you their stack trace,
  * by printing this information to the console as well as reporting it to the runtime fiber monitor.
  */
-public class QuasarSyncApi2CfApi {
+public class QuasarSyncCfAdapter {
 
-    public static <T> Function<Supplier<T>, CompletableFuture<T>> supplyQuasar() {
+    public static <T> Function<Supplier<T>, CompletableFuture<T>> adapt() {
         return s -> CompletableFuture.supplyAsync(quasarify(s));
     }
     
     private static <T> Supplier<T> quasarify(Supplier<T> task) {
-        Fiber<T> quasarFiber = new Fiber<T>() {
-            @Override protected T run() throws SuspendExecution, InterruptedException {
-                return task.get();
-            }
-        }.start();
+        Fiber<T> quasarFiber = new Fiber<>(()->task.get()).start();
 
         return () -> {
             try {

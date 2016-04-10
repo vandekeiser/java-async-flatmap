@@ -1,8 +1,8 @@
 package fr.cla.jam.apitypes.sync.exampledomain;
 
 import fr.cla.jam.apitypes.sync.CollectionSyncCfAdapter;
-import fr.cla.jam.apitypes.sync.QuasarSyncApi2CfApi;
 import fr.cla.jam.apitypes.sync.SyncCfAdapter;
+import fr.cla.jam.apitypes.sync.VertxSyncCfAdapter;
 import fr.cla.jam.exampledomain.AbstractJenkinsPlugin;
 import fr.cla.jam.exampledomain.CfJenkinsPlugin;
 import fr.cla.jam.exampledomain.JiraBundle;
@@ -15,20 +15,20 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 
-public class QuasarCollectSyncApiCfJenkinsPlugin extends AbstractJenkinsPlugin implements CfJenkinsPlugin {
+public class VertxSyncCfJenkinsPlugin extends AbstractJenkinsPlugin implements CfJenkinsPlugin {
     
     private final Function<String, CompletableFuture<Set<JiraComponent>>> findComponentsByBundleNameAsync;
 
-    public QuasarCollectSyncApiCfJenkinsPlugin(SyncJiraApi srv, Executor dedicatedPool) {
+    public VertxSyncCfJenkinsPlugin(SyncJiraApi srv, Executor dedicatedPool) {
         super(srv);
         Function<String, CompletableFuture<Set<JiraBundle>>> findBundlesByNameAsync =
-            SyncCfAdapter.adapt(srv::findBundlesByName, QuasarSyncApi2CfApi.supplyQuasar());
+            SyncCfAdapter.adapt(srv::findBundlesByName, VertxSyncCfAdapter.supplyVertx());
         
         Function<Set<JiraBundle>, CompletableFuture<Set<JiraComponent>>> findComponentsByBundlesAsync = 
             bundles -> CollectionSyncCfAdapter.flatMapAdapt(
                 bundles,
                 srv::findComponentsByBundle,
-                QuasarSyncApi2CfApi.supplyQuasar(),
+                VertxSyncCfAdapter.supplyVertx(),
                 Collections::emptySet,
                 Sets::union
             );
