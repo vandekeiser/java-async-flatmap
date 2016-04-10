@@ -21,12 +21,11 @@ public class QuasarPromiseCfJenkinsPlugin extends AbstractCfJenkinsPlugin implem
     public QuasarPromiseCfJenkinsPlugin(PromiseJiraApi srv, Executor dedicatedPool) {
         super(
             srv,
-            QuasarPromiseCfAdapter.<String, Set<JiraBundle>>usingFiberScheduler(dedicatedScheduler(dedicatedPool))
-                    .apply(srv::findBundlesByName),
+            QuasarPromiseCfAdapter.adapt(srv::findBundlesByName, dedicatedScheduler(dedicatedPool)),
             bundles -> PromiseCfAdapter.adaptFlatMap(
                 bundles,
                 srv::findComponentsByBundle,
-                QuasarPromiseCfAdapter.usingFiberScheduler(dedicatedScheduler(dedicatedPool))
+                mapper -> QuasarPromiseCfAdapter.adapt(mapper, dedicatedScheduler(dedicatedPool))
             )
         );
     }

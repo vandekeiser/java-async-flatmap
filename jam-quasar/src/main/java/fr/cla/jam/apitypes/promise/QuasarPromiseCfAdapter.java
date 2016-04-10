@@ -8,14 +8,14 @@ import java.util.function.Function;
 
 public class QuasarPromiseCfAdapter {
 
-    public static <T, U> Function<
-        Function<T, Promise<U>>,
-        Function<T, CompletableFuture<U>>
-    > usingFiberScheduler(FiberScheduler dedicatedScheduler) {
-        return promise -> input -> {
+    public static <T, U> Function<T, CompletableFuture<U>> adapt(
+        Function<T, Promise<U>> adaptee,
+        FiberScheduler dedicatedScheduler
+    ) {
+        return input -> {
             CompletableFuture<U> fiberCf = new CompletableFuture<>();
 
-            new Fiber<>(dedicatedScheduler, () -> promise.apply(input).whenComplete(
+            new Fiber<>(dedicatedScheduler, () -> adaptee.apply(input).whenComplete(
                 res -> fiberCf.complete(res),
                 x -> fiberCf.completeExceptionally(x)
             )).start();
