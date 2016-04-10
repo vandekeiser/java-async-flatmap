@@ -2,8 +2,7 @@ package fr.cla.jam.apitypes.callback.exampledomain;
 
 import co.paralleluniverse.common.monitoring.MonitorType;
 import co.paralleluniverse.fibers.*;
-import fr.cla.jam.apitypes.callback.CallbackApi2CfApi;
-import fr.cla.jam.apitypes.callback.CollectCallbackApiIntoCf;
+import fr.cla.jam.apitypes.callback.CallbackCfAdapter;
 import fr.cla.jam.exampledomain.AbstractJenkinsPlugin;
 import fr.cla.jam.exampledomain.CfJenkinsPlugin;
 import fr.cla.jam.exampledomain.JiraBundle;
@@ -30,14 +29,13 @@ public class QuasarCollectCallbackApiIntoCfJenkinsPlugin extends AbstractJenkins
         this.dedicatedScheduler = dedicatedScheduler(dedicatedPool);
 
         Function<String, CompletableFuture<Set<JiraBundle>>> findBundlesByNameAsync =
-            CallbackApi2CfApi.<String, Set<JiraBundle>>waitToBeCalledBack()
-            .apply(srv::findBundlesByName);
+            CallbackCfAdapter.adapt(srv::findBundlesByName);
 
         Function<Set<JiraBundle>, CompletableFuture<Set<JiraComponent>>> 
-        findComponentsByBundlesAsync = bundles -> CollectCallbackApiIntoCf.flatMapCallbackAsync(
+        findComponentsByBundlesAsync = bundles -> CallbackCfAdapter.flatMapCallbackAsync(
             bundles,
             srv::findComponentsByBundle,
-            CallbackApi2CfApi.waitToBeCalledBack()
+            CallbackCfAdapter::adapt
         );
 
         this.findComponentsByBundleNameAsync = findBundlesByNameAsync.andThen(

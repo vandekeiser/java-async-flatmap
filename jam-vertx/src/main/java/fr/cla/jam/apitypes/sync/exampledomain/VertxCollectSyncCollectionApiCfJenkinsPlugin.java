@@ -1,7 +1,7 @@
 package fr.cla.jam.apitypes.sync.exampledomain;
 
 import fr.cla.jam.apitypes.sync.CollectSyncCollectionApiIntoCf;
-import fr.cla.jam.apitypes.sync.SyncApi2CfApi;
+import fr.cla.jam.apitypes.sync.SyncCfAdapter;
 import fr.cla.jam.apitypes.sync.VertxSyncApi2CfApi;
 import fr.cla.jam.exampledomain.AbstractJenkinsPlugin;
 import fr.cla.jam.exampledomain.CfJenkinsPlugin;
@@ -22,7 +22,7 @@ public class VertxCollectSyncCollectionApiCfJenkinsPlugin extends AbstractJenkin
     public VertxCollectSyncCollectionApiCfJenkinsPlugin(SyncJiraApi srv, Executor dedicatedPool) {
         super(srv);
         Function<String, CompletableFuture<Set<JiraBundle>>> findBundlesByNameAsync =
-            SyncApi2CfApi.asyncify(srv::findBundlesByName, VertxSyncApi2CfApi.supplyVertx());
+            SyncCfAdapter.adapt(srv::findBundlesByName, VertxSyncApi2CfApi.supplyVertx());
         
         Function<Set<JiraBundle>, CompletableFuture<Set<JiraComponent>>> findComponentsByBundlesAsync = 
             bundles -> CollectSyncCollectionApiIntoCf.flatMapCollectionAsync(

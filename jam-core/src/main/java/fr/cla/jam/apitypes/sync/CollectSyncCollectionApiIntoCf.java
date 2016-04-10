@@ -32,7 +32,7 @@ public final class CollectSyncCollectionApiIntoCf {
         BinaryOperator<Fs> collectionUnion
     ) {
         return inputs.stream()
-            .map(SyncApi2CfApi.asyncify(mapper, asyncifier))
+            .map(SyncCfAdapter.adapt(mapper, asyncifier))
             .collect(toSet())
             .stream()
             .collect(flattening(collectionSupplier, collectionUnion));    

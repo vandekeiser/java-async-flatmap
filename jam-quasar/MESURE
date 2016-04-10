@@ -164,6 +164,13 @@ pas clair ce qui est bloqué, au moins le client
         activer JMX?
     --> IO locale avec API de fichier non blocante? AsynchronousFileChannel/ CompletionHandler
         bof: "NIO.2's asynchronous channel APIs provide a convenient and standard way of performing asynchronous operations platform-independently. They allow application developers to write programs that use asynchronous I/O in a clear manner, without having to define their own Java threads and, in addition, may give performance improvements by using the asynchronous support on the underlying OS. As with many Java APIs, the amount that the API can exploit an OS's native asynchronous capabilities will depend on the support for that platform." 
+       *pqoi y'a besoin de ca si nio est non bloquant?: https://github.com/puniverse/quasar/tree/master/quasar-core/src/main/java/co/paralleluniverse 
     -->srv en localhost?
 
 cf thencompose = flatmap
+
+
+**************
+adapt sans ET avec pool? 
+callback avec 2 args
+generifier les plugins et introduire abstract pour utiliser les adapters

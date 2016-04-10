@@ -3,7 +3,7 @@ package fr.cla.jam.apitypes.promise.exampledomain;
 import co.paralleluniverse.common.monitoring.MonitorType;
 import co.paralleluniverse.fibers.FiberExecutorScheduler;
 import co.paralleluniverse.fibers.FiberScheduler;
-import fr.cla.jam.apitypes.promise.CollectPromiseApiIntoCf;
+import fr.cla.jam.apitypes.promise.PromiseCfAdapter;
 import fr.cla.jam.apitypes.promise.QuasarPromiseApi2CfApi;
 import fr.cla.jam.exampledomain.AbstractJenkinsPlugin;
 import fr.cla.jam.exampledomain.CfJenkinsPlugin;
@@ -30,7 +30,7 @@ public class QuasarCollectPromiseApiIntoCfJenkinsPlugin extends AbstractJenkinsP
             .apply(srv::findBundlesByName);
 
         Function<Set<JiraBundle>, CompletableFuture<Set<JiraComponent>>>
-        findComponentsByBundlesAsync = bundles -> CollectPromiseApiIntoCf.flatMapPromiseAsync(
+        findComponentsByBundlesAsync = bundles -> PromiseCfAdapter.adaptFlatMap(
             bundles,
             srv::findComponentsByBundle,
             QuasarPromiseApi2CfApi.usingFiberScheduler(dedicatedScheduler)

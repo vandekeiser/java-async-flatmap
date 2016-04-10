@@ -9,21 +9,32 @@ import java.util.function.Function;
 import static fr.cla.jam.util.collectors.FlatteningSetCollector.flattening;
 import static java.util.stream.Collectors.toSet;
 
-public final class CollectCsApiIntoCf {
+public final class CsCfAdapter {
 
-    public static <E, F> CompletableFuture<Set<F>> flatMapAsyncUsingPool(
+    public static <S, T> Function<S, CompletableFuture<T>>
+    adapt(Function<S, CompletionStage<T>> mapper, Executor pool) {
+        return e -> {
+            CompletableFuture<T> result = new CompletableFuture<>();
+            mapper.apply(e).whenCompleteAsync(
+                (t, x) -> {
+                    if(x != null) result.completeExceptionally(x);
+                    else result.complete(t);
+                },
+                pool
+            );
+            return result;
+        };
+    }
+
+    public static <E, F> CompletableFuture<Set<F>> flatMapAdaptUsingPool(
         Set<E> inputs,
         Function<E, CompletionStage<Set<F>>> mapper,
         Executor parallelisationPool
     ) {
-        return inputs.stream()
-            .map(CsApi2CfApi.placeInPoolWhenComplete(mapper, parallelisationPool))
-            .collect(toSet())
-            .stream()
-            .collect(flattening());
+        return flatMapAdapt(inputs, mapper, m -> adapt(m, parallelisationPool));
     }
 
-    public static <E, F> CompletableFuture<Set<F>> flatMapAsync(
+    public static <E, F> CompletableFuture<Set<F>> flatMapAdapt(
         Set<E> inputs,
         Function<E, CompletionStage<Set<F>>> mapper,
         Function<

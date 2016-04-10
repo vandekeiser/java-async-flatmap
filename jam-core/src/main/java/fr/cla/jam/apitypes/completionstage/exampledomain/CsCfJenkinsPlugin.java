@@ -1,7 +1,6 @@
-package fr.cla.jam.apitypes.sync.exampledomain;
+package fr.cla.jam.apitypes.completionstage.exampledomain;
 
-import fr.cla.jam.apitypes.sync.ReducetSyncApiIntoCf;
-import fr.cla.jam.apitypes.sync.SyncApi2CfApi;
+import fr.cla.jam.apitypes.completionstage.CsCfAdapter;
 import fr.cla.jam.exampledomain.AbstractJenkinsPlugin;
 import fr.cla.jam.exampledomain.CfJenkinsPlugin;
 import fr.cla.jam.exampledomain.JiraBundle;
@@ -12,23 +11,24 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 
-public class ReduceSyncApiCfJenkinsPlugin extends AbstractJenkinsPlugin implements CfJenkinsPlugin {
+public class CsCfJenkinsPlugin extends AbstractJenkinsPlugin implements CfJenkinsPlugin {
     
     private final Function<String, CompletableFuture<Set<JiraComponent>>> findComponentsByBundleNameAsync;
 
-    public ReduceSyncApiCfJenkinsPlugin(SyncJiraApi srv, Executor dedicatedPool) {
+    public CsCfJenkinsPlugin(CsJiraApi srv, Executor dedicatedPool) {
         super(srv);
-        Function<String, CompletableFuture<Set<JiraBundle>>> findBundlesByNameAsync =
-            SyncApi2CfApi.asyncifyWithPool(srv::findBundlesByName, dedicatedPool);
+        Function<String, CompletableFuture<Set<JiraBundle>>>
+            findBundlesByNameAsync = CsCfAdapter.adapt(srv::findBundlesByName, dedicatedPool);
         
         Function<Set<JiraBundle>, CompletableFuture<Set<JiraComponent>>> findComponentsByBundlesAsync = 
-            bundles -> ReducetSyncApiIntoCf.flatMapAsync(bundles, srv::findComponentsByBundle, dedicatedPool);
-                
+            bundles -> CsCfAdapter.flatMapAdaptUsingPool(bundles, srv::findComponentsByBundle, dedicatedPool);
+
         this.findComponentsByBundleNameAsync = findBundlesByNameAsync.andThen(
             bundlesFuture -> bundlesFuture.thenCompose(findComponentsByBundlesAsync)
         );
     }
 
+    @Override
     public CompletableFuture<Set<JiraComponent>> findComponentsByBundleNameAsync(String bundleName) {
         return findComponentsByBundleNameAsync.apply(bundleName);
     }

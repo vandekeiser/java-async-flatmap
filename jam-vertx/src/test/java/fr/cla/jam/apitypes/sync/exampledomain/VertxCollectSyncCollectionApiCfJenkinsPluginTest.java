@@ -70,13 +70,13 @@ public class VertxCollectSyncCollectionApiCfJenkinsPluginTest extends MeasuringT
     
     @Test public void should_3_be_fast() throws FileNotFoundException {
         List<BiFunction<SyncJiraApi, Executor, JenkinsPlugin>> plugins = Arrays.asList(
-            CollectSyncApiCfJenkinsPlugin::new,
-            CollectSyncApiCfJenkinsPlugin::new,
-            CollectSyncApiCfJenkinsPlugin::new,
-            CollectSyncApiCfJenkinsPlugin::new,
-            CollectSyncApiCfJenkinsPlugin::new,
-            CollectSyncApiCfJenkinsPlugin::new,
-            CollectSyncApiCfJenkinsPlugin::new
+            PoolAndCollectCfJenkinsPlugin::new,
+            PoolAndCollectCfJenkinsPlugin::new,
+            PoolAndCollectCfJenkinsPlugin::new,
+            PoolAndCollectCfJenkinsPlugin::new,
+            PoolAndCollectCfJenkinsPlugin::new,
+            PoolAndCollectCfJenkinsPlugin::new,
+            PoolAndCollectCfJenkinsPlugin::new
         );
 
         SyncJiraApi srv = new LatentSyncJiraApi(new FakeSyncJiraApi());

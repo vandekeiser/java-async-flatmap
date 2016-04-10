@@ -1,53 +1,53 @@
-package fr.cla.jam.apitypes.completionstage.exampledomain;
+package fr.cla.jam.apitypes.callback.exampledomain;
 
-import fr.cla.jam.apitypes.sync.exampledomain.CollectSyncApiCfJenkinsPlugin;
+import fr.cla.jam.apitypes.completionstage.exampledomain.CsJiraApi;
+import fr.cla.jam.apitypes.completionstage.exampledomain.FakeCsJiraApi;
+import fr.cla.jam.apitypes.completionstage.exampledomain.LatentCsJiraApi;
 import fr.cla.jam.apitypes.sync.exampledomain.FakeSyncJiraApi;
 import fr.cla.jam.apitypes.sync.exampledomain.LatentSyncJiraApi;
 import fr.cla.jam.apitypes.sync.exampledomain.SyncJiraApi;
-import fr.cla.jam.exampledomain.*;
+import fr.cla.jam.exampledomain.AbstractJenkinsPluginTest;
+import fr.cla.jam.exampledomain.CfJenkinsPlugin;
+import fr.cla.jam.exampledomain.JenkinsPlugin;
 import org.junit.FixMethodOrder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static fr.cla.jam.util.functions.Functions.curry;
-import static java.util.Collections.singleton;
 import static java.util.concurrent.Executors.newCachedThreadPool;
 import static java.util.stream.Collectors.toList;
 import static org.junit.runners.MethodSorters.NAME_ASCENDING;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
+//deepneural4j
+
+//TODO:
+// -tester scalabilite avec JMH
+// -factor nb de resultats
+// -separer modules fwk et domain
 @FixMethodOrder(NAME_ASCENDING)
-public class CollectCsApiCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
+public class CallbackCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
 
     @Override
     protected CfJenkinsPlugin defectiveSut() {
-        CsJiraApi jira = mock(CsJiraApi.class);
-        when(jira.findBundlesByName(any())).thenThrow(new JiraApiException());
-        return new CollectCsApiCfJenkinsPlugin(jira, newCachedThreadPool());
+        CallbackJiraApi jira = new DefectiveCallbackJiraApi();
+        return new CallbackCfJenkinsPlugin(jira, newCachedThreadPool());
     }
 
     @Override
     protected CfJenkinsPlugin halfDefectiveSut() {
-        CsJiraApi jira = mock(CsJiraApi.class);
-        when(jira.findBundlesByName(any())).thenReturn(
-            CompletableFuture.completedFuture(singleton(new JiraBundle("the bundle")))
-        );
-        when(jira.findComponentsByBundle(any())).thenThrow(new JiraApiException());
-        return new CollectCsApiCfJenkinsPlugin(jira, newCachedThreadPool());
+        CallbackJiraApi jira = new HalfDefectiveCallbackJiraApi();
+        return new CallbackCfJenkinsPlugin(jira, newCachedThreadPool());
     }
 
     @Override
     protected CfJenkinsPlugin latentSut() {
-        return new CollectCsApiCfJenkinsPlugin(
-            new LatentCsJiraApi(new FakeCsJiraApi()),
+        return new CallbackCfJenkinsPlugin(
+            new BlockingLatentCallbackJiraApi(new FakeCallbackJiraApi()),
             newCachedThreadPool()
         );
     }
@@ -65,18 +65,21 @@ public class CollectCsApiCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
     @Override
     protected List<Function<Executor, JenkinsPlugin>> allPluginsForLatencyMeasurement() {
         List<BiFunction<SyncJiraApi, Executor, JenkinsPlugin>> syncPlugins = Arrays.asList(
-            CollectSyncApiCfJenkinsPlugin::new
         );
         List<BiFunction<CsJiraApi, Executor, JenkinsPlugin>> csPlugins = Arrays.asList(
-            CollectCsApiCfJenkinsPlugin::new
+        );
+        List<BiFunction<CallbackJiraApi, Executor, JenkinsPlugin>> callbackPlugins = Arrays.asList(
+            CallbackCfJenkinsPlugin::new
         );
 
         SyncJiraApi syncApi = new LatentSyncJiraApi(new FakeSyncJiraApi());
         CsJiraApi csApi = new LatentCsJiraApi(new FakeCsJiraApi());
+        CallbackJiraApi callbackApi = new BlockingLatentCallbackJiraApi(new FakeCallbackJiraApi());
 
-        List<Function<Executor, JenkinsPlugin>> allPlugins = new ArrayList<>();
+        List<Function<Executor,JenkinsPlugin>> allPlugins = new ArrayList<>();
         allPlugins.addAll(syncPlugins.stream().map(curry(syncApi)).collect(toList()));
         allPlugins.addAll(csPlugins.stream().map(curry(csApi)).collect(toList()));
+        allPlugins.addAll(callbackPlugins.stream().map(curry(callbackApi)).collect(toList()));
         return allPlugins;
     }
 

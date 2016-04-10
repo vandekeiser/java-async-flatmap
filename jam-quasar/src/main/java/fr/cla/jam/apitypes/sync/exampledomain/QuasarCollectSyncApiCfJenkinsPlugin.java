@@ -2,7 +2,7 @@ package fr.cla.jam.apitypes.sync.exampledomain;
 
 import fr.cla.jam.apitypes.sync.CollectSyncCollectionApiIntoCf;
 import fr.cla.jam.apitypes.sync.QuasarSyncApi2CfApi;
-import fr.cla.jam.apitypes.sync.SyncApi2CfApi;
+import fr.cla.jam.apitypes.sync.SyncCfAdapter;
 import fr.cla.jam.exampledomain.AbstractJenkinsPlugin;
 import fr.cla.jam.exampledomain.CfJenkinsPlugin;
 import fr.cla.jam.exampledomain.JiraBundle;
@@ -22,7 +22,7 @@ public class QuasarCollectSyncApiCfJenkinsPlugin extends AbstractJenkinsPlugin i
     public QuasarCollectSyncApiCfJenkinsPlugin(SyncJiraApi srv, Executor dedicatedPool) {
         super(srv);
         Function<String, CompletableFuture<Set<JiraBundle>>> findBundlesByNameAsync =
-            SyncApi2CfApi.asyncify(srv::findBundlesByName, QuasarSyncApi2CfApi.supplyQuasar());
+            SyncCfAdapter.adapt(srv::findBundlesByName, QuasarSyncApi2CfApi.supplyQuasar());
         
         Function<Set<JiraBundle>, CompletableFuture<Set<JiraComponent>>> findComponentsByBundlesAsync = 
             bundles -> CollectSyncCollectionApiIntoCf.flatMapCollectionAsync(

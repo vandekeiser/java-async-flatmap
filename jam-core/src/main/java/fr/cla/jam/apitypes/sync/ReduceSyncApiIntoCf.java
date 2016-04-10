@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.stream.Collectors.toSet;
 
-public final class ReducetSyncApiIntoCf {
+public final class ReduceSyncApiIntoCf {
 
     public static <E, F> CompletableFuture<Set<F>> flatMapAsync(
         Set<E> inputs,
@@ -22,7 +22,7 @@ public final class ReducetSyncApiIntoCf {
         Function<E, Set<F>> _mapper = requireNonNull(mapper);
         
         return inputs.stream()
-            .map(SyncApi2CfApi.asyncifyWithPool(_mapper, parallelisationPool))
+            .map(SyncCfAdapter.adaptUsingPool(_mapper, parallelisationPool))
             .collect(toSet())
             .stream()
             .reduce(

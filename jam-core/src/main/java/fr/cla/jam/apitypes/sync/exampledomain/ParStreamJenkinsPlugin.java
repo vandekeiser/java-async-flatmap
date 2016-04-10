@@ -10,14 +10,14 @@ import java.util.function.Function;
 
 import static java.util.stream.Collectors.toSet;
 
-public class SequentialStreamSyncApiJenkinsPlugin extends AbstractJenkinsPlugin implements JenkinsPlugin {
+public class ParStreamJenkinsPlugin extends AbstractJenkinsPlugin implements JenkinsPlugin {
 
     private final Function<String, Set<JiraComponent>> findComponentsByBundleName;
 
-    public SequentialStreamSyncApiJenkinsPlugin(SyncJiraApi srv, Executor dedicatedPool) {
+    public ParStreamJenkinsPlugin(SyncJiraApi srv, Executor dedicatedPool) {
         super(srv);
         findComponentsByBundleName = bundleName -> srv.findBundlesByName(bundleName)
-            .stream()
+            .stream().parallel()
             .flatMap(b -> srv.findComponentsByBundle(b).stream())
             .collect(toSet());
     }

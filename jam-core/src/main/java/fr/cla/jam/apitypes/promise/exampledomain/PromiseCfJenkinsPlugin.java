@@ -1,7 +1,6 @@
-package fr.cla.jam.apitypes.completionstage.exampledomain;
+package fr.cla.jam.apitypes.promise.exampledomain;
 
-import fr.cla.jam.apitypes.completionstage.CollectCsApiIntoCf;
-import fr.cla.jam.apitypes.completionstage.CsApi2CfApi;
+import fr.cla.jam.apitypes.promise.PromiseCfAdapter;
 import fr.cla.jam.exampledomain.AbstractJenkinsPlugin;
 import fr.cla.jam.exampledomain.CfJenkinsPlugin;
 import fr.cla.jam.exampledomain.JiraBundle;
@@ -12,17 +11,20 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 
-public class CollectCsApiCfJenkinsPlugin extends AbstractJenkinsPlugin implements CfJenkinsPlugin {
-    
+public class PromiseCfJenkinsPlugin extends AbstractJenkinsPlugin implements CfJenkinsPlugin {
+
     private final Function<String, CompletableFuture<Set<JiraComponent>>> findComponentsByBundleNameAsync;
 
-    public CollectCsApiCfJenkinsPlugin(CsJiraApi srv, Executor dedicatedPool) {
+    public PromiseCfJenkinsPlugin(PromiseJiraApi srv, Executor dedicatedPool) {
         super(srv);
-        Function<String, CompletableFuture<Set<JiraBundle>>>
-                findBundlesByNameAsync = CsApi2CfApi.placeInPoolWhenComplete(srv::findBundlesByName, dedicatedPool);
-        
-        Function<Set<JiraBundle>, CompletableFuture<Set<JiraComponent>>> findComponentsByBundlesAsync = 
-            bundles -> CollectCsApiIntoCf.flatMapAsyncUsingPool(bundles, srv::findComponentsByBundle, dedicatedPool);
+        Function<String, CompletableFuture<Set<JiraBundle>>> findBundlesByNameAsync =
+            PromiseCfAdapter.adapt(srv::findBundlesByName);
+
+        Function<Set<JiraBundle>, CompletableFuture<Set<JiraComponent>>>
+        findComponentsByBundlesAsync = bundles -> PromiseCfAdapter.adaptFlatMap(
+            bundles,
+            srv::findComponentsByBundle
+        );
 
         this.findComponentsByBundleNameAsync = findBundlesByNameAsync.andThen(
             bundlesFuture -> bundlesFuture.thenCompose(findComponentsByBundlesAsync)

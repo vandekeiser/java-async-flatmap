@@ -1,6 +1,6 @@
 package fr.cla.jam.apitypes.completionstage.exampledomain;
 
-import fr.cla.jam.apitypes.completionstage.CollectCsApiIntoCf;
+import fr.cla.jam.apitypes.completionstage.CsCfAdapter;
 import fr.cla.jam.apitypes.completionstage.QuasarCsApi2CfApi;
 import fr.cla.jam.exampledomain.AbstractJenkinsPlugin;
 import fr.cla.jam.exampledomain.CfJenkinsPlugin;
@@ -23,7 +23,7 @@ public class QuasarCollectCsApiIntoCfJenkinsPlugin extends AbstractJenkinsPlugin
             .apply(srv::findBundlesByName);
 
         Function<Set<JiraBundle>, CompletableFuture<Set<JiraComponent>>> 
-        findComponentsByBundlesAsync = bundles -> CollectCsApiIntoCf.flatMapAsync(
+        findComponentsByBundlesAsync = bundles -> CsCfAdapter.flatMapAdapt(
                 bundles,
                 srv::findComponentsByBundle,
                 QuasarCsApi2CfApi.usingPool(dedicatedPool)

@@ -14,15 +14,15 @@ public final class CollectSyncStreamApiIntoCf {
 
     public interface StreamSupplier<E, Es extends Stream<E>> extends Supplier<Es> {}
     
-    public static <E, F> CompletableFuture<Stream<F>> flatMapAsync(
+    public static <E, F> CompletableFuture<Stream<F>> adapt(
         Stream<E> inputs,
         Function<E, Stream<F>> mapper,
         Executor parallelisationPool
     ) {
-        return CollectSyncStreamApiIntoCf.flatMapAsync(inputs, mapper, parallelisationPool, Stream::empty, Stream::concat);
+        return CollectSyncStreamApiIntoCf.adapt(inputs, mapper, parallelisationPool, Stream::empty, Stream::concat);
     }
     
-    public static <E, Es extends Stream<E>, F, Fs extends Stream<F>> CompletableFuture<Fs> flatMapAsync(
+    public static <E, Es extends Stream<E>, F, Fs extends Stream<F>> CompletableFuture<Fs> adapt(
         Es inputs,
         Function<E, Fs> mapper,
         Executor parallelisationPool,
@@ -30,7 +30,7 @@ public final class CollectSyncStreamApiIntoCf {
         BinaryOperator<Fs> streamUnion
     ) {
         return inputs
-            .map(SyncApi2CfApi.asyncifyWithPool(mapper, parallelisationPool))
+            .map(SyncCfAdapter.adaptUsingPool(mapper, parallelisationPool))
             .collect(toSet())
             .stream()
             .collect(flattening(streamSupplier, streamUnion));    
