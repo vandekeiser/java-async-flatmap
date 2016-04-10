@@ -3,15 +3,10 @@ package fr.cla.jam.apitypes.promise;
 import co.paralleluniverse.fibers.Fiber;
 import co.paralleluniverse.fibers.FiberExecutorScheduler;
 import co.paralleluniverse.fibers.FiberScheduler;
-import fr.cla.jam.exampledomain.JiraBundle;
-import fr.cla.jam.exampledomain.JiraComponent;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
-
-import static fr.cla.jam.util.collectors.FlatteningSetCollector.flattening;
-import static java.util.stream.Collectors.toSet;
 
 public class QuasarPromiseCfAdapter {
 

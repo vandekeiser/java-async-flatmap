@@ -9,7 +9,6 @@ import fr.cla.jam.exampledomain.CfJenkinsPlugin;
 import fr.cla.jam.util.containers.Sets;
 
 import java.util.Collections;
-import java.util.concurrent.Executor;
 
 public class QuasarSyncCfJenkinsPlugin extends AbstractCfJenkinsPlugin implements CfJenkinsPlugin {
     

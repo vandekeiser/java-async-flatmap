@@ -5,8 +5,6 @@ import fr.cla.jam.apitypes.callback.CallbackCfAdapter;
 import fr.cla.jam.exampledomain.AbstractCfJenkinsPlugin;
 import fr.cla.jam.exampledomain.CfJenkinsPlugin;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 public class QuasarCallbackCfJenkinsPlugin extends AbstractCfJenkinsPlugin implements CfJenkinsPlugin {
     
     public QuasarCallbackCfJenkinsPlugin(CallbackJiraApi srv, FiberExecutorScheduler dedicatedScheduler) {

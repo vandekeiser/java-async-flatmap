@@ -1,37 +1,13 @@
 package fr.cla.jam.apitypes.callback.exampledomain;
 
-import co.paralleluniverse.common.monitoring.MonitorType;
-import co.paralleluniverse.fibers.FiberExecutorScheduler;
 import fr.cla.jam.apitypes.AbstractQuasarJenkinsPluginTest;
 import fr.cla.jam.apitypes.callback.NonBlockingLatentCallbackJiraApi;
-import fr.cla.jam.apitypes.completionstage.exampledomain.CsJiraApi;
-import fr.cla.jam.apitypes.completionstage.exampledomain.FakeCsJiraApi;
-import fr.cla.jam.apitypes.completionstage.exampledomain.LatentCsJiraApi;
-import fr.cla.jam.apitypes.promise.NonBlockingLatentPromiseJiraApi;
-import fr.cla.jam.apitypes.promise.exampledomain.FakePromiseJiraApi;
-import fr.cla.jam.apitypes.promise.exampledomain.PromiseJiraApi;
-import fr.cla.jam.apitypes.promise.exampledomain.QuasarPromiseCfJenkinsPlugin;
-import fr.cla.jam.apitypes.sync.exampledomain.FakeSyncJiraApi;
-import fr.cla.jam.apitypes.sync.exampledomain.LatentSyncJiraApi;
-import fr.cla.jam.apitypes.sync.exampledomain.SyncJiraApi;
-import fr.cla.jam.exampledomain.AbstractJenkinsPluginTest;
 import fr.cla.jam.exampledomain.CfJenkinsPlugin;
 import fr.cla.jam.exampledomain.JenkinsPlugin;
-import org.junit.After;
-import org.junit.Before;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-
-import static fr.cla.jam.util.functions.Functions.curry;
-import static java.util.concurrent.Executors.newCachedThreadPool;
-import static java.util.concurrent.Executors.newFixedThreadPool;
-import static java.util.stream.Collectors.toList;
 
 //deepneural4j
 

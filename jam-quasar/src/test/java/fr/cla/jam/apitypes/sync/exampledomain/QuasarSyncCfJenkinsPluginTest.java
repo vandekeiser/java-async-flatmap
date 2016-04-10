@@ -1,27 +1,17 @@
 package fr.cla.jam.apitypes.sync.exampledomain;
 
-import co.paralleluniverse.common.monitoring.MonitorType;
-import co.paralleluniverse.fibers.FiberExecutorScheduler;
 import fr.cla.jam.apitypes.AbstractQuasarJenkinsPluginTest;
-import fr.cla.jam.apitypes.callback.exampledomain.BlockingLatentCallbackJiraApi;
-import fr.cla.jam.apitypes.callback.exampledomain.CallbackCfJenkinsPlugin;
-import fr.cla.jam.apitypes.callback.exampledomain.CallbackJiraApi;
-import fr.cla.jam.apitypes.callback.exampledomain.FakeCallbackJiraApi;
-import fr.cla.jam.exampledomain.*;
+import fr.cla.jam.exampledomain.CfJenkinsPlugin;
+import fr.cla.jam.exampledomain.JenkinsPlugin;
+import fr.cla.jam.exampledomain.JiraApiException;
+import fr.cla.jam.exampledomain.JiraBundle;
 import org.junit.FixMethodOrder;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
-import static fr.cla.jam.util.functions.Functions.curry;
 import static java.util.Collections.singleton;
-import static java.util.concurrent.Executors.newCachedThreadPool;
-import static java.util.stream.Collectors.toList;
 import static org.junit.runners.MethodSorters.NAME_ASCENDING;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;

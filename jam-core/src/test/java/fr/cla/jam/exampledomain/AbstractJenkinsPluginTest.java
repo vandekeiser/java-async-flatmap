@@ -12,9 +12,11 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.*;
+import java.util.List;
+import java.util.LongSummaryStatistics;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.*;
-import java.util.function.Function;
 import java.util.stream.IntStream;
 
 import static fr.cla.jam.util.FakeApi.NB_OF_BUNDLES_PER_NAME;
