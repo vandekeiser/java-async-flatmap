@@ -15,7 +15,7 @@ public class QuasarSyncCfJenkinsPlugin extends AbstractCfJenkinsPlugin implement
     public QuasarSyncCfJenkinsPlugin(SyncJiraApi srv, FiberExecutorScheduler dedicatedScheduler) {
         super(
             srv,
-            SyncCfAdapter.adapt(srv::findBundlesByName, QuasarSyncCfAdapter.adapt()),
+            QuasarSyncCfAdapter.adapt(srv::findBundlesByName, dedicatedScheduler),
             bundles -> CollectionSyncCfAdapter.flatMapAdapt(
                 bundles,
                 srv::findComponentsByBundle,

@@ -1,7 +1,10 @@
 package fr.cla.jam.apitypes.sync;
 
 import co.paralleluniverse.fibers.Fiber;
+import co.paralleluniverse.fibers.FiberExecutorScheduler;
+import fr.cla.jam.exampledomain.JiraBundle;
 
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
@@ -49,4 +52,21 @@ public class QuasarSyncCfAdapter {
         };
     }
 
+    public static <S, T> Function<S, CompletableFuture<T>> adapt(
+        Function<S, T> adaptee,
+        FiberExecutorScheduler dedicatedScheduler
+    ) {
+        return s -> {
+            CompletableFuture<T> cf = new CompletableFuture<>();
+            new Fiber<>(dedicatedScheduler, () -> {
+                try {
+                    T success = adaptee.apply(s);
+                    cf.complete(success);
+                } catch (Throwable t) {
+                    cf.completeExceptionally(t);
+                }
+            }).start();
+            return cf;
+        };
+    }
 }
