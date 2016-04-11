@@ -16,12 +16,10 @@ public class QuasarSyncCfJenkinsPlugin extends AbstractCfJenkinsPlugin implement
         super(
             srv,
             QuasarSyncCfAdapter.adapt(srv::findBundlesByName, dedicatedScheduler),
-            bundles -> CollectionSyncCfAdapter.flatMapAdapt(
+            bundles -> SyncCfAdapter.flatMapAdapt(
                 bundles,
                 srv::findComponentsByBundle,
-                QuasarSyncCfAdapter.adapt(),
-                Collections::emptySet,
-                Sets::union
+                QuasarSyncCfAdapter.adapt()
             )
         );
     }
