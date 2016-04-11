@@ -177,3 +177,8 @@ cf thencompose = flatmap
 -repasser sur les plugins pour vf s'ils utilisent le bon adapter. 
     -adapt sans ET avec pool? 
     -Si pool/sched inutile le baser en faisant gaffe/splitter en adapter avec-sans pool, ou autre..
+-degager QuasarSyncCfAdapter.adapt: devrait etre ds cf tt court et prendre un pool    
+    -suppr plein de methodes inutiles ou les exprimer en fonction d'autres de la mm classe
+        -pour ca on aura pe besoin d'introuduire un adapt() qui prend en arg une Function et non un Supplier 
+        ds SyncCfAdapter
+-apres ts ces refactors on pourra utiliser le suffixe _async a la place de adapt/flatMapAdapt_usingXXX, comme ds Cf      
