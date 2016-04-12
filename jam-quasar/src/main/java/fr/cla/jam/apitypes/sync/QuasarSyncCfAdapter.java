@@ -2,20 +2,10 @@ package fr.cla.jam.apitypes.sync;
 
 import co.paralleluniverse.fibers.Fiber;
 import co.paralleluniverse.fibers.FiberExecutorScheduler;
-import fr.cla.jam.apitypes.callback.Callback;
-import fr.cla.jam.exampledomain.JiraBundle;
-import fr.cla.jam.exampledomain.JiraComponent;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
-import java.util.concurrent.ExecutionException;
-import java.util.function.BiConsumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
-
-import static fr.cla.jam.util.collectors.FlatteningSetCollector.flattening;
-import static java.util.stream.Collectors.toSet;
 
 /**
  * POOR USE OF QUASAR, since it blocks
