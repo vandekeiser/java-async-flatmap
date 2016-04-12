@@ -42,22 +42,6 @@ import static java.util.stream.Collectors.toSet;
  */
 public class QuasarSyncCfAdapter {
 
-    public static <T> Function<Supplier<T>, CompletableFuture<T>> adapt() {
-        return s -> CompletableFuture.supplyAsync(quasarify(s));
-    }
-    
-    private static <T> Supplier<T> quasarify(Supplier<T> task) {
-        Fiber<T> quasarFiber = new Fiber<>(()->task.get()).start();
-
-        return () -> {
-            try {
-                return quasarFiber.get();
-            } catch (ExecutionException | InterruptedException e) {
-                throw new CompletionException(e);
-            } 
-        };
-    }
-
     public static <S, T> Function<S, CompletableFuture<T>> adaptUsingScheduler(
         Function<S, T> adaptee,
         FiberExecutorScheduler dedicatedScheduler
@@ -74,17 +58,6 @@ public class QuasarSyncCfAdapter {
             }).start();
             return cf;
         };
-    }
-
-    public static <E, F> CompletableFuture<Set<F>> flatMapAdapt(
-        Set<E> inputs,
-        Function<E, Set<F>> mapper
-    ) {
-        return SyncCfAdapter.flatMapAdapt(
-            inputs,
-            mapper,
-            QuasarSyncCfAdapter.adapt()
-        );
     }
 
     public static <E, F> CompletableFuture<Set<F>> flatMapAdaptUsingScheduler(
