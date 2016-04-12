@@ -17,9 +17,9 @@ public final class SyncCfAdapter {
         Function<T, U> adaptee,
         Executor parallelisationPool
     ) {
-        return adapt(
-            adaptee,
-            a -> CompletableFuture.supplyAsync(a, parallelisationPool)
+        return t -> CompletableFuture.supplyAsync(
+            () -> adaptee.apply(t),
+            parallelisationPool
         );
     }
     

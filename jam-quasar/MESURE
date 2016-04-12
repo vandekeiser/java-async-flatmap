@@ -185,3 +185,8 @@ cf thencompose = flatmap
     -->prio = QuasarSyncCfAdapter!
         -->OK donc maintenant il faut simplifier vertx et remplacer les supplier par des functions dans les adapters
         -->et aussi passer vertx aux plugins 
+
+-->DABORD remplacer les supplier par des functions dans les adapters
+mais on a une dependance croisee entre CollectionSyncCfAdapter et SyncCfAdapter
+    -->commencer les dependances aux supplier ds SyncCfAdapter
+
