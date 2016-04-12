@@ -182,4 +182,6 @@ cf thencompose = flatmap
         -pour ca on aura pe besoin d'introuduire un adapt() qui prend en arg une Function et non un Supplier 
         ds SyncCfAdapter
 -apres ts ces refactors on pourra utiliser le suffixe _async a la place de adapt/flatMapAdapt_usingXXX, comme ds Cf      
--->prio = QuasarSyncCfAdapter!
+    -->prio = QuasarSyncCfAdapter!
+        -->OK donc maintenant il faut simplifier vertx et remplacer les supplier par des functions dans les adapters
+        -->et aussi passer vertx aux plugins 

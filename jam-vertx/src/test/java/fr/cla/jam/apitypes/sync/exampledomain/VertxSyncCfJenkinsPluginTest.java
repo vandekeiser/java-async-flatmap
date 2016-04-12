@@ -4,6 +4,7 @@ import com.jasongoodwin.monads.Try;
 import fr.cla.jam.exampledomain.*;
 import fr.cla.jam.util.ConsolePlusFile;
 import fr.cla.jam.util.MeasuringTest;
+import io.vertx.core.Vertx;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 
@@ -35,11 +36,13 @@ import static org.mockito.Mockito.when;
 @FixMethodOrder(NAME_ASCENDING)
 public class VertxSyncCfJenkinsPluginTest extends MeasuringTest {
 
+    private static final Vertx vertx =  Vertx.vertx();
+
     @Test
     public void should_1_report_bundles_errors() {
         SyncJiraApi jira = mock(SyncJiraApi.class);
         when(jira.findBundlesByName(any())).thenThrow(new JiraApiException());
-        JenkinsPlugin sut = new VertxSyncCfJenkinsPlugin(jira, newCachedThreadPool());
+        JenkinsPlugin sut = new VertxSyncCfJenkinsPlugin(jira, vertx);
         
         try {
             sut.findComponentsByBundleName("foo");
@@ -54,7 +57,7 @@ public class VertxSyncCfJenkinsPluginTest extends MeasuringTest {
     @Test
     public void should_2_report_components_errors() {
         SyncJiraApi jira = mock(SyncJiraApi.class);
-        JenkinsPlugin sut = new VertxSyncCfJenkinsPlugin(jira, newCachedThreadPool());
+        JenkinsPlugin sut = new VertxSyncCfJenkinsPlugin(jira, vertx);
         when(jira.findBundlesByName(any())).thenReturn(singleton(new JiraBundle("the bundle")));
         when(jira.findComponentsByBundle(any())).thenThrow(new JiraApiException());
         
@@ -97,8 +100,8 @@ public class VertxSyncCfJenkinsPluginTest extends MeasuringTest {
     
     @Test public void should_4_find_the_right_nunmber_of_jira_components() {
         JenkinsPlugin sut = new VertxSyncCfJenkinsPlugin(
-                new LatentSyncJiraApi(new FakeSyncJiraApi()),
-                newCachedThreadPool()
+            new LatentSyncJiraApi(new FakeSyncJiraApi()),
+            vertx
         );
         
         IntStream.rangeClosed(1, 1).forEach(i -> {
@@ -112,7 +115,7 @@ public class VertxSyncCfJenkinsPluginTest extends MeasuringTest {
     @Test public void should_5_be_chainable() {
         CfJenkinsPlugin sut = new VertxSyncCfJenkinsPlugin(
             new LatentSyncJiraApi(new FakeSyncJiraApi()),
-            newCachedThreadPool()
+            vertx
         );
      
         Set<JiraComponent> componentsOrEmpty = sut
@@ -143,7 +146,7 @@ public class VertxSyncCfJenkinsPluginTest extends MeasuringTest {
     @Test public void should_6_work_with_other_collections() {
         JenkinsPlugin sut = new VertxSyncCfJenkinsPlugin(
             new LatentSyncJiraApi(new FakeSyncJiraApi()),
-            newCachedThreadPool()
+            vertx
         );
      
         assertThat(

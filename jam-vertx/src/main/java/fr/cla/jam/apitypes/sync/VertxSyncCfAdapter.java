@@ -1,8 +1,12 @@
 package fr.cla.jam.apitypes.sync;
 
+import fr.cla.jam.exampledomain.JiraBundle;
 import io.vertx.core.AsyncResult;
+import io.vertx.core.Future;
+import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -29,4 +33,28 @@ public class VertxSyncCfAdapter {
         };
     }
 
+    public static <T, U>  Function<T, CompletableFuture<U>> adapt(
+        Function<T, U> adaptee,
+        Vertx vertx
+    ) {
+        return t -> {
+            CompletableFuture<U> cf = new CompletableFuture<>();
+            vertx.executeBlocking(
+                (io.vertx.core.Future<U> vertxFuture) -> {
+                    try {
+                        U success = adaptee.apply(t);
+                        vertxFuture.complete(success);
+                    } catch (Throwable failure) {
+                        vertxFuture.fail(failure);
+                    }
+                },
+                false,
+                (io.vertx.core.AsyncResult<U> r) -> {
+                    if(r.succeeded()) cf.complete(r.result());
+                    if(r.failed()) cf.completeExceptionally(r.cause());
+                }
+            );
+            return cf;
+        };
+    }
 }
