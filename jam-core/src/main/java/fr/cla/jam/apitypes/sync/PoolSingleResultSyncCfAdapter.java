@@ -4,8 +4,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 
-import static java.util.Objects.requireNonNull;
-
 public final class PoolSingleResultSyncCfAdapter {
 
     private final SingleResultSyncCfAdapter unpooled = new SingleResultSyncCfAdapter();
@@ -20,7 +18,9 @@ public final class PoolSingleResultSyncCfAdapter {
     ) {
         return unpooled.adapt(
             adaptee,
-            mapper -> input -> CompletableFuture.supplyAsync(() -> mapper.apply(input), pool)
+            mapper -> input -> CompletableFuture.supplyAsync(
+                () -> mapper.apply(input), pool
+            )
         );
     }
     

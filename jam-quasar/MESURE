@@ -203,3 +203,5 @@ TODO renommer les usingXXX dans les plugins
     puis factoriser les cstr des plugins
     mettre de reqNonNull
     VertxSyncCfJenkinsPlugin est crado
+
+peut-on factoriser le inputs.stream()... entre par ex CsCfAdapter/CallbackCfAdapter

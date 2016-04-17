@@ -5,7 +5,6 @@ import fr.cla.jam.exampledomain.JenkinsPlugin;
 import fr.cla.jam.exampledomain.JiraComponent;
 
 import java.util.Set;
-import java.util.concurrent.Executor;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.toSet;

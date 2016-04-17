@@ -14,7 +14,9 @@ public final class PoolSetSyncCfAdapter {
         this.poolSingleResultAdapter = new PoolSingleResultSyncCfAdapter(dedicatedPool);
     }
 
-    public <T, U> Function<T, CompletableFuture<U>> adapt(Function<T, U> adaptee) {
+    public <T, U> Function<T, CompletableFuture<U>> adapt(
+        Function<T, U> adaptee
+    ) {
         return poolSingleResultAdapter.adapt(adaptee);
     }
 

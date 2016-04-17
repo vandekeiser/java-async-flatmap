@@ -19,7 +19,9 @@ public class VertxSyncCfAdapter {
         this.vertx = vertx;
     }
 
-    public <T, U> Function<T, CompletableFuture<U>> adapt(Function<T, U> adaptee) {
+    public <T, U> Function<T, CompletableFuture<U>> adapt(
+        Function<T, U> adaptee
+    ) {
         return t -> {
             CompletableFuture<U> cf = new CompletableFuture<>();
             vertx.executeBlocking(

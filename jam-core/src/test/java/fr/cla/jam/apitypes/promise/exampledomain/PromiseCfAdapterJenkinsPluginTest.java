@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 import static java.util.Collections.singleton;
-import static java.util.concurrent.Executors.newCachedThreadPool;
 import static org.junit.runners.MethodSorters.NAME_ASCENDING;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;

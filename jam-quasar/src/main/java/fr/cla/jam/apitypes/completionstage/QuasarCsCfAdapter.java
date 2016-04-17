@@ -1,7 +1,6 @@
 package fr.cla.jam.apitypes.completionstage;
 
 import co.paralleluniverse.fibers.Fiber;
-import co.paralleluniverse.fibers.FiberExecutorScheduler;
 import co.paralleluniverse.fibers.FiberScheduler;
 
 import java.util.Set;

@@ -3,7 +3,6 @@ package fr.cla.jam.apitypes.completionstage;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
-import java.util.concurrent.Executor;
 import java.util.function.Function;
 
 import static fr.cla.jam.util.collectors.FlatteningSetCollector.flattening;
@@ -11,7 +10,9 @@ import static java.util.stream.Collectors.toSet;
 
 public class CsCfAdapter {
 
-    public <S, T> Function<S, CompletableFuture<T>> adapt(Function<S, CompletionStage<T>> mapper) {
+    public <S, T> Function<S, CompletableFuture<T>> adapt(
+        Function<S, CompletionStage<T>> mapper
+    ) {
         return e -> {
             CompletableFuture<T> result = new CompletableFuture<>();
             mapper.apply(e).whenCompleteAsync(
@@ -37,10 +38,10 @@ public class CsCfAdapter {
         Function<
             Function<E, CompletionStage<Set<F>>>,
             Function<E, CompletableFuture<Set<F>>>
-        > asyncifier
+        > adapter
     ) {
         return inputs.stream()
-            .map(asyncifier.apply(mapper))
+            .map(adapter.apply(mapper))
             .collect(toSet())
             .stream()
             .collect(flattening());

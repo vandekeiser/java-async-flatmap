@@ -8,7 +8,6 @@ import java.util.function.BinaryOperator;
 import java.util.function.Function;
 
 import static fr.cla.jam.util.collectors.FlatteningCollectionCollector.flattening;
-import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toSet;
 
 public final class CollectionSyncCfAdapter {
@@ -21,12 +20,12 @@ public final class CollectionSyncCfAdapter {
         Function<
             Function<E, Fs>,
             Function<E, CompletableFuture<Fs>>
-        > asyncifier,
+        > adapter,
         CollectionSupplier<F, Fs> collectionSupplier,
         BinaryOperator<Fs> collectionUnion
     ) {
         return inputs.stream()
-            .map(singleResultAdapter.adapt(mapper, asyncifier))
+            .map(singleResultAdapter.adapt(mapper, adapter))
             .collect(toSet())
             .stream()
             .collect(flattening(collectionSupplier, collectionUnion));

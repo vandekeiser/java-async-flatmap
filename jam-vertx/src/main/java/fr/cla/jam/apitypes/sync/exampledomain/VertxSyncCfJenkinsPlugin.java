@@ -1,6 +1,5 @@
 package fr.cla.jam.apitypes.sync.exampledomain;
 
-import fr.cla.jam.apitypes.sync.SetSyncCfAdapter;
 import fr.cla.jam.apitypes.sync.VertxSyncCfAdapter;
 import fr.cla.jam.exampledomain.AbstractCfJenkinsPlugin;
 import fr.cla.jam.exampledomain.CfJenkinsPlugin;

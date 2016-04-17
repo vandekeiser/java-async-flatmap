@@ -4,8 +4,6 @@ import fr.cla.jam.apitypes.completionstage.CsCfAdapter;
 import fr.cla.jam.exampledomain.AbstractCfJenkinsPlugin;
 import fr.cla.jam.exampledomain.CfJenkinsPlugin;
 
-import java.util.concurrent.Executor;
-
 public class CsCfJenkinsPlugin extends AbstractCfJenkinsPlugin implements CfJenkinsPlugin {
     
     private CsCfJenkinsPlugin(CsJiraApi srv, CsCfAdapter adapter) {

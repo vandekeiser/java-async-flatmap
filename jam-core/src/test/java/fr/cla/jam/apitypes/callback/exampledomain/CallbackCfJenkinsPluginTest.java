@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
-import static java.util.concurrent.Executors.newCachedThreadPool;
 import static org.junit.runners.MethodSorters.NAME_ASCENDING;
 
 //deepneural4j

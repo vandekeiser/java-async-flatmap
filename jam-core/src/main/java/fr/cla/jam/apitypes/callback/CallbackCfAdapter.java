@@ -10,7 +10,9 @@ import static java.util.stream.Collectors.toSet;
 
 public class CallbackCfAdapter {
 
-    public <T, U> Function<T, CompletableFuture<U>> adapt(BiConsumer<T, Callback<U>> adaptee) {
+    public <T, U> Function<T, CompletableFuture<U>> adapt(
+        BiConsumer<T, Callback<U>> adaptee
+    ) {
         return input -> {
             CompletableFuture<U> cf = new CompletableFuture<>();
             adaptee.accept(input, Callback.either(
@@ -24,7 +26,10 @@ public class CallbackCfAdapter {
     public <E, F> CompletableFuture<Set<F>> flatMapAdapt(
         Set<E> inputs,
         BiConsumer<E, Callback<Set<F>>> adaptee,
-        Function<BiConsumer<E, Callback<Set<F>>>, Function<E, CompletableFuture<Set<F>>>> adapter
+        Function<
+            BiConsumer<E, Callback<Set<F>>>,
+            Function<E, CompletableFuture<Set<F>>>
+        > adapter
     ) {
         return inputs.stream()
             .map(adapter.apply(adaptee))
