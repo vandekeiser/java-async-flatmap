@@ -49,7 +49,11 @@ public class LatentSyncJiraApi implements SyncJiraApi {
     }
 
     @Override public String description() {
-        return getClass().getSimpleName();
+        return String.format(
+            "%s (%s)",
+            getClass().getSimpleName(),
+            jira.toString()
+        );
     }
 
 }

@@ -171,37 +171,22 @@ cf thencompose = flatmap
 
 
 **************refactors TODO***********
--repasser sur AbstractCfJenkinsPlugin, on peut pas generifier plus?
--QuasarCallbackCfJenkinsPlugin est bizarre, trop de methodes
 -QuasarSyncCfAdapter a l'air craignos (bloque+utilise mm pas le pool+revoir methode commentee)
 -repasser sur les plugins pour vf s'ils utilisent le bon adapter. 
     -adapt sans ET avec pool? 
-    -Si pool/sched inutile le baser en faisant gaffe/splitter en adapter avec-sans pool, ou autre..
--degager QuasarSyncCfAdapter.adapt: devrait etre ds cf tt court et prendre un pool    
-    -suppr plein de methodes inutiles ou les exprimer en fonction d'autres de la mm classe
-        -pour ca on aura pe besoin d'introuduire un adapt() qui prend en arg une Function et non un Supplier 
-        ds SyncCfAdapter
--apres ts ces refactors on pourra utiliser le suffixe _async a la place de adapt/flatMapAdapt_usingXXX, comme ds Cf      
-    -->prio = QuasarSyncCfAdapter!
-        -->OK donc maintenant il faut simplifier vertx et remplacer les supplier par des functions dans les adapters
-        -->et aussi passer vertx aux plugins 
 
--->DABORD remplacer les supplier par des functions dans les adapters
-mais on a une dependance croisee entre CollectionSyncCfAdapter et SyncCfAdapter
-    -->commencer les dependances aux supplier ds SyncCfAdapter
-
-***
-dependance croisee cassee, 
-puis on passe en arg des adapters du module quasar le scheduler
--->faire la mm chose avec le pool
-MAIS ex. de cas ou on sait pas trop si utiliser un pool ou pas: 
+ex. de cas ou on sait pas trop si utiliser un pool ou pas: 
     CallbackCfJenkinsPlugin
 Comprehension courante:
-    en fait on n'a pas besoin qd l'API est deja async, sauf si on veut utiliser une techno particuliere
+    on n'a pas besoin qd l'API est deja async, sauf si on veut utiliser une techno particuliere
+    interessant de mesurer qd mm?
+        -->4e module battle royale?
 
 TODO renommer les usingXXX dans les plugins    
     puis factoriser les cstr des plugins
     mettre de reqNonNull
-    VertxSyncCfJenkinsPlugin est crado
+    revoir le nommage "using" ds les plugins
 
-peut-on factoriser le inputs.stream()... entre par ex CsCfAdapter/CallbackCfAdapter
+-->2 choix pour la suite: 
+    -repasser sur l'aspect perf en comparant un gros flatmap avec apis non-bloquante vs bloquante
+    -completer la monade avec map, filter, .. trouver un nommage 

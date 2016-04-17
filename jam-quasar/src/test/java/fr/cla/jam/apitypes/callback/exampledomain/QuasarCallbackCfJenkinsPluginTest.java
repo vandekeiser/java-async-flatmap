@@ -51,7 +51,7 @@ public class QuasarCallbackCfJenkinsPluginTest extends AbstractQuasarJenkinsPlug
 
     @Override
     protected int scalabilityTestConcurrency() {
-        return 1_000;
+        return 100;
     }
 
     @Override

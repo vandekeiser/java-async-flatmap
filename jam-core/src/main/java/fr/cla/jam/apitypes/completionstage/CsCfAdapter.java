@@ -19,7 +19,7 @@ public class CsCfAdapter {
     ) {
         return e -> {
             CompletableFuture<T> result = new CompletableFuture<>();
-            mapper.apply(e).whenCompleteAsync(
+            mapper.apply(e).whenComplete(
                 (t, x) -> {
                     if(x != null) result.completeExceptionally(x);
                     else result.complete(t);

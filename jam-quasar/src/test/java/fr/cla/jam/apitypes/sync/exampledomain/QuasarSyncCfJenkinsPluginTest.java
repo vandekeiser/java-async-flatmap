@@ -47,7 +47,7 @@ public class QuasarSyncCfJenkinsPluginTest extends AbstractQuasarJenkinsPluginTe
 
     @Override
     protected int scalabilityTestParallelism() {
-        return 1_000;
+        return 1;
     }
 
     @Override
@@ -61,6 +61,7 @@ public class QuasarSyncCfJenkinsPluginTest extends AbstractQuasarJenkinsPluginTe
         List<JenkinsPlugin> all = new ArrayList<>();
 
         all.add(SyncCfJenkinsPlugin.using(syncApi, measurementPool));
+        all.add(QuasarSyncCfJenkinsPlugin.using(syncApi, dedicatedScheduler(measurementPool)));
 
         if(useRealServer()) {
             SyncJiraApi realServerSyncApi = new RealServerLatencySyncApi(new FakeSyncJiraApi(), getRealServer());
