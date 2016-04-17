@@ -14,7 +14,7 @@ public class SeqStreamJenkinsPlugin extends AbstractJenkinsPlugin implements Jen
 
     private final Function<String, Set<JiraComponent>> findComponentsByBundleName;
 
-    public SeqStreamJenkinsPlugin(SyncJiraApi srv, Executor dedicatedPool) {
+    public SeqStreamJenkinsPlugin(SyncJiraApi srv) {
         super(srv);
         findComponentsByBundleName = bundleName -> srv.findBundlesByName(bundleName)
             .stream()

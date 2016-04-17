@@ -8,16 +8,16 @@ import io.vertx.core.Vertx;
 
 public class VertxSyncCfJenkinsPlugin extends AbstractCfJenkinsPlugin implements CfJenkinsPlugin {
     
-    public VertxSyncCfJenkinsPlugin(SyncJiraApi srv, Vertx vertx) {
+    private VertxSyncCfJenkinsPlugin(SyncJiraApi srv, VertxSyncCfAdapter adapter) {
         super(
             srv,
-            VertxSyncCfAdapter.adapt(srv::findBundlesByName, vertx),
-            bundles -> SetSyncCfAdapter.flatMapAdapt(
-                bundles,
-                srv::findComponentsByBundle,
-                VertxSyncCfAdapter.supplyVertx()
-            )
+            adapter.adapt(srv::findBundlesByName),
+            bundles -> adapter.flatMapAdapt(bundles, srv::findComponentsByBundle)
         );
+    }
+
+    public static VertxSyncCfJenkinsPlugin using(SyncJiraApi srv, Vertx vertx) {
+        return new VertxSyncCfJenkinsPlugin(srv, new VertxSyncCfAdapter(vertx));
     }
 
 }

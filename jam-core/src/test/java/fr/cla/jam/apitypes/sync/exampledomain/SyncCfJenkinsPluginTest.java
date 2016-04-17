@@ -55,8 +55,8 @@ public class SyncCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
         SyncJiraApi syncApi = new LatentSyncJiraApi(new FakeSyncJiraApi());
 
         return Arrays.asList(
-            new SeqStreamJenkinsPlugin(syncApi, latencyMeasurementPool),
-            new ParStreamJenkinsPlugin(syncApi, latencyMeasurementPool),
+            new SeqStreamJenkinsPlugin(syncApi),
+            new ParStreamJenkinsPlugin(syncApi),
             SyncCfJenkinsPlugin.using(syncApi, latencyMeasurementPool)
         );
     }

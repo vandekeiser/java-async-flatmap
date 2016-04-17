@@ -1,9 +1,6 @@
 package fr.cla.jam.apitypes.sync;
 
-import fr.cla.jam.exampledomain.JiraBundle;
 import io.vertx.core.AsyncResult;
-import io.vertx.core.Future;
-import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 
 import java.util.Set;
@@ -17,26 +14,25 @@ import java.util.function.Supplier;
  */
 public class VertxSyncCfAdapter {
 
-    private static final Vertx vertx =  Vertx.vertx();
-    
-    public static <T> Function<Supplier<T>, CompletableFuture<T>> supplyVertx() {
-        return s -> {
-            CompletableFuture<T> cf = new CompletableFuture<>();
-            vertx.executeBlocking(
-                f -> f.complete(s.get()), 
-                (AsyncResult<T> r) -> {
-                    if(r.succeeded()) cf.complete(r.result());
-                    if(r.failed()) cf.completeExceptionally(r.cause());
-                }
-            );
-            return cf;    
-        };
+    private final Vertx vertx;
+
+    public VertxSyncCfAdapter(Vertx vertx) {
+        this.vertx = vertx;
     }
 
-    public static <T, U>  Function<T, CompletableFuture<U>> adapt(
-        Function<T, U> adaptee,
-        Vertx vertx
-    ) {
+    public <T> CompletableFuture<T> supplyVertx(Supplier<T> s) {
+        CompletableFuture<T> cf = new CompletableFuture<>();
+        vertx.executeBlocking(
+            f -> f.complete(s.get()),
+            (AsyncResult<T> r) -> {
+                if(r.succeeded()) cf.complete(r.result());
+                if(r.failed()) cf.completeExceptionally(r.cause());
+            }
+        );
+        return cf;
+    }
+
+    public <T, U> Function<T, CompletableFuture<U>> adapt(Function<T, U> adaptee) {
         return t -> {
             CompletableFuture<U> cf = new CompletableFuture<>();
             vertx.executeBlocking(
@@ -57,4 +53,14 @@ public class VertxSyncCfAdapter {
             return cf;
         };
     }
+
+    public <E, F> CompletableFuture<Set<F>> flatMapAdapt(
+        Set<E> inputs,
+        Function<E, Set<F>> mapper
+    ) {
+        return SetSyncCfAdapter.flatMapAdapt(
+            inputs, mapper, this::supplyVertx
+        );
+    }
+
 }

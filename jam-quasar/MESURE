@@ -202,3 +202,5 @@ Comprehension courante:
 TODO renommer les usingXXX dans les plugins    
     puis factoriser les cstr des plugins
     mettre de reqNonNull
+    SyncCfAdapter a encore une methode statique!
+    VertxSyncCfJenkinsPlugin est crado
