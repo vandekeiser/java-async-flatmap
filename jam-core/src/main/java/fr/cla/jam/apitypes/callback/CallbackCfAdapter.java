@@ -23,13 +23,21 @@ public final class CallbackCfAdapter {
 
     public static <E, F> CompletableFuture<Set<F>> flatMapAdapt(
         Set<E> inputs,
-        BiConsumer<E, Callback<Set<F>>> adaptee
+        BiConsumer<E, Callback<Set<F>>> adaptee,
+        Function<BiConsumer<E, Callback<Set<F>>>, Function<E, CompletableFuture<Set<F>>>> adapter
     ) {
         return inputs.stream()
-            .map(adapt(adaptee))
+            .map(adapter.apply(adaptee))
             .collect(toSet())
             .stream()
             .collect(flattening());
+    }
+
+    public static <E, F> CompletableFuture<Set<F>> flatMapAdapt(
+        Set<E> inputs,
+        BiConsumer<E, Callback<Set<F>>> adaptee
+    ) {
+        return flatMapAdapt(inputs, adaptee, CallbackCfAdapter::adapt);
     }
     
 }

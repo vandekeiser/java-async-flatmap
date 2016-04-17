@@ -2,17 +2,23 @@ package fr.cla.jam.apitypes.completionstage.exampledomain;
 
 import co.paralleluniverse.fibers.FiberExecutorScheduler;
 import fr.cla.jam.apitypes.completionstage.QuasarCsCfAdapter;
+import fr.cla.jam.apitypes.promise.QuasarPromiseCfAdapter2;
+import fr.cla.jam.apitypes.promise.exampledomain.PromiseJiraApi;
 import fr.cla.jam.exampledomain.AbstractCfJenkinsPlugin;
 import fr.cla.jam.exampledomain.CfJenkinsPlugin;
 
 public class QuasarCsCfJenkinsPlugin extends AbstractCfJenkinsPlugin implements CfJenkinsPlugin {
 
-    public QuasarCsCfJenkinsPlugin(CsJiraApi srv, FiberExecutorScheduler dedicatedScheduler) {
+    private QuasarCsCfJenkinsPlugin(CsJiraApi srv, QuasarCsCfAdapter adapter) {
         super(
             srv,
-            QuasarCsCfAdapter.adapt(srv::findBundlesByName, dedicatedScheduler),
-            bundles -> QuasarCsCfAdapter.flatMapAdapt(bundles, srv::findComponentsByBundle, dedicatedScheduler)
+            adapter.adapt(srv::findBundlesByName),
+            bundles -> adapter.flatMapAdapt(bundles, srv::findComponentsByBundle)
         );
+    }
+
+    public static QuasarCsCfJenkinsPlugin usingScheduler(CsJiraApi srv, FiberExecutorScheduler dedicatedScheduler) {
+        return new QuasarCsCfJenkinsPlugin(srv, new QuasarCsCfAdapter(dedicatedScheduler));
     }
 
 }

@@ -11,10 +11,13 @@ import java.util.function.Function;
 
 public class QuasarCsCfAdapter {
 
-    public static <T, U> Function<T, CompletableFuture<U>> adapt(
-        Function<T, CompletionStage<U>> adaptee,
-        FiberScheduler scheduler
-    ) {
+    private final FiberScheduler scheduler;
+
+    public QuasarCsCfAdapter(FiberScheduler scheduler) {
+        this.scheduler = scheduler;
+    }
+
+    public <T, U> Function<T, CompletableFuture<U>> adapt(Function<T, CompletionStage<U>> adaptee) {
         return input -> {
             CompletableFuture<U> fiberCf = new CompletableFuture<>();
 
@@ -29,16 +32,11 @@ public class QuasarCsCfAdapter {
         };
     }
 
-    public static <E, F> CompletableFuture<Set<F>> flatMapAdapt(
-            Set<E> inputs,
-            Function<E, CompletionStage<Set<F>>> mapper,
-            FiberExecutorScheduler dedicatedScheduler
+    public <E, F> CompletableFuture<Set<F>> flatMapAdapt(
+        Set<E> inputs,
+        Function<E, CompletionStage<Set<F>>> mapper
     ) {
-        return CsCfAdapter.flatMapAdapt(
-            inputs,
-            mapper,
-            m -> QuasarCsCfAdapter.adapt(m, dedicatedScheduler)
-        );
+        return CsCfAdapter.flatMapAdapt(inputs, mapper, this::adapt);
     }
 
 }

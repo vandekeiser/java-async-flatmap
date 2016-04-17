@@ -12,7 +12,7 @@ public class PromiseCfJenkinsPlugin extends AbstractCfJenkinsPlugin implements C
         super(
             srv,
             PromiseCfAdapter.adapt(srv::findBundlesByName),
-            bundles -> PromiseCfAdapter.adaptFlatMap(bundles, srv::findComponentsByBundle)
+            bundles -> PromiseCfAdapter.flatMapAdapt(bundles, srv::findComponentsByBundle)
         );
     }
 

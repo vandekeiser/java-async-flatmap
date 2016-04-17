@@ -22,14 +22,14 @@ public final class PromiseCfAdapter {
         };
     }
 
-    public static <E, F> CompletableFuture<Set<F>> adaptFlatMap(
+    public static <E, F> CompletableFuture<Set<F>> flatMapAdapt(
         Set<E> inputs,
         Function<E, Promise<Set<F>>> mapper
     ) {
-        return adaptFlatMap(inputs, mapper, PromiseCfAdapter::adapt);
+        return flatMapAdapt(inputs, mapper, PromiseCfAdapter::adapt);
     }
 
-    public static <E, F> CompletableFuture<Set<F>> adaptFlatMap(
+    public static <E, F> CompletableFuture<Set<F>> flatMapAdapt(
         Set<E> inputs,
         Function<E, Promise<Set<F>>> mapper,
         Function<

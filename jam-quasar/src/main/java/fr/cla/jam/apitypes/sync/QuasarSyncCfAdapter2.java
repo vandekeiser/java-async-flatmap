@@ -2,6 +2,7 @@ package fr.cla.jam.apitypes.sync;
 
 import co.paralleluniverse.fibers.Fiber;
 import co.paralleluniverse.fibers.FiberExecutorScheduler;
+import co.paralleluniverse.fibers.FiberScheduler;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -30,11 +31,16 @@ import java.util.function.Function;
  * whether they’re sync the thread or hogging the CPU, and gives you their stack trace,
  * by printing this information to the console as well as reporting it to the runtime fiber monitor.
  */
-public class QuasarSyncCfAdapter {
+public class QuasarSyncCfAdapter2 {
 
-    public static <S, T> Function<S, CompletableFuture<T>> adaptUsingScheduler(
-        Function<S, T> adaptee,
-        FiberExecutorScheduler dedicatedScheduler
+    private final FiberScheduler dedicatedScheduler;
+
+    public QuasarSyncCfAdapter2(FiberScheduler dedicatedScheduler) {
+        this.dedicatedScheduler = dedicatedScheduler;
+    }
+
+    public <S, T> Function<S, CompletableFuture<T>> adaptUsingScheduler(
+        Function<S, T> adaptee
     ) {
         return s -> {
             CompletableFuture<T> cf = new CompletableFuture<>();
@@ -50,10 +56,9 @@ public class QuasarSyncCfAdapter {
         };
     }
 
-    public static <E, F> CompletableFuture<Set<F>> flatMapAdaptUsingScheduler(
+    public <E, F> CompletableFuture<Set<F>> flatMapAdaptUsingScheduler(
         Set<E> inputs,
-        Function<E, Set<F>> mapper,
-        FiberExecutorScheduler dedicatedScheduler
+        Function<E, Set<F>> mapper
     ) {
         return SetSyncCfAdapter.flatMapAdapt(
             inputs,

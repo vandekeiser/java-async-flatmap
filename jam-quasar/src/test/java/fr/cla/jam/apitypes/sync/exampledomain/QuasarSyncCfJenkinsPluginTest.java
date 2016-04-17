@@ -26,7 +26,7 @@ public class QuasarSyncCfJenkinsPluginTest extends AbstractQuasarJenkinsPluginTe
     protected CfJenkinsPlugin defectiveSut() {
         SyncJiraApi jira = mock(SyncJiraApi.class);
         when(jira.findBundlesByName(any())).thenThrow(new JiraApiException());
-        return new QuasarSyncCfJenkinsPlugin(jira, dedicatedScheduler(latencyMeasurementPool));
+        return QuasarSyncCfJenkinsPlugin.using(jira, dedicatedScheduler(latencyMeasurementPool));
     }
 
     @Override
@@ -34,12 +34,12 @@ public class QuasarSyncCfJenkinsPluginTest extends AbstractQuasarJenkinsPluginTe
         SyncJiraApi jira = mock(SyncJiraApi.class);
         when(jira.findBundlesByName(any())).thenReturn(singleton(new JiraBundle("the bundle")));
         when(jira.findComponentsByBundle(any())).thenThrow(new JiraApiException());
-        return new QuasarSyncCfJenkinsPlugin(jira, dedicatedScheduler(latencyMeasurementPool));
+        return QuasarSyncCfJenkinsPlugin.using(jira, dedicatedScheduler(latencyMeasurementPool));
     }
 
     @Override
     protected CfJenkinsPlugin latentSut() {
-        return new QuasarSyncCfJenkinsPlugin(
+        return QuasarSyncCfJenkinsPlugin.using(
             new LatentSyncJiraApi(new FakeSyncJiraApi()),
             dedicatedScheduler(latencyMeasurementPool)
         );

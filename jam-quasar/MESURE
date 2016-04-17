@@ -190,3 +190,9 @@ cf thencompose = flatmap
 mais on a une dependance croisee entre CollectionSyncCfAdapter et SyncCfAdapter
     -->commencer les dependances aux supplier ds SyncCfAdapter
 
+***
+dependance croisee cassee, 
+puis on passe en arg des adapters du module quasar le scheduler
+-->faire la mm chose avec le pool
+MAIS ex. de cas ou on sait pas trop si utiliser un pool ou pas: 
+    CallbackCfJenkinsPlugin

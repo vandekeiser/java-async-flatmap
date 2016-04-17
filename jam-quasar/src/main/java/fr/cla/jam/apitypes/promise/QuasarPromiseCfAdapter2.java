@@ -1,18 +1,23 @@
 package fr.cla.jam.apitypes.promise;
 
 import co.paralleluniverse.fibers.Fiber;
-import co.paralleluniverse.fibers.FiberExecutorScheduler;
 import co.paralleluniverse.fibers.FiberScheduler;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
-public class QuasarPromiseCfAdapter {
+public class QuasarPromiseCfAdapter2 {
 
-    public static <T, U> Function<T, CompletableFuture<U>> adapt(
-        Function<T, Promise<U>> adaptee,
-        FiberScheduler dedicatedScheduler
+    private final FiberScheduler dedicatedScheduler;
+
+    public QuasarPromiseCfAdapter2(FiberScheduler dedicatedScheduler) {
+        this.dedicatedScheduler = Objects.requireNonNull(dedicatedScheduler);
+    }
+
+    public <T, U> Function<T, CompletableFuture<U>> adapt(
+        Function<T, Promise<U>> adaptee
     ) {
         return input -> {
             CompletableFuture<U> fiberCf = new CompletableFuture<>();
@@ -26,12 +31,11 @@ public class QuasarPromiseCfAdapter {
         };
     }
 
-    public static <E, F> CompletableFuture<Set<F>> adaptFlatMap(
+    public <E, F> CompletableFuture<Set<F>> flatMapAdapt(
         Set<E> inputs,
-        Function<E, Promise<Set<F>>> adaptee,
-        FiberExecutorScheduler scheduler
+        Function<E, Promise<Set<F>>> adaptee
     ) {
-        return PromiseCfAdapter.adaptFlatMap(inputs, adaptee, mapper -> adapt(mapper, scheduler));
+        return PromiseCfAdapter.flatMapAdapt(inputs, adaptee, this::adapt);
     }
 
 }
