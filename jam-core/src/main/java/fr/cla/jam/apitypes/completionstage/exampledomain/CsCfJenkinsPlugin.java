@@ -8,12 +8,16 @@ import java.util.concurrent.Executor;
 
 public class CsCfJenkinsPlugin extends AbstractCfJenkinsPlugin implements CfJenkinsPlugin {
     
-    public CsCfJenkinsPlugin(CsJiraApi srv, Executor dedicatedPool) {
+    private CsCfJenkinsPlugin(CsJiraApi srv, CsCfAdapter adapter) {
         super(
             srv,
-            CsCfAdapter.adapt(srv::findBundlesByName, dedicatedPool),
-            bundles -> CsCfAdapter.flatMapAdaptUsingPool(bundles, srv::findComponentsByBundle, dedicatedPool)
+            adapter.adapt(srv::findBundlesByName),
+            bundles -> adapter.flatMapAdapt(bundles, srv::findComponentsByBundle)
         );
+    }
+
+    public static CsCfJenkinsPlugin using(CsJiraApi srv) {
+        return new CsCfJenkinsPlugin(srv, new CsCfAdapter());
     }
 
 }

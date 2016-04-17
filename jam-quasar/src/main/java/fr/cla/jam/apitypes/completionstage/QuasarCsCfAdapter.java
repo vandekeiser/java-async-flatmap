@@ -9,7 +9,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
 
-public class QuasarCsCfAdapter {
+public class QuasarCsCfAdapter extends CsCfAdapter {
 
     private final FiberScheduler scheduler;
 
@@ -36,7 +36,7 @@ public class QuasarCsCfAdapter {
         Set<E> inputs,
         Function<E, CompletionStage<Set<F>>> mapper
     ) {
-        return CsCfAdapter.flatMapAdapt(inputs, mapper, this::adapt);
+        return flatMapAdapt(inputs, mapper, this::adapt);
     }
 
 }

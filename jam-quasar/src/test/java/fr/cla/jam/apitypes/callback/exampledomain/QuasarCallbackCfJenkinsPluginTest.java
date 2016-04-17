@@ -59,7 +59,7 @@ public class QuasarCallbackCfJenkinsPluginTest extends AbstractQuasarJenkinsPlug
         CallbackJiraApi nonBlockingCallbackApi = new NonBlockingLatentCallbackJiraApi(new FakeCallbackJiraApi());
 
         return Arrays.asList(
-            new CallbackCfJenkinsPlugin(nonBlockingCallbackApi, measurementPool),
+            CallbackCfJenkinsPlugin.using(nonBlockingCallbackApi),
             QuasarCallbackCfJenkinsPlugin.usingScheduler(nonBlockingCallbackApi, dedicatedScheduler(measurementPool))
         );
     }

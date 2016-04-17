@@ -12,7 +12,7 @@ import java.util.function.Function;
 import static fr.cla.jam.util.collectors.FlatteningSetCollector.flattening;
 import static java.util.stream.Collectors.toSet;
 
-public class QuasarCallbackCfAdapter {
+public class QuasarCallbackCfAdapter extends CallbackCfAdapter {
 
     private final FiberScheduler dedicatedScheduler;
 
@@ -39,7 +39,7 @@ public class QuasarCallbackCfAdapter {
         Set<E> inputs,
         BiConsumer<E, Callback<Set<F>>> adaptee
     ) {
-        return CallbackCfAdapter.flatMapAdapt(inputs, adaptee, this::adapt);
+        return flatMapAdapt(inputs, adaptee, this::adapt);
     }
 
 }

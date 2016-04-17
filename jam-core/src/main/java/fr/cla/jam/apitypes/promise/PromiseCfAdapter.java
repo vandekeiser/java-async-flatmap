@@ -7,9 +7,9 @@ import java.util.function.Function;
 import static fr.cla.jam.util.collectors.FlatteningSetCollector.flattening;
 import static java.util.stream.Collectors.toSet;
 
-public final class PromiseCfAdapter {
+public class PromiseCfAdapter {
 
-    public static <T, U> Function<T, CompletableFuture<U>> adapt(
+    public <T, U> Function<T, CompletableFuture<U>> adapt(
         Function<T, Promise<U>> adaptee
     ) {
         return input -> {
@@ -22,14 +22,14 @@ public final class PromiseCfAdapter {
         };
     }
 
-    public static <E, F> CompletableFuture<Set<F>> flatMapAdapt(
+    public <E, F> CompletableFuture<Set<F>> flatMapAdapt(
         Set<E> inputs,
         Function<E, Promise<Set<F>>> mapper
     ) {
-        return flatMapAdapt(inputs, mapper, PromiseCfAdapter::adapt);
+        return flatMapAdapt(inputs, mapper, this::adapt);
     }
 
-    public static <E, F> CompletableFuture<Set<F>> flatMapAdapt(
+    public <E, F> CompletableFuture<Set<F>> flatMapAdapt(
         Set<E> inputs,
         Function<E, Promise<Set<F>>> mapper,
         Function<

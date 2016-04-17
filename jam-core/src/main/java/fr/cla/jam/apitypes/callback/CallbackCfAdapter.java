@@ -8,9 +8,9 @@ import java.util.function.Function;
 import static fr.cla.jam.util.collectors.FlatteningSetCollector.flattening;
 import static java.util.stream.Collectors.toSet;
 
-public final class CallbackCfAdapter {
+public class CallbackCfAdapter {
 
-    public static <T, U> Function<T, CompletableFuture<U>> adapt(BiConsumer<T, Callback<U>> adaptee) {
+    public <T, U> Function<T, CompletableFuture<U>> adapt(BiConsumer<T, Callback<U>> adaptee) {
         return input -> {
             CompletableFuture<U> cf = new CompletableFuture<>();
             adaptee.accept(input, Callback.either(
@@ -21,7 +21,7 @@ public final class CallbackCfAdapter {
         };
     }
 
-    public static <E, F> CompletableFuture<Set<F>> flatMapAdapt(
+    public <E, F> CompletableFuture<Set<F>> flatMapAdapt(
         Set<E> inputs,
         BiConsumer<E, Callback<Set<F>>> adaptee,
         Function<BiConsumer<E, Callback<Set<F>>>, Function<E, CompletableFuture<Set<F>>>> adapter
@@ -33,11 +33,11 @@ public final class CallbackCfAdapter {
             .collect(flattening());
     }
 
-    public static <E, F> CompletableFuture<Set<F>> flatMapAdapt(
+    public <E, F> CompletableFuture<Set<F>> flatMapAdapt(
         Set<E> inputs,
         BiConsumer<E, Callback<Set<F>>> adaptee
     ) {
-        return flatMapAdapt(inputs, adaptee, CallbackCfAdapter::adapt);
+        return flatMapAdapt(inputs, adaptee, this::adapt);
     }
     
 }

@@ -68,7 +68,7 @@ public class QuasarCsCfAdapterJenkinsPluginTest extends AbstractQuasarJenkinsPlu
         CsJiraApi csApi = new LatentCsJiraApi(new FakeCsJiraApi());
 
         return Arrays.asList(
-            new CsCfJenkinsPlugin(csApi, measurementPool),
+            CsCfJenkinsPlugin.using(csApi),
             QuasarCsCfJenkinsPlugin.usingScheduler(csApi, dedicatedScheduler(measurementPool))
         );
     }

@@ -9,32 +9,29 @@ import java.util.function.Function;
 import static fr.cla.jam.util.collectors.FlatteningSetCollector.flattening;
 import static java.util.stream.Collectors.toSet;
 
-public final class CsCfAdapter {
+public class CsCfAdapter {
 
-    public static <S, T> Function<S, CompletableFuture<T>>
-    adapt(Function<S, CompletionStage<T>> mapper, Executor pool) {
+    public <S, T> Function<S, CompletableFuture<T>> adapt(Function<S, CompletionStage<T>> mapper) {
         return e -> {
             CompletableFuture<T> result = new CompletableFuture<>();
             mapper.apply(e).whenCompleteAsync(
                 (t, x) -> {
                     if(x != null) result.completeExceptionally(x);
                     else result.complete(t);
-                },
-                pool
+                }
             );
             return result;
         };
     }
 
-    public static <E, F> CompletableFuture<Set<F>> flatMapAdaptUsingPool(
+    public <E, F> CompletableFuture<Set<F>> flatMapAdapt(
         Set<E> inputs,
-        Function<E, CompletionStage<Set<F>>> mapper,
-        Executor parallelisationPool
+        Function<E, CompletionStage<Set<F>>> mapper
     ) {
-        return flatMapAdapt(inputs, mapper, m -> adapt(m, parallelisationPool));
+        return flatMapAdapt(inputs, mapper, this::adapt);
     }
 
-    public static <E, F> CompletableFuture<Set<F>> flatMapAdapt(
+    public <E, F> CompletableFuture<Set<F>> flatMapAdapt(
         Set<E> inputs,
         Function<E, CompletionStage<Set<F>>> mapper,
         Function<
@@ -46,7 +43,7 @@ public final class CsCfAdapter {
             .map(asyncifier.apply(mapper))
             .collect(toSet())
             .stream()
-            .collect(flattening());    
+            .collect(flattening());
     }
 
 }

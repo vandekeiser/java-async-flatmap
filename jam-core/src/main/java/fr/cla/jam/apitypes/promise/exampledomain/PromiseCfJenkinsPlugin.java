@@ -8,12 +8,16 @@ import java.util.concurrent.Executor;
 
 public class PromiseCfJenkinsPlugin extends AbstractCfJenkinsPlugin implements CfJenkinsPlugin {
 
-    public PromiseCfJenkinsPlugin(PromiseJiraApi srv, Executor dedicatedPool) {
+    public PromiseCfJenkinsPlugin(PromiseJiraApi srv, PromiseCfAdapter adapter) {
         super(
             srv,
-            PromiseCfAdapter.adapt(srv::findBundlesByName),
-            bundles -> PromiseCfAdapter.flatMapAdapt(bundles, srv::findComponentsByBundle)
+            adapter.adapt(srv::findBundlesByName),
+            bundles -> adapter.flatMapAdapt(bundles, srv::findComponentsByBundle)
         );
+    }
+
+    public static PromiseCfJenkinsPlugin using(PromiseJiraApi srv) {
+        return new PromiseCfJenkinsPlugin(srv, new PromiseCfAdapter());
     }
 
 }

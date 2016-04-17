@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
-public class QuasarPromiseCfAdapter {
+public class QuasarPromiseCfAdapter extends PromiseCfAdapter{
 
     private final FiberScheduler dedicatedScheduler;
 
@@ -35,7 +35,7 @@ public class QuasarPromiseCfAdapter {
         Set<E> inputs,
         Function<E, Promise<Set<F>>> adaptee
     ) {
-        return PromiseCfAdapter.flatMapAdapt(inputs, adaptee, this::adapt);
+        return flatMapAdapt(inputs, adaptee, this::adapt);
     }
 
 }

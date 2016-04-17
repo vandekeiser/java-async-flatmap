@@ -23,7 +23,7 @@ public class PromiseCfAdapterJenkinsPluginTest extends AbstractJenkinsPluginTest
         when(jira.findBundlesByName(any())).thenReturn(
             (onSuccess, onFailure) -> onFailure.accept(new JiraApiException())
         );
-        return new PromiseCfJenkinsPlugin(jira, newCachedThreadPool());
+        return PromiseCfJenkinsPlugin.using(jira);
     }
 
     @Override
@@ -35,14 +35,13 @@ public class PromiseCfAdapterJenkinsPluginTest extends AbstractJenkinsPluginTest
         when(jira.findComponentsByBundle(any())).thenReturn(
             (onSuccess, onFailure) -> onFailure.accept(new JiraApiException())
         );
-        return new PromiseCfJenkinsPlugin(jira, newCachedThreadPool());
+        return PromiseCfJenkinsPlugin.using(jira);
     }
 
     @Override
     protected CfJenkinsPlugin latentSut() {
-        return new PromiseCfJenkinsPlugin(
-            new BlockingLatentPromiseJiraApi(new FakePromiseJiraApi()),
-            newCachedThreadPool()
+        return PromiseCfJenkinsPlugin.using(
+            new BlockingLatentPromiseJiraApi(new FakePromiseJiraApi())
         );
     }
 
@@ -61,7 +60,7 @@ public class PromiseCfAdapterJenkinsPluginTest extends AbstractJenkinsPluginTest
         PromiseJiraApi promiseApi = new BlockingLatentPromiseJiraApi(new FakePromiseJiraApi());
 
         return Arrays.asList(
-            new PromiseCfJenkinsPlugin(promiseApi, measurementPool)
+            PromiseCfJenkinsPlugin.using(promiseApi)
         );
     }
 

@@ -196,3 +196,9 @@ puis on passe en arg des adapters du module quasar le scheduler
 -->faire la mm chose avec le pool
 MAIS ex. de cas ou on sait pas trop si utiliser un pool ou pas: 
     CallbackCfJenkinsPlugin
+Comprehension courante:
+    en fait on n'a pas besoin qd l'API est deja async, sauf si on veut utiliser une techno particuliere
+
+TODO renommer les usingXXX dans les plugins    
+    puis factoriser les cstr des plugins
+    mettre de reqNonNull

@@ -26,7 +26,7 @@ public class CsCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
     protected CfJenkinsPlugin defectiveSut() {
         CsJiraApi jira = mock(CsJiraApi.class);
         when(jira.findBundlesByName(any())).thenThrow(new JiraApiException());
-        return new CsCfJenkinsPlugin(jira, newCachedThreadPool());
+        return CsCfJenkinsPlugin.using(jira);
     }
 
     @Override
@@ -36,14 +36,13 @@ public class CsCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
             CompletableFuture.completedFuture(singleton(new JiraBundle("the bundle")))
         );
         when(jira.findComponentsByBundle(any())).thenThrow(new JiraApiException());
-        return new CsCfJenkinsPlugin(jira, newCachedThreadPool());
+        return CsCfJenkinsPlugin.using(jira);
     }
 
     @Override
     protected CfJenkinsPlugin latentSut() {
-        return new CsCfJenkinsPlugin(
-            new LatentCsJiraApi(new FakeCsJiraApi()),
-            newCachedThreadPool()
+        return CsCfJenkinsPlugin.using(
+            new LatentCsJiraApi(new FakeCsJiraApi())
         );
     }
 
@@ -64,7 +63,7 @@ public class CsCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
 
         return Arrays.asList(
             new SyncCfJenkinsPlugin(syncApi, measurementPool),
-            new CsCfJenkinsPlugin(csApi, measurementPool)
+            CsCfJenkinsPlugin.using(csApi)
         );
     }
 
