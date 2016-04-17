@@ -1,6 +1,6 @@
 package fr.cla.jam.apitypes.sync.unused;
 
-import fr.cla.jam.apitypes.sync.SyncCfAdapter;
+import fr.cla.jam.apitypes.sync.SingleResultSyncCfAdapter;
 import fr.cla.jam.util.containers.unused.Streamable;
 
 import java.util.concurrent.CompletableFuture;
@@ -16,7 +16,14 @@ import static java.util.stream.Collectors.toSet;
  *  Generalizing it to order-dependant results doesn't seem worth the effort for now,
  *  because most operations that can be optimized by parallelezing them don't require order.
  */
-public final class ManySyncCfAdapter extends SyncCfAdapter {
+public final class ManySyncCfAdapter {
+
+    private final SingleResultSyncCfAdapter singleResultAdapter = new SingleResultSyncCfAdapter();
+    private final Executor pool;
+
+    public ManySyncCfAdapter(Executor pool) {
+        this.pool = pool;
+    }
 
     /**
      * @param inputs The mapped elements
@@ -30,7 +37,7 @@ public final class ManySyncCfAdapter extends SyncCfAdapter {
      * @param <Fs> Container type of the target of mapper()
      * @return The result of applying the mapper, but flattened to a single level of Container. The mapping operation is launched before returning, but is probably not completed.
      */
-    public static <E, Es extends Streamable<E>, F, Fs extends Streamable<F>>
+    public <E, Es extends Streamable<E>, F, Fs extends Streamable<F>>
     CompletableFuture<Fs> flatMapAdaptUsingPool(
         Es inputs,
         Function<E, Fs> mapper,
@@ -42,7 +49,7 @@ public final class ManySyncCfAdapter extends SyncCfAdapter {
             //Can do this because Streamable defines stream()
             .stream()
             //Call the 1->N operation asynchronously    
-            .map(adaptUsingPool(mapper, parallelisationPool))
+            .map(singleResultAdapter.adaptUsingPool(mapper, parallelisationPool))
             //This Stream terminal operation ensures that 
             // the 1->N mapping operation is launched before returning 
             // (this is required since Stream intermediate operations are lazy)

@@ -7,9 +7,9 @@ import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
-public class SyncCfAdapter {
+public final class SingleResultSyncCfAdapter {
 
-    public static <T, U> Function<T, CompletableFuture<U>> adapt(
+    public <T, U> Function<T, CompletableFuture<U>> adapt(
         Function<T, U> adaptee,
         Function<Supplier<U>, CompletableFuture<U>> asyncifier
     ) {
@@ -19,7 +19,7 @@ public class SyncCfAdapter {
         );
     }
 
-    public static <T, U> Function<T, CompletableFuture<U>> adaptUsingPool(
+    public <T, U> Function<T, CompletableFuture<U>> adaptUsingPool(
         Function<T, U> adaptee,
         Executor pool
     ) {

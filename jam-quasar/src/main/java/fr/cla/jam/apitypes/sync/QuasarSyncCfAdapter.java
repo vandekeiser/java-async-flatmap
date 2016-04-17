@@ -31,8 +31,9 @@ import java.util.function.Function;
  * whether they’re sync the thread or hogging the CPU, and gives you their stack trace,
  * by printing this information to the console as well as reporting it to the runtime fiber monitor.
  */
-public class QuasarSyncCfAdapter extends SetSyncCfAdapter {
+public class QuasarSyncCfAdapter {
 
+    private final SetSyncCfAdapter notQuasarified = new SetSyncCfAdapter();
     private final FiberScheduler dedicatedScheduler;
 
     public QuasarSyncCfAdapter(FiberScheduler dedicatedScheduler) {
@@ -60,7 +61,7 @@ public class QuasarSyncCfAdapter extends SetSyncCfAdapter {
         Set<E> inputs,
         Function<E, Set<F>> mapper
     ) {
-        return flatMapAdapt(
+        return notQuasarified.flatMapAdapt(
             inputs,
             mapper,
             mappingResultSupplier -> {
