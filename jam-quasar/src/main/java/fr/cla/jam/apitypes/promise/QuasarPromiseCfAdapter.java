@@ -8,11 +8,11 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
-public class QuasarPromiseCfAdapter2 {
+public class QuasarPromiseCfAdapter {
 
     private final FiberScheduler dedicatedScheduler;
 
-    public QuasarPromiseCfAdapter2(FiberScheduler dedicatedScheduler) {
+    public QuasarPromiseCfAdapter(FiberScheduler dedicatedScheduler) {
         this.dedicatedScheduler = Objects.requireNonNull(dedicatedScheduler);
     }
 

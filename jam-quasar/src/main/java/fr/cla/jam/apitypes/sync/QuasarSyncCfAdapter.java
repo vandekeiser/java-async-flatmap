@@ -31,11 +31,11 @@ import java.util.function.Function;
  * whether they’re sync the thread or hogging the CPU, and gives you their stack trace,
  * by printing this information to the console as well as reporting it to the runtime fiber monitor.
  */
-public class QuasarSyncCfAdapter2 {
+public class QuasarSyncCfAdapter {
 
     private final FiberScheduler dedicatedScheduler;
 
-    public QuasarSyncCfAdapter2(FiberScheduler dedicatedScheduler) {
+    public QuasarSyncCfAdapter(FiberScheduler dedicatedScheduler) {
         this.dedicatedScheduler = dedicatedScheduler;
     }
 

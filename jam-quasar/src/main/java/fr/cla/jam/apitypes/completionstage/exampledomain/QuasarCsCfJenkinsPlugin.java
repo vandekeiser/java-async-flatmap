@@ -2,8 +2,6 @@ package fr.cla.jam.apitypes.completionstage.exampledomain;
 
 import co.paralleluniverse.fibers.FiberExecutorScheduler;
 import fr.cla.jam.apitypes.completionstage.QuasarCsCfAdapter;
-import fr.cla.jam.apitypes.promise.QuasarPromiseCfAdapter2;
-import fr.cla.jam.apitypes.promise.exampledomain.PromiseJiraApi;
 import fr.cla.jam.exampledomain.AbstractCfJenkinsPlugin;
 import fr.cla.jam.exampledomain.CfJenkinsPlugin;
 

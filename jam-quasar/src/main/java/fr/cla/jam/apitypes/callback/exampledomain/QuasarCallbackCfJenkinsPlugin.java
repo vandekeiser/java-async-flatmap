@@ -1,11 +1,7 @@
 package fr.cla.jam.apitypes.callback.exampledomain;
 
 import co.paralleluniverse.fibers.FiberExecutorScheduler;
-import fr.cla.jam.apitypes.callback.CallbackCfAdapter;
 import fr.cla.jam.apitypes.callback.QuasarCallbackCfAdapter;
-import fr.cla.jam.apitypes.promise.QuasarPromiseCfAdapter2;
-import fr.cla.jam.apitypes.promise.exampledomain.PromiseJiraApi;
-import fr.cla.jam.apitypes.promise.exampledomain.QuasarPromiseCfJenkinsPlugin;
 import fr.cla.jam.exampledomain.AbstractCfJenkinsPlugin;
 import fr.cla.jam.exampledomain.CfJenkinsPlugin;
 
