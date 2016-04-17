@@ -1,5 +1,6 @@
 package fr.cla.jam.apitypes.sync.unused;
 
+import fr.cla.jam.apitypes.sync.PoolSingleResultSyncCfAdapter;
 import fr.cla.jam.apitypes.sync.SingleResultSyncCfAdapter;
 
 import java.util.concurrent.CompletableFuture;
@@ -12,11 +13,10 @@ import static java.util.stream.Collectors.toSet;
 
 public final class StreamSyncCfAdapter {
 
-    private final SingleResultSyncCfAdapter singleResultAdapter = new SingleResultSyncCfAdapter();
-    private final Executor pool;
+    private final PoolSingleResultSyncCfAdapter singleResultAdapter;
 
     public StreamSyncCfAdapter(Executor pool) {
-        this.pool = pool;
+        this.singleResultAdapter = new PoolSingleResultSyncCfAdapter(pool);
     }
 
     public <E, F> CompletableFuture<Stream<F>> adaptUsingPool(
@@ -24,7 +24,7 @@ public final class StreamSyncCfAdapter {
         Function<E, Stream<F>> mapper
     ) {
         return inputs
-            .map(singleResultAdapter.adaptUsingPool(mapper, pool))
+            .map(singleResultAdapter.adaptUsingPool(mapper))
             .collect(toSet())
             .stream()
             .collect(flattening(Stream::empty, Stream::concat));

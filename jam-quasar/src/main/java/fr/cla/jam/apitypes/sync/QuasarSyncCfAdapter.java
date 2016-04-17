@@ -61,22 +61,18 @@ public class QuasarSyncCfAdapter {
         Set<E> inputs,
         Function<E, Set<F>> mapper
     ) {
-        return notQuasarified.flatMapAdapt(
-            inputs,
-            mapper,
-            mappingResultSupplier -> {
-                CompletableFuture<Set<F>> cf = new CompletableFuture<>();
-                new Fiber<>(dedicatedScheduler, () -> {
-                    try {
-                        Set<F> success = mappingResultSupplier.get();
-                        cf.complete(success);
-                    } catch (Throwable t) {
-                        cf.completeExceptionally(t);
-                    }
-                }).start();
-                return cf;
-            }
-        );
+        return notQuasarified.flatMapAdapt(inputs, mapper, mappingResultSupplier -> {
+            CompletableFuture<Set<F>> cf = new CompletableFuture<>();
+            new Fiber<>(dedicatedScheduler, () -> {
+                try {
+                    Set<F> success = mappingResultSupplier.get();
+                    cf.complete(success);
+                } catch (Throwable t) {
+                    cf.completeExceptionally(t);
+                }
+            }).start();
+            return cf;
+        });
     }
 
 }

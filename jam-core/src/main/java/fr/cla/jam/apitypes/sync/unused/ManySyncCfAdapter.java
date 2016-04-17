@@ -1,5 +1,6 @@
 package fr.cla.jam.apitypes.sync.unused;
 
+import fr.cla.jam.apitypes.sync.PoolSingleResultSyncCfAdapter;
 import fr.cla.jam.apitypes.sync.SingleResultSyncCfAdapter;
 import fr.cla.jam.util.containers.unused.Streamable;
 
@@ -18,11 +19,10 @@ import static java.util.stream.Collectors.toSet;
  */
 public final class ManySyncCfAdapter {
 
-    private final SingleResultSyncCfAdapter singleResultAdapter = new SingleResultSyncCfAdapter();
-    private final Executor pool;
+    private final PoolSingleResultSyncCfAdapter singleResultAdapter;
 
     public ManySyncCfAdapter(Executor pool) {
-        this.pool = pool;
+        this.singleResultAdapter = new PoolSingleResultSyncCfAdapter(pool);
     }
 
     /**
@@ -49,7 +49,7 @@ public final class ManySyncCfAdapter {
             //Can do this because Streamable defines stream()
             .stream()
             //Call the 1->N operation asynchronously    
-            .map(singleResultAdapter.adaptUsingPool(mapper, parallelisationPool))
+            .map(singleResultAdapter.adaptUsingPool(mapper))
             //This Stream terminal operation ensures that 
             // the 1->N mapping operation is launched before returning 
             // (this is required since Stream intermediate operations are lazy)

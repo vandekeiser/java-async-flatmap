@@ -19,14 +19,4 @@ public final class SingleResultSyncCfAdapter {
         );
     }
 
-    public <T, U> Function<T, CompletableFuture<U>> adaptUsingPool(
-        Function<T, U> adaptee,
-        Executor pool
-    ) {
-        return adapt(
-            adaptee,
-            resultSupplier -> CompletableFuture.supplyAsync(resultSupplier, pool)
-        );
-    }
-    
 }
