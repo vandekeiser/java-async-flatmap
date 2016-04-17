@@ -10,9 +10,30 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static fr.cla.jam.util.collectors.FlatteningCollectionCollector.flattening;
+import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toSet;
 
 public final class CollectionSyncCfAdapter {
+
+    public static <T, U> Function<T, CompletableFuture<U>> adapt(
+        Function<T, U> adaptee,
+        Function<Supplier<U>, CompletableFuture<U>> asyncifier
+    ) {
+        Function<T, U> verifiedAdaptee = requireNonNull(adaptee);
+        return t -> asyncifier.apply(
+            () -> verifiedAdaptee.apply(t)
+        );
+    }
+
+    public static <T, U> Function<T, CompletableFuture<U>> adaptUsingPool(
+        Function<T, U> adaptee,
+        Executor pool
+    ) {
+        return t -> CompletableFuture.supplyAsync(
+            () -> adaptee.apply(t),
+            pool
+        );
+    }
 
     public static <E, Es extends Collection<E>, F, Fs extends Collection<F>> CompletableFuture<Fs> flatMapAdaptUsingPool(
         Es inputs,
@@ -22,7 +43,7 @@ public final class CollectionSyncCfAdapter {
         BinaryOperator<Fs> collectionUnion
     ) {
         return inputs.stream()
-            .map(SyncCfAdapter.adaptUsingPool(mapper, parallelisationPool))
+            .map(adaptUsingPool(mapper, parallelisationPool))
             .collect(toSet())
             .stream()
             .collect(flattening(collectionSupplier, collectionUnion));
@@ -36,7 +57,7 @@ public final class CollectionSyncCfAdapter {
         BinaryOperator<Fs> collectionUnion
     ) {
         return inputs.stream()
-            .map(SyncCfAdapter.adapt(mapper, asyncifier))
+            .map(adapt(mapper, asyncifier))
             .collect(toSet())
             .stream()
             .collect(flattening(collectionSupplier, collectionUnion));    

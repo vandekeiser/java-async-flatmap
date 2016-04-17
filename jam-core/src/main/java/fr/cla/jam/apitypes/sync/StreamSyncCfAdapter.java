@@ -19,7 +19,7 @@ public final class StreamSyncCfAdapter {
         Executor parallelisationPool
     ) {
         return inputs
-            .map(SyncCfAdapter.adaptUsingPool(mapper, parallelisationPool))
+            .map(CollectionSyncCfAdapter.adaptUsingPool(mapper, parallelisationPool))
             .collect(toSet())
             .stream()
             .collect(flattening(Stream::empty, Stream::concat));

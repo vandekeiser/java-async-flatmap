@@ -13,26 +13,6 @@ import static java.util.Objects.requireNonNull;
 
 public final class SyncCfAdapter {
 
-    public static <T, U> Function<T, CompletableFuture<U>> adaptUsingPool(
-        Function<T, U> adaptee,
-        Executor parallelisationPool
-    ) {
-        return t -> CompletableFuture.supplyAsync(
-            () -> adaptee.apply(t),
-            parallelisationPool
-        );
-    }
-    
-    public static <T, U> Function<T, CompletableFuture<U>> adapt(
-        Function<T, U> adaptee,
-        Function<Supplier<U>, CompletableFuture<U>> asyncifier
-    ) {
-        Function<T, U> verifiedAdaptee = requireNonNull(adaptee);
-        return t -> asyncifier.apply(
-            () -> verifiedAdaptee.apply(t)
-        );
-    }
-
     public static <E, F> CompletableFuture<Set<F>> flatMapAdapt(
         Set<E> inputs,
         Function<E, Set<F>> mapper,
@@ -42,4 +22,5 @@ public final class SyncCfAdapter {
             inputs, mapper, asyncifier, Collections::emptySet, Sets::union
         );
     }
+
 }
