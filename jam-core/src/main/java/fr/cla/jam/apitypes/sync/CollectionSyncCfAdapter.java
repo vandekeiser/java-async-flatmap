@@ -12,8 +12,6 @@ import static java.util.stream.Collectors.toSet;
 
 public final class CollectionSyncCfAdapter {
 
-    private final SingleResultSyncCfAdapter singleResultAdapter = new SingleResultSyncCfAdapter();
-
     public <E, Es extends Collection<E>, F, Fs extends Collection<F>> CompletableFuture<Fs> flatMapAdapt(
         Es inputs,
         Function<E, Fs> mapper,
@@ -25,7 +23,7 @@ public final class CollectionSyncCfAdapter {
         BinaryOperator<Fs> collectionUnion
     ) {
         return inputs.stream()
-            .map(singleResultAdapter.adapt(mapper, adapter))
+            .map(adapter.apply(mapper))
             .collect(toSet())
             .stream()
             .collect(flattening(collectionSupplier, collectionUnion));

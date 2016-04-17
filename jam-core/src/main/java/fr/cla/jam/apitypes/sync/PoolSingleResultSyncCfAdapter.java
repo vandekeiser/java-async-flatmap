@@ -6,7 +6,6 @@ import java.util.function.Function;
 
 public final class PoolSingleResultSyncCfAdapter {
 
-    private final SingleResultSyncCfAdapter unpooled = new SingleResultSyncCfAdapter();
     private final Executor pool;
 
     public PoolSingleResultSyncCfAdapter(Executor pool) {
@@ -16,11 +15,8 @@ public final class PoolSingleResultSyncCfAdapter {
     public <T, U> Function<T, CompletableFuture<U>> adapt(
         Function<T, U> adaptee
     ) {
-        return unpooled.adapt(
-            adaptee,
-            mapper -> input -> CompletableFuture.supplyAsync(
-                () -> mapper.apply(input), pool
-            )
+        return input -> CompletableFuture.supplyAsync(
+            () -> adaptee.apply(input), pool
         );
     }
     

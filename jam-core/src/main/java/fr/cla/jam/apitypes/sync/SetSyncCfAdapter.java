@@ -9,18 +9,7 @@ import java.util.function.Function;
 
 public final class SetSyncCfAdapter {
 
-    private final SingleResultSyncCfAdapter singleResultAdapter = new SingleResultSyncCfAdapter();
     private final CollectionSyncCfAdapter collectionResultAdapter = new CollectionSyncCfAdapter();
-
-    public <T, U> Function<T, CompletableFuture<U>> adapt(
-        Function<T, U> adaptee,
-        Function<
-            Function<T, U>,
-            Function<T, CompletableFuture<U>>
-        > adapter
-    ) {
-        return singleResultAdapter.adapt(adaptee, adapter);
-    }
 
     public <E, F> CompletableFuture<Set<F>> flatMapAdapt(
         Set<E> inputs,
