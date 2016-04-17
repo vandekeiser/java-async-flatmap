@@ -20,6 +20,16 @@ public final class SetSyncCfAdapter {
         return singleResultAdapter.adapt(adaptee, asyncifier);
     }
 
+    public <T, U> Function<T, CompletableFuture<U>> adapt2(
+        Function<T, U> adaptee,
+        Function<
+            Function<T, U>,
+            Function<T, CompletableFuture<U>>
+        > asyncifier
+    ) {
+        return singleResultAdapter.adapt2(adaptee, asyncifier);
+    }
+
     public <E, F> CompletableFuture<Set<F>> flatMapAdapt(
         Set<E> inputs,
         Function<E, Set<F>> mapper,
@@ -27,6 +37,19 @@ public final class SetSyncCfAdapter {
     ) {
         return collectionResultAdapter.flatMapAdapt(
             inputs, mapper, asyncifier, Collections::emptySet, Sets::union
+        );
+    }
+
+    public <E, F> CompletableFuture<Set<F>> flatMapAdapt2(
+        Set<E> inputs,
+        Function<E, Set<F>> mapper,
+        Function<
+            Function<E, Set<F>>,
+            Function<E, CompletableFuture<Set<F>>>
+        > asyncifier
+    ) {
+        return collectionResultAdapter.flatMapAdapt2(
+                inputs, mapper, asyncifier, Collections::emptySet, Sets::union
         );
     }
 

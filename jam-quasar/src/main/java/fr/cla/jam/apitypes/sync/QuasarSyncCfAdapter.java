@@ -75,4 +75,11 @@ public class QuasarSyncCfAdapter {
         });
     }
 
+    public <E, F> CompletableFuture<Set<F>> flatMapAdaptUsingScheduler2(
+        Set<E> inputs,
+        Function<E, Set<F>> mapper
+    ) {
+        return notQuasarified.flatMapAdapt2(inputs, mapper, this::adaptUsingScheduler);
+    }
+
 }

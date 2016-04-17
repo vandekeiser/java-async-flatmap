@@ -19,4 +19,14 @@ public final class SingleResultSyncCfAdapter {
         );
     }
 
+    public <T, U> Function<T, CompletableFuture<U>> adapt2(
+        Function<T, U> adaptee,
+        Function<
+            Function<T, U>,
+            Function<T, CompletableFuture<U>>
+        > asyncifier
+    ) {
+        return asyncifier.apply(adaptee);
+    }
+
 }
