@@ -5,7 +5,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 
-public final class PoolSetSyncCfAdapter {
+public final class PoolSetSyncCfAdapter extends SetSyncCfAdapter {
 
     private final Executor dedicatedPool;
 
@@ -14,7 +14,7 @@ public final class PoolSetSyncCfAdapter {
     }
 
     public <T, U> Function<T, CompletableFuture<U>> adapt(Function<T, U> adaptee) {
-        return SyncCfAdapter.adapt(
+        return adapt(
             adaptee,
             resultSupplier -> CompletableFuture.supplyAsync(resultSupplier, dedicatedPool)
         );
@@ -24,7 +24,7 @@ public final class PoolSetSyncCfAdapter {
         Set<E> inputs,
         Function<E, Set<F>> mapper
     ) {
-        return SetSyncCfAdapter.flatMapAdapt(
+        return flatMapAdapt(
             inputs,
             mapper,
             resultSupplier -> CompletableFuture.supplyAsync(resultSupplier, dedicatedPool)

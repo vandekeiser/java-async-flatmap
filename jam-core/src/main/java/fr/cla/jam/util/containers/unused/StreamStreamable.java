@@ -1,4 +1,4 @@
-package fr.cla.jam.util.containers;
+package fr.cla.jam.util.containers.unused;
 
 
 import java.util.function.BinaryOperator;
@@ -6,12 +6,12 @@ import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 
-public class StreamContainerOfMany<E, Es extends Stream<E>>
-implements ContainerOfMany<E> {
+public class StreamStreamable<E, Es extends Stream<E>>
+implements Streamable<E> {
     
     private final Es stream;
 
-    public StreamContainerOfMany(Es stream) {
+    public StreamStreamable(Es stream) {
         this.stream = requireNonNull(stream);
     }
 
@@ -25,19 +25,19 @@ implements ContainerOfMany<E> {
     }
 
     public static <F, Fs extends Stream<F>>
-    BinaryOperator<StreamContainerOfMany<F, Fs>> containerUnion(
+    BinaryOperator<StreamStreamable<F, Fs>> containerUnion(
         BinaryOperator<Fs> streamUnion
     ) {
-        return (c1, c2) -> new StreamContainerOfMany<>(streamUnion.apply(
+        return (c1, c2) -> new StreamStreamable<>(streamUnion.apply(
             c1.underlyingContainer(), c2.underlyingContainer()
         ));
     }
 
     public static <F, Fs extends Stream<F>>
-    ContainerSupplier<F, StreamContainerOfMany<F, Fs>> containerSupplier(
+    Supplier<F, StreamStreamable<F, Fs>> containerSupplier(
         StreamSupplier<F, Fs> streamSupplier
     ) {
-        return () -> new StreamContainerOfMany<>(streamSupplier.get());
+        return () -> new StreamStreamable<>(streamSupplier.get());
     }
 
 }

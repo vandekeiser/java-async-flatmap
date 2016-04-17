@@ -8,14 +8,14 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public final class SetSyncCfAdapter {
+public class SetSyncCfAdapter extends CollectionSyncCfAdapter {
 
     public static <E, F> CompletableFuture<Set<F>> flatMapAdapt(
         Set<E> inputs,
         Function<E, Set<F>> mapper,
         Function<Supplier<Set<F>>, CompletableFuture<Set<F>>> asyncifier
     ) {
-        return CollectionSyncCfAdapter.flatMapAdapt(
+        return flatMapAdapt(
             inputs, mapper, asyncifier, Collections::emptySet, Sets::union
         );
     }

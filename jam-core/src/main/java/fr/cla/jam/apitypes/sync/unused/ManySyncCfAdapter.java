@@ -1,6 +1,7 @@
-package fr.cla.jam.apitypes.sync;
+package fr.cla.jam.apitypes.sync.unused;
 
-import fr.cla.jam.util.containers.ContainerOfMany;
+import fr.cla.jam.apitypes.sync.SyncCfAdapter;
+import fr.cla.jam.util.containers.unused.Streamable;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -15,13 +16,13 @@ import static java.util.stream.Collectors.toSet;
  *  Generalizing it to order-dependant results doesn't seem worth the effort for now,
  *  because most operations that can be optimized by parallelezing them don't require order.
  */
-public final class ManySyncCfAdapter {
+public final class ManySyncCfAdapter extends SyncCfAdapter {
 
     /**
      * @param inputs The mapped elements
      * @param mapper The mapping function, which returns many target elements for each source element.
      * @param parallelisationPool The thread pool specifically used to make the flatMap operation parallel.
-     * @param containerSupplier Instantiates an empty containers of target elements
+     * @param supplier Instantiates an empty containers of target elements
      * @param containerUnion Merges 2 containers of target elements, following the deduplication semantics determined by the type of the target container
      * @param <E> Element type of the source of mapper()
      * @param <Es> Container type of the source of mapper()
@@ -29,19 +30,19 @@ public final class ManySyncCfAdapter {
      * @param <Fs> Container type of the target of mapper()
      * @return The result of applying the mapper, but flattened to a single level of Container. The mapping operation is launched before returning, but is probably not completed.
      */
-    public static <E, Es extends ContainerOfMany<E>, F, Fs extends ContainerOfMany<F>> 
+    public static <E, Es extends Streamable<E>, F, Fs extends Streamable<F>>
     CompletableFuture<Fs> flatMapAdaptUsingPool(
         Es inputs,
         Function<E, Fs> mapper,
         Executor parallelisationPool,
-        ContainerOfMany.ContainerSupplier<F, Fs> containerSupplier,
+        Streamable.Supplier<F, Fs> supplier,
         BinaryOperator<Fs> containerUnion
     ) {
         return inputs
-            //Can do this because ContainerOfMany defines stream()
+            //Can do this because Streamable defines stream()
             .stream()
             //Call the 1->N operation asynchronously    
-            .map(SyncCfAdapter.adaptUsingPool(mapper, parallelisationPool))
+            .map(adaptUsingPool(mapper, parallelisationPool))
             //This Stream terminal operation ensures that 
             // the 1->N mapping operation is launched before returning 
             // (this is required since Stream intermediate operations are lazy)
@@ -50,7 +51,7 @@ public final class ManySyncCfAdapter {
             .stream() 
             //Merge the partial results in a non-sync way
             // (don't wait for all partial results)
-            .collect(flattening(containerSupplier, containerUnion));     
+            .collect(flattening(supplier, containerUnion));
     }
 
 }

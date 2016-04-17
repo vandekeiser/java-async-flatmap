@@ -12,7 +12,7 @@ import static fr.cla.jam.util.collectors.FlatteningCollectionCollector.flattenin
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toSet;
 
-public final class CollectionSyncCfAdapter {
+public class CollectionSyncCfAdapter extends SyncCfAdapter {
 
     public static <E, Es extends Collection<E>, F, Fs extends Collection<F>> CompletableFuture<Fs> flatMapAdapt(
         Es inputs,
@@ -22,7 +22,7 @@ public final class CollectionSyncCfAdapter {
         BinaryOperator<Fs> collectionUnion
     ) {
         return inputs.stream()
-            .map(SyncCfAdapter.adapt(mapper, asyncifier))
+            .map(adapt(mapper, asyncifier))
             .collect(toSet())
             .stream()
             .collect(flattening(collectionSupplier, collectionUnion));    

@@ -1,6 +1,6 @@
 package fr.cla.jam.util.collectors;
 
-import fr.cla.jam.apitypes.sync.StreamSyncCfAdapter;
+import fr.cla.jam.util.containers.unused.StreamSupplier;
 
 import java.util.EnumSet;
 import java.util.Set;
@@ -23,16 +23,16 @@ public class FlatteningStreamCollector<F, Fs extends Stream<F>> implements Colle
     AtomicReference<CompletableFuture<Fs>>,
     CompletableFuture<Fs>
 > {
-    private final StreamSyncCfAdapter.StreamSupplier<F, Fs> streamSupplier;
+    private final StreamSupplier<F, Fs> streamSupplier;
     private final BinaryOperator<Fs> streamUnion;
 
-    private FlatteningStreamCollector(StreamSyncCfAdapter.StreamSupplier<F, Fs> streamSupplier, BinaryOperator<Fs> streamUnion) {
+    private FlatteningStreamCollector(StreamSupplier<F, Fs> streamSupplier, BinaryOperator<Fs> streamUnion) {
         this.streamSupplier = requireNonNull(streamSupplier);
         this.streamUnion = requireNonNull(streamUnion);
     }
 
     public static <F, Fs extends Stream<F>> Collector<CompletableFuture<Fs>, ?, CompletableFuture<Fs>> flattening(
-        StreamSyncCfAdapter.StreamSupplier<F, Fs> streamSupplier,
+        StreamSupplier<F, Fs> streamSupplier,
         BinaryOperator<Fs> streamUnion
     ) {
         return new FlatteningStreamCollector<>(streamSupplier, streamUnion);

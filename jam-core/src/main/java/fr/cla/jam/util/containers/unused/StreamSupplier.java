@@ -1,4 +1,4 @@
-package fr.cla.jam.util.containers;
+package fr.cla.jam.util.containers.unused;
 
 import java.util.function.Supplier;
 import java.util.stream.Stream;

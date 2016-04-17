@@ -1,6 +1,6 @@
 package fr.cla.jam.util.collectors;
 
-import fr.cla.jam.util.containers.ContainerOfMany;
+import fr.cla.jam.util.containers.unused.Streamable;
 
 import java.util.EnumSet;
 import java.util.Set;
@@ -17,7 +17,7 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.stream.Collector.Characteristics.CONCURRENT;
 import static java.util.stream.Collector.Characteristics.UNORDERED;
 
-public class FlatteningContainerOfManyCollector<F, Fs extends ContainerOfMany<F>>
+public class FlatteningContainerOfManyCollector<F, Fs extends Streamable<F>>
 implements Collector<
     //The source Stream's element type
     CompletableFuture<Fs>,
@@ -29,27 +29,27 @@ implements Collector<
     CompletableFuture<Fs>
 > {
 
-    private final ContainerOfMany.ContainerSupplier<F, Fs> containerSupplier;
+    private final Streamable.Supplier<F, Fs> supplier;
     private final BinaryOperator<Fs> containerUnion;
 
-    private FlatteningContainerOfManyCollector(ContainerOfMany.ContainerSupplier<F, Fs> containerSupplier, BinaryOperator<Fs> containerUnion) {
-        this.containerSupplier = requireNonNull(containerSupplier);
+    private FlatteningContainerOfManyCollector(Streamable.Supplier<F, Fs> supplier, BinaryOperator<Fs> containerUnion) {
+        this.supplier = requireNonNull(supplier);
         this.containerUnion = requireNonNull(containerUnion);
     }
 
     //The only purpose of this method is to make instantiating this collector
     // more readable from the point of view of its caller.
-    public static <F, Fs extends ContainerOfMany<F>>
+    public static <F, Fs extends Streamable<F>>
     Collector<CompletableFuture<Fs>, ?, CompletableFuture<Fs>> flattening(
-        ContainerOfMany.ContainerSupplier<F, Fs> containerSupplier,
+        Streamable.Supplier<F, Fs> supplier,
         BinaryOperator<Fs> containerUnion
     ) {
-        return new FlatteningContainerOfManyCollector<>(containerSupplier, containerUnion);
+        return new FlatteningContainerOfManyCollector<>(supplier, containerUnion);
     }
 
     @Override
     public Supplier<AtomicReference<CompletableFuture<Fs>>> supplier() {
-        return () -> new AtomicReference<>(completedFuture(containerSupplier.get()));
+        return () -> new AtomicReference<>(completedFuture(supplier.get()));
     }
 
     @Override

@@ -7,7 +7,7 @@ import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
-public final class SyncCfAdapter {
+public class SyncCfAdapter {
 
     public static <T, U> Function<T, CompletableFuture<U>> adapt(
         Function<T, U> adaptee,

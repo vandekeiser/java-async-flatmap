@@ -1,4 +1,6 @@
-package fr.cla.jam.util.containers;
+package fr.cla.jam.util.containers.unused;
+
+import fr.cla.jam.util.containers.CollectionSupplier;
 
 import java.util.Collection;
 import java.util.function.BinaryOperator;
@@ -6,12 +8,12 @@ import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 
-public class CollectionContainerOfMany<E, Es extends Collection<E>>
-implements ContainerOfMany<E> {
+public class CollectionStreamable<E, Es extends Collection<E>>
+implements Streamable<E> {
 
     private final Es coll;
 
-    public CollectionContainerOfMany(Es coll) {
+    public CollectionStreamable(Es coll) {
         this.coll = requireNonNull(coll);
     }
 
@@ -25,18 +27,18 @@ implements ContainerOfMany<E> {
     }
 
     public static <F, Fs extends Collection<F>>
-    BinaryOperator<CollectionContainerOfMany<F, Fs>> containerUnion(
+    BinaryOperator<CollectionStreamable<F, Fs>> containerUnion(
             BinaryOperator<Fs> collectionUnion
     ) {
-        return (c1, c2) -> new CollectionContainerOfMany<>(collectionUnion.apply(
+        return (c1, c2) -> new CollectionStreamable<>(collectionUnion.apply(
             c1.underlyingContainer(), c2.underlyingContainer()
         ));
     }
 
     public static <F, Fs extends Collection<F>>
-    ContainerSupplier<F, CollectionContainerOfMany<F, Fs>> containerSupplier(
+    Supplier<F, CollectionStreamable<F, Fs>> containerSupplier(
             CollectionSupplier<F, Fs> collectionSupplier
     ) {
-        return () -> new CollectionContainerOfMany<>(collectionSupplier.get());
+        return () -> new CollectionStreamable<>(collectionSupplier.get());
     }
 }
