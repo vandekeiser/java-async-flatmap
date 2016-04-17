@@ -55,7 +55,7 @@ public class QuasarSyncCfAdapter {
         Function<E, Set<F>> mapper,
         FiberExecutorScheduler dedicatedScheduler
     ) {
-        return SyncCfAdapter.flatMapAdapt(
+        return SetSyncCfAdapter.flatMapAdapt(
             inputs,
             mapper,
             mappingResultSupplier -> {
