@@ -45,9 +45,7 @@ public class VertxSyncCfAdapter {
         Set<E> inputs,
         Function<E, Set<F>> mapper
     ) {
-        return notVertxed.flatMapAdapt(
-            inputs, mapper, this::adapt
-        );
+        return notVertxed.flatMapAdapt(inputs, mapper, this::adapt);
     }
 
 }

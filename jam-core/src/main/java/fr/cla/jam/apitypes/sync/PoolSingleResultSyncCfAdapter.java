@@ -8,7 +8,7 @@ import static java.util.Objects.requireNonNull;
 
 public final class PoolSingleResultSyncCfAdapter {
 
-    private final SingleResultSyncCfAdapter notPooled = new SingleResultSyncCfAdapter();
+    private final SingleResultSyncCfAdapter unpooled = new SingleResultSyncCfAdapter();
     private final Executor pool;
 
     public PoolSingleResultSyncCfAdapter(Executor pool) {
@@ -18,7 +18,7 @@ public final class PoolSingleResultSyncCfAdapter {
     public <T, U> Function<T, CompletableFuture<U>> adapt(
         Function<T, U> adaptee
     ) {
-        return notPooled.adapt(
+        return unpooled.adapt(
             adaptee,
             mapper -> input -> CompletableFuture.supplyAsync(() -> mapper.apply(input), pool)
         );
