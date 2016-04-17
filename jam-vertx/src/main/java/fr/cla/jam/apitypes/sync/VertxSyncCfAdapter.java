@@ -1,12 +1,10 @@
 package fr.cla.jam.apitypes.sync;
 
-import io.vertx.core.AsyncResult;
 import io.vertx.core.Vertx;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * This impl is not satisfying at all since the call is sync and doesn't use the event loop.
@@ -19,18 +17,6 @@ public class VertxSyncCfAdapter {
 
     public VertxSyncCfAdapter(Vertx vertx) {
         this.vertx = vertx;
-    }
-
-    public <T> CompletableFuture<T> supplyVertx(Supplier<T> s) {
-        CompletableFuture<T> cf = new CompletableFuture<>();
-        vertx.executeBlocking(
-            f -> f.complete(s.get()),
-            (AsyncResult<T> r) -> {
-                if(r.succeeded()) cf.complete(r.result());
-                if(r.failed()) cf.completeExceptionally(r.cause());
-            }
-        );
-        return cf;
     }
 
     public <T, U> Function<T, CompletableFuture<U>> adapt(Function<T, U> adaptee) {
@@ -60,7 +46,7 @@ public class VertxSyncCfAdapter {
         Function<E, Set<F>> mapper
     ) {
         return notVertxed.flatMapAdapt(
-            inputs, mapper, this::supplyVertx
+            inputs, mapper, this::adapt
         );
     }
 

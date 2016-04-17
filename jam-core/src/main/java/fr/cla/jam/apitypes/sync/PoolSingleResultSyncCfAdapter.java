@@ -15,12 +15,12 @@ public final class PoolSingleResultSyncCfAdapter {
         this.pool = pool;
     }
 
-    public <T, U> Function<T, CompletableFuture<U>> adaptUsingPool(
+    public <T, U> Function<T, CompletableFuture<U>> adapt(
         Function<T, U> adaptee
     ) {
         return notPooled.adapt(
             adaptee,
-            resultSupplier -> CompletableFuture.supplyAsync(resultSupplier, pool)
+            mapper -> input -> CompletableFuture.supplyAsync(() -> mapper.apply(input), pool)
         );
     }
     

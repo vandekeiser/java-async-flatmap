@@ -10,8 +10,8 @@ public class QuasarSyncCfJenkinsPlugin extends AbstractCfJenkinsPlugin implement
     private QuasarSyncCfJenkinsPlugin(SyncJiraApi srv, QuasarSyncCfAdapter adapter) {
         super(
             srv,
-            adapter.adaptUsingScheduler(srv::findBundlesByName),
-            bundles -> adapter.flatMapAdaptUsingScheduler(bundles, srv::findComponentsByBundle)
+            adapter.adapt(srv::findBundlesByName),
+            bundles -> adapter.flatMapAdapt(bundles, srv::findComponentsByBundle)
         );
     }
 

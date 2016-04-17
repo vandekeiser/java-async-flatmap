@@ -17,18 +17,18 @@ public final class PoolSetSyncCfAdapter {
     public <T, U> Function<T, CompletableFuture<U>> adapt(Function<T, U> adaptee) {
         return notPooled.adapt(
             adaptee,
-            resultSupplier -> CompletableFuture.supplyAsync(resultSupplier, dedicatedPool)
+            mapper -> input -> CompletableFuture.supplyAsync(() -> mapper.apply(input), dedicatedPool)
         );
     }
 
     public <E, F> CompletableFuture<Set<F>> flatMapAdapt(
         Set<E> inputs,
-        Function<E, Set<F>> mapper
+        Function<E, Set<F>> adaptee
     ) {
         return notPooled.flatMapAdapt(
             inputs,
-            mapper,
-            resultSupplier -> CompletableFuture.supplyAsync(resultSupplier, dedicatedPool)
+            adaptee,
+            mapper -> input -> CompletableFuture.supplyAsync(() -> mapper.apply(input), dedicatedPool)
         );
     }
 

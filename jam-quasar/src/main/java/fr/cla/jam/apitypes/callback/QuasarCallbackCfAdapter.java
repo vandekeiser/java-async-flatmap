@@ -20,7 +20,9 @@ public class QuasarCallbackCfAdapter extends CallbackCfAdapter {
         this.dedicatedScheduler = dedicatedScheduler;
     }
 
-    public <T, U> Function<T, CompletableFuture<U>> adapt(BiConsumer<T, Callback<U>> adaptee) {
+    public <T, U> Function<T, CompletableFuture<U>> adapt(
+        BiConsumer<T, Callback<U>> adaptee
+    ) {
         return input -> {
             CompletableFuture<U> cf = new CompletableFuture<>();
 

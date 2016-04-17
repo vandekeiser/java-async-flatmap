@@ -17,7 +17,9 @@ public class QuasarCsCfAdapter extends CsCfAdapter {
         this.scheduler = scheduler;
     }
 
-    public <T, U> Function<T, CompletableFuture<U>> adapt(Function<T, CompletionStage<U>> adaptee) {
+    public <T, U> Function<T, CompletableFuture<U>> adapt(
+        Function<T, CompletionStage<U>> adaptee
+    ) {
         return input -> {
             CompletableFuture<U> fiberCf = new CompletableFuture<>();
 

@@ -1,7 +1,6 @@
 package fr.cla.jam.apitypes.sync;
 
 import co.paralleluniverse.fibers.Fiber;
-import co.paralleluniverse.fibers.FiberExecutorScheduler;
 import co.paralleluniverse.fibers.FiberScheduler;
 
 import java.util.Set;
@@ -40,7 +39,7 @@ public class QuasarSyncCfAdapter {
         this.dedicatedScheduler = dedicatedScheduler;
     }
 
-    public <S, T> Function<S, CompletableFuture<T>> adaptUsingScheduler(
+    public <S, T> Function<S, CompletableFuture<T>> adapt(
         Function<S, T> adaptee
     ) {
         return s -> {
@@ -57,29 +56,11 @@ public class QuasarSyncCfAdapter {
         };
     }
 
-    public <E, F> CompletableFuture<Set<F>> flatMapAdaptUsingScheduler(
+    public <E, F> CompletableFuture<Set<F>> flatMapAdapt(
         Set<E> inputs,
-        Function<E, Set<F>> mapper
+        Function<E, Set<F>> adaptee
     ) {
-        return notQuasarified.flatMapAdapt(inputs, mapper, mappingResultSupplier -> {
-            CompletableFuture<Set<F>> cf = new CompletableFuture<>();
-            new Fiber<>(dedicatedScheduler, () -> {
-                try {
-                    Set<F> success = mappingResultSupplier.get();
-                    cf.complete(success);
-                } catch (Throwable t) {
-                    cf.completeExceptionally(t);
-                }
-            }).start();
-            return cf;
-        });
-    }
-
-    public <E, F> CompletableFuture<Set<F>> flatMapAdaptUsingScheduler2(
-        Set<E> inputs,
-        Function<E, Set<F>> mapper
-    ) {
-        return notQuasarified.flatMapAdapt2(inputs, mapper, this::adaptUsingScheduler);
+        return notQuasarified.flatMapAdapt(inputs, adaptee, this::adapt);
     }
 
 }

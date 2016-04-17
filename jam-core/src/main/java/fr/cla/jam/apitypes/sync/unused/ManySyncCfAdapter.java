@@ -1,7 +1,6 @@
 package fr.cla.jam.apitypes.sync.unused;
 
 import fr.cla.jam.apitypes.sync.PoolSingleResultSyncCfAdapter;
-import fr.cla.jam.apitypes.sync.SingleResultSyncCfAdapter;
 import fr.cla.jam.util.containers.unused.Streamable;
 
 import java.util.concurrent.CompletableFuture;
@@ -27,21 +26,19 @@ public final class ManySyncCfAdapter {
 
     /**
      * @param inputs The mapped elements
-     * @param mapper The mapping function, which returns many target elements for each source element.
-     * @param parallelisationPool The thread pool specifically used to make the flatMap operation parallel.
+     * @param adaptee The mapping function, which returns many target elements for each source element.
      * @param supplier Instantiates an empty containers of target elements
      * @param containerUnion Merges 2 containers of target elements, following the deduplication semantics determined by the type of the target container
-     * @param <E> Element type of the source of mapper()
-     * @param <Es> Container type of the source of mapper()
-     * @param <F> Element type of the target of mapper()
-     * @param <Fs> Container type of the target of mapper()
-     * @return The result of applying the mapper, but flattened to a single level of Container. The mapping operation is launched before returning, but is probably not completed.
+     * @param <E> Element type of the source of adaptee()
+     * @param <Es> Container type of the source of adaptee()
+     * @param <F> Element type of the target of adaptee()
+     * @param <Fs> Container type of the target of adaptee()
+     * @return The result of applying the adaptee, but flattened to a single level of Container. The mapping operation is launched before returning, but is probably not completed.
      */
     public <E, Es extends Streamable<E>, F, Fs extends Streamable<F>>
-    CompletableFuture<Fs> flatMapAdaptUsingPool(
+    CompletableFuture<Fs> flatMapAdapt(
         Es inputs,
-        Function<E, Fs> mapper,
-        Executor parallelisationPool,
+        Function<E, Fs> adaptee,
         Streamable.Supplier<F, Fs> supplier,
         BinaryOperator<Fs> containerUnion
     ) {
@@ -49,7 +46,7 @@ public final class ManySyncCfAdapter {
             //Can do this because Streamable defines stream()
             .stream()
             //Call the 1->N operation asynchronously    
-            .map(singleResultAdapter.adaptUsingPool(mapper))
+            .map(singleResultAdapter.adapt(adaptee))
             //This Stream terminal operation ensures that 
             // the 1->N mapping operation is launched before returning 
             // (this is required since Stream intermediate operations are lazy)

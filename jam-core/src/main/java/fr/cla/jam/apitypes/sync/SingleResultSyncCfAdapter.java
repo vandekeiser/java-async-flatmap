@@ -11,16 +11,6 @@ public final class SingleResultSyncCfAdapter {
 
     public <T, U> Function<T, CompletableFuture<U>> adapt(
         Function<T, U> adaptee,
-        Function<Supplier<U>, CompletableFuture<U>> asyncifier
-    ) {
-        Function<T, U> verifiedAdaptee = requireNonNull(adaptee);
-        return t -> asyncifier.apply(
-            () -> verifiedAdaptee.apply(t)
-        );
-    }
-
-    public <T, U> Function<T, CompletableFuture<U>> adapt2(
-        Function<T, U> adaptee,
         Function<
             Function<T, U>,
             Function<T, CompletableFuture<U>>
