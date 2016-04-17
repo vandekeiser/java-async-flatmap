@@ -62,7 +62,7 @@ public class CsCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
         CsJiraApi csApi = new LatentCsJiraApi(new FakeCsJiraApi());
 
         return Arrays.asList(
-            new SyncCfJenkinsPlugin(syncApi, measurementPool),
+            SyncCfJenkinsPlugin.using(syncApi, measurementPool),
             CsCfJenkinsPlugin.using(csApi)
         );
     }

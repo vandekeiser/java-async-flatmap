@@ -11,15 +11,27 @@ import java.util.function.Supplier;
 
 public final class SetSyncCfAdapter {
 
-    public static <E, F> CompletableFuture<Set<F>> flatMapAdaptUsingPool(
+    private final Executor dedicatedPool;
+
+    public SetSyncCfAdapter(Executor dedicatedPool) {
+        this.dedicatedPool = dedicatedPool;
+    }
+
+    public <T, U> Function<T, CompletableFuture<U>> adaptUsingPool(Function<T, U> adaptee) {
+        return SyncCfAdapter.adapt(
+            adaptee,
+            resultSupplier -> CompletableFuture.supplyAsync(resultSupplier, dedicatedPool)
+        );
+    }
+
+    public <E, F> CompletableFuture<Set<F>> flatMapAdaptUsingPool(
         Set<E> inputs,
-        Function<E, Set<F>> mapper,
-        Executor pool
+        Function<E, Set<F>> mapper
     ) {
         return flatMapAdapt(
             inputs,
             mapper,
-            resultSupplier -> CompletableFuture.supplyAsync(resultSupplier, pool)
+            resultSupplier -> CompletableFuture.supplyAsync(resultSupplier, dedicatedPool)
         );
     }
 
@@ -32,4 +44,5 @@ public final class SetSyncCfAdapter {
             inputs, mapper, asyncifier, Collections::emptySet, Sets::union
         );
     }
+
 }

@@ -9,12 +9,16 @@ import java.util.concurrent.Executor;
 
 public class SyncCfJenkinsPlugin extends AbstractCfJenkinsPlugin implements CfJenkinsPlugin {
     
-    public SyncCfJenkinsPlugin(SyncJiraApi srv, Executor dedicatedPool) {
+    private SyncCfJenkinsPlugin(SyncJiraApi srv, SetSyncCfAdapter adapter) {
         super(
             srv,
-            SyncCfAdapter.adaptUsingPool(srv::findBundlesByName, dedicatedPool),
-            bundles -> SetSyncCfAdapter.flatMapAdaptUsingPool(bundles, srv::findComponentsByBundle, dedicatedPool)
+            adapter.adaptUsingPool(srv::findBundlesByName),
+            bundles -> adapter.flatMapAdaptUsingPool(bundles, srv::findComponentsByBundle)
         );
+    }
+
+    public static SyncCfJenkinsPlugin using(SyncJiraApi srv, Executor dedicatedPool) {
+        return new SyncCfJenkinsPlugin(srv, new SetSyncCfAdapter(dedicatedPool));
     }
 
 }
