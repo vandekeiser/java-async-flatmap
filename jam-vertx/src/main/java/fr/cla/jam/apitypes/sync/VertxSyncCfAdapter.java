@@ -12,7 +12,7 @@ import java.util.function.Supplier;
  * This impl is not satisfying at all since the call is sync and doesn't use the event loop.
  * Apparently node/vertx can only adapt a given set of calls (ws requests, ..)
  */
-public class VertxSyncCfAdapter {
+public class VertxSyncCfAdapter extends SetSyncCfAdapter {
 
     private final Vertx vertx;
 
@@ -58,7 +58,7 @@ public class VertxSyncCfAdapter {
         Set<E> inputs,
         Function<E, Set<F>> mapper
     ) {
-        return SetSyncCfAdapter.flatMapAdapt(
+        return flatMapAdapt(
             inputs, mapper, this::supplyVertx
         );
     }

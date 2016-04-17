@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 
 public class SetSyncCfAdapter extends CollectionSyncCfAdapter {
 
-    public static <E, F> CompletableFuture<Set<F>> flatMapAdapt(
+    public <E, F> CompletableFuture<Set<F>> flatMapAdapt(
         Set<E> inputs,
         Function<E, Set<F>> mapper,
         Function<Supplier<Set<F>>, CompletableFuture<Set<F>>> asyncifier
