@@ -14,7 +14,7 @@ import static java.util.stream.Collectors.toSet;
 
 public class CollectionSyncCfAdapter extends SyncCfAdapter {
 
-    public static <E, Es extends Collection<E>, F, Fs extends Collection<F>> CompletableFuture<Fs> flatMapAdapt(
+    public <E, Es extends Collection<E>, F, Fs extends Collection<F>> CompletableFuture<Fs> flatMapAdapt(
         Es inputs,
         Function<E, Fs> mapper,
         Function<Supplier<Fs>, CompletableFuture<Fs>> asyncifier,

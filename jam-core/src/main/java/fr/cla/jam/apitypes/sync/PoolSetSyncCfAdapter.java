@@ -5,7 +5,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 
-public final class PoolSetSyncCfAdapter extends SetSyncCfAdapter {
+public class PoolSetSyncCfAdapter extends SetSyncCfAdapter {
 
     private final Executor dedicatedPool;
 
