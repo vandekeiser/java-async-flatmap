@@ -1,5 +1,7 @@
 package fr.cla.jam.apitypes.promise;
 
+import fr.cla.jam.apitypes.SetCfAdapter;
+
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
@@ -8,6 +10,8 @@ import static fr.cla.jam.util.collectors.FlatteningSetCollector.flattening;
 import static java.util.stream.Collectors.toSet;
 
 public class PromiseCfAdapter {
+
+    private final SetCfAdapter apiTypeAgnosticAdapter = new SetCfAdapter();
 
     public <T, U> Function<T, CompletableFuture<U>> adapt(
         Function<T, Promise<U>> adaptee
@@ -31,17 +35,13 @@ public class PromiseCfAdapter {
 
     public <E, F> CompletableFuture<Set<F>> flatMapAdapt(
         Set<E> inputs,
-        Function<E, Promise<Set<F>>> mapper,
+        Function<E, Promise<Set<F>>> adaptee,
         Function<
             Function<E, Promise<Set<F>>>,
             Function<E, CompletableFuture<Set<F>>>
         > adapter
     ) {
-        return inputs.stream()
-            .map(adapter.apply(mapper))
-            .collect(toSet())
-            .stream()
-            .collect(flattening());
+        return apiTypeAgnosticAdapter.flatMapAdapt(inputs, adapter.apply(adaptee));
     }
 
 }

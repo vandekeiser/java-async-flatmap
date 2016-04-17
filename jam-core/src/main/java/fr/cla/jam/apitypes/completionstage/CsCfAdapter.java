@@ -1,5 +1,7 @@
 package fr.cla.jam.apitypes.completionstage;
 
+import fr.cla.jam.apitypes.SetCfAdapter;
+
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -9,6 +11,8 @@ import static fr.cla.jam.util.collectors.FlatteningSetCollector.flattening;
 import static java.util.stream.Collectors.toSet;
 
 public class CsCfAdapter {
+
+    private final SetCfAdapter apiTypeAgnosticAdapter = new SetCfAdapter();
 
     public <S, T> Function<S, CompletableFuture<T>> adapt(
         Function<S, CompletionStage<T>> mapper
@@ -34,17 +38,13 @@ public class CsCfAdapter {
 
     public <E, F> CompletableFuture<Set<F>> flatMapAdapt(
         Set<E> inputs,
-        Function<E, CompletionStage<Set<F>>> mapper,
+        Function<E, CompletionStage<Set<F>>> adaptee,
         Function<
             Function<E, CompletionStage<Set<F>>>,
             Function<E, CompletableFuture<Set<F>>>
         > adapter
     ) {
-        return inputs.stream()
-            .map(adapter.apply(mapper))
-            .collect(toSet())
-            .stream()
-            .collect(flattening());
+        return apiTypeAgnosticAdapter.flatMapAdapt(inputs, adapter.apply(adaptee));
     }
 
 }

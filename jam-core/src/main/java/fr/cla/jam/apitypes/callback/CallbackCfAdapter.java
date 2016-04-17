@@ -1,14 +1,15 @@
 package fr.cla.jam.apitypes.callback;
 
+import fr.cla.jam.apitypes.SetCfAdapter;
+
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-import static fr.cla.jam.util.collectors.FlatteningSetCollector.flattening;
-import static java.util.stream.Collectors.toSet;
-
 public class CallbackCfAdapter {
+
+    private final SetCfAdapter apiTypeAgnosticAdapter = new SetCfAdapter();
 
     public <T, U> Function<T, CompletableFuture<U>> adapt(
         BiConsumer<T, Callback<U>> adaptee
@@ -31,11 +32,7 @@ public class CallbackCfAdapter {
             Function<E, CompletableFuture<Set<F>>>
         > adapter
     ) {
-        return inputs.stream()
-            .map(adapter.apply(adaptee))
-            .collect(toSet())
-            .stream()
-            .collect(flattening());
+        return apiTypeAgnosticAdapter.flatMapAdapt(inputs, adapter.apply(adaptee));
     }
 
     public <E, F> CompletableFuture<Set<F>> flatMapAdapt(
