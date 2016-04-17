@@ -38,15 +38,17 @@ public final class CollectionSyncCfAdapter {
     public static <E, Es extends Collection<E>, F, Fs extends Collection<F>> CompletableFuture<Fs> flatMapAdaptUsingPool(
         Es inputs,
         Function<E, Fs> mapper,
-        Executor parallelisationPool,
+        Executor pool,
         CollectionSupplier<F, Fs> collectionSupplier,
         BinaryOperator<Fs> collectionUnion
     ) {
-        return inputs.stream()
-            .map(adaptUsingPool(mapper, parallelisationPool))
-            .collect(toSet())
-            .stream()
-            .collect(flattening(collectionSupplier, collectionUnion));
+        return flatMapAdapt(
+            inputs,
+            mapper,
+            resultSupplier -> CompletableFuture.supplyAsync(resultSupplier, pool),
+            collectionSupplier,
+            collectionUnion
+        );
     }
 
     public static <E, Es extends Collection<E>, F, Fs extends Collection<F>> CompletableFuture<Fs> flatMapAdapt(
