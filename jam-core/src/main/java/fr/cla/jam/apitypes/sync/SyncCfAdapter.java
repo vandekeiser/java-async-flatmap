@@ -23,10 +23,10 @@ public final class SyncCfAdapter {
         Function<T, U> adaptee,
         Executor pool
     ) {
-        return t -> CompletableFuture.supplyAsync(
-            () -> adaptee.apply(t),
-            pool
+        return adapt(
+            adaptee,
+            resultSupplier -> CompletableFuture.supplyAsync(resultSupplier, pool)
         );
     }
-
+    
 }
