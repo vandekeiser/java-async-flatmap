@@ -5,7 +5,7 @@ import fr.cla.jam.Csf;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
-public interface CfsJenkinsPlugin extends JenkinsPlugin {
+public interface CsfJenkinsPlugin extends JenkinsPlugin {
     
     Csf<JiraComponent> findComponentsByBundleNameAsync(String bundleName);
     

@@ -2,10 +2,10 @@ package fr.cla.jam.apitypes.callback.exampledomain;
 
 import fr.cla.jam.Csf;
 import fr.cla.jam.exampledomain.AbstractJenkinsPlugin;
-import fr.cla.jam.exampledomain.CfsJenkinsPlugin;
+import fr.cla.jam.exampledomain.CsfJenkinsPlugin;
 import fr.cla.jam.exampledomain.JiraComponent;
 
-public class CallbackCfJenkinsPlugin2 extends AbstractJenkinsPlugin implements CfsJenkinsPlugin {
+public class CallbackCfJenkinsPlugin2 extends AbstractJenkinsPlugin implements CsfJenkinsPlugin {
 
     private final CallbackJiraApi srv;
 
