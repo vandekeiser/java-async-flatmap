@@ -36,13 +36,12 @@ public class Csf<E>{
     public Set<E> join() { return this.wrapped.join(); }
 
     //Monad Constructors
-    private Csf(CompletableFuture<Set<E>> wrapped) { this.wrapped = wrapped; }
-    private Csf(Set<E> r) { this.wrapped = completedFuture(r); }
-    private Csf(Throwable x) { this.wrapped = new CompletableFuture<>(); wrapped.completeExceptionally(x); }
-
-    public static <E> Csf<E> of(CompletableFuture<Set<E>> cf) { return new Csf<>(cf);}
-    public static <E> Csf<E> succeeded(Set<E> r) { return new Csf<>(r);}
-    public static <E> Csf<E> failed(Throwable x) { return new Csf<>(x);}
+    protected Csf(CompletableFuture<Set<E>> wrapped) { this.wrapped = wrapped; }
+    protected static <E> CompletableFuture<Set<E>> exceptionnallyCompletedFuture(Throwable x) {
+        CompletableFuture<Set<E>> cf = new CompletableFuture<>();
+        cf.completeExceptionally(x);
+        return cf;
+    }
 
     public static <I, E> Csf<E> ofSync(
         I input,
@@ -96,24 +95,54 @@ public class Csf<E>{
         return new Csf<>(newWrapped);
     }
 
+    public <F> Csf<F> flatMapSync(
+        Function<E, Set<F>> mapper,
+        Executor pool
+    ) {
+        Function<
+            Function<E, Set<F>>,
+            Function<E, CompletableFuture<Set<F>>>
+        > adapter = new PoolSingleResultSyncCfAdapter(pool)::adapt;
+
+        return flatMapSync(mapper, adapter);
+    }
+    protected final <F> Csf<F> flatMapSync(
+        Function<E, Set<F>> mapper,
+        Function<
+            Function<E, Set<F>>,
+            Function<E, CompletableFuture<Set<F>>>
+        > adapter
+    ) {
+        return flatMapCf(adapter.apply(mapper));
+    }
+
     public <F> Csf<F> flatMapCs(
         Function<E, CompletionStage<Set<F>>> mapper
     ) {
+        return flatMapCs(mapper, csCfAdapter::adapt);
+    }
+
+    protected final <F> Csf<F> flatMapCs(
+        Function<E, CompletionStage<Set<F>>> mapper,
+        Function<
+            Function<E, CompletionStage<Set<F>>>,
+            Function<E, CompletableFuture<Set<F>>>
+        > adapter
+    ) {
         CompletableFuture<Set<F>> newWrapped = wrapped.thenCompose(
             inputs -> csCfAdapter.flatMapAdapt(
-                inputs, mapper
+                inputs, mapper, adapter
             )
         );
         return new Csf<>(newWrapped);
     }
 
-    public <F> Csf<F> flatMapSync(
-        Function<E, Set<F>> mapper, Executor pool
-    ) {
-        return flatMapCf(new PoolSingleResultSyncCfAdapter(pool).adapt(mapper));
-    }
-
     public <F> Csf<F> flatMapCallback(
+        BiConsumer<E, Callback<Set<F>>> mapper
+    ) {
+        return flatMapCallback(mapper, callbackCfAdapter::adapt);
+    }
+    protected final <F> Csf<F> flatMapCallback(
         BiConsumer<E, Callback<Set<F>>> mapper,
         Function<
             BiConsumer<E, Callback<Set<F>>>,
@@ -127,13 +156,13 @@ public class Csf<E>{
         );
         return new Csf<>(newWrapped);
     }
-    public <F> Csf<F> flatMapCallback(
-        BiConsumer<E, Callback<Set<F>>> mapper
-    ) {
-        return flatMapCallback(mapper, callbackCfAdapter::adapt);
-    }
 
     public <F> Csf<F> flatMapPromise(
+        Function<E, Promise<Set<F>>> mapper
+    ) {
+        return flatMapPromise(mapper, promiseCfAdapter::adapt);
+    }
+    protected final <F> Csf<F> flatMapPromise(
         Function<E, Promise<Set<F>>> mapper,
         Function<
             Function<E, Promise<Set<F>>>,
@@ -146,11 +175,6 @@ public class Csf<E>{
             )
         );
         return new Csf<>(newWrapped);
-    }
-    public <F> Csf<F> flatMapPromise(
-        Function<E, Promise<Set<F>>> mapper
-    ) {
-        return flatMapPromise(mapper, promiseCfAdapter::adapt);
     }
 
 }
