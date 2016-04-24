@@ -18,8 +18,6 @@ import java.util.concurrent.Executor;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-import static java.util.concurrent.CompletableFuture.completedFuture;
-
 public class Csf<E>{
 
     private static final CollectionCfAdapter collectionResultAdapter = new CollectionCfAdapter();
@@ -104,9 +102,9 @@ public class Csf<E>{
             Function<E, CompletableFuture<Set<F>>>
         > adapter = new PoolSingleResultSyncCfAdapter(pool)::adapt;
 
-        return flatMapSync(mapper, adapter);
+        return doFlatMapSync(mapper, adapter);
     }
-    protected final <F> Csf<F> flatMapSync(
+    protected final <F> Csf<F> doFlatMapSync(
         Function<E, Set<F>> mapper,
         Function<
             Function<E, Set<F>>,
@@ -119,10 +117,10 @@ public class Csf<E>{
     public <F> Csf<F> flatMapCs(
         Function<E, CompletionStage<Set<F>>> mapper
     ) {
-        return flatMapCs(mapper, csCfAdapter::adapt);
+        return doFlatMapCs(mapper, csCfAdapter::adapt);
     }
 
-    protected final <F> Csf<F> flatMapCs(
+    protected final <F> Csf<F> doFlatMapCs(
         Function<E, CompletionStage<Set<F>>> mapper,
         Function<
             Function<E, CompletionStage<Set<F>>>,
@@ -140,9 +138,9 @@ public class Csf<E>{
     public <F> Csf<F> flatMapCallback(
         BiConsumer<E, Callback<Set<F>>> mapper
     ) {
-        return flatMapCallback(mapper, callbackCfAdapter::adapt);
+        return doFlatMapCallback(mapper, callbackCfAdapter::adapt);
     }
-    protected final <F> Csf<F> flatMapCallback(
+    protected final <F> Csf<F> doFlatMapCallback(
         BiConsumer<E, Callback<Set<F>>> mapper,
         Function<
             BiConsumer<E, Callback<Set<F>>>,
@@ -160,9 +158,9 @@ public class Csf<E>{
     public <F> Csf<F> flatMapPromise(
         Function<E, Promise<Set<F>>> mapper
     ) {
-        return flatMapPromise(mapper, promiseCfAdapter::adapt);
+        return doFlatMapPromise(mapper, promiseCfAdapter::adapt);
     }
-    protected final <F> Csf<F> flatMapPromise(
+    protected final <F> Csf<F> doFlatMapPromise(
         Function<E, Promise<Set<F>>> mapper,
         Function<
             Function<E, Promise<Set<F>>>,

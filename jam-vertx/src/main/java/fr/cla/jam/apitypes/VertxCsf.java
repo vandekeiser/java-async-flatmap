@@ -31,7 +31,7 @@ public class VertxCsf<E> extends Csf<E> {
             Function<E, CompletableFuture<Set<F>>>
         > adapter = new VertxSyncCfAdapter(quasarScheduler)::adapt;
 
-        return flatMapSync(mapper, adapter);
+        return doFlatMapSync(mapper, adapter);
     }
 
 }

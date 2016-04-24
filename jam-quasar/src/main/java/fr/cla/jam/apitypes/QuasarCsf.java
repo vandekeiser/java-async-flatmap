@@ -7,13 +7,11 @@ import fr.cla.jam.apitypes.callback.QuasarCallbackCfAdapter;
 import fr.cla.jam.apitypes.completionstage.QuasarCsCfAdapter;
 import fr.cla.jam.apitypes.promise.Promise;
 import fr.cla.jam.apitypes.promise.QuasarPromiseCfAdapter;
-import fr.cla.jam.apitypes.sync.PoolSingleResultSyncCfAdapter;
 import fr.cla.jam.apitypes.sync.QuasarSyncCfAdapter;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
-import java.util.concurrent.Executor;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -70,28 +68,28 @@ public class QuasarCsf<E> extends Csf<E> {
             Function<E, CompletableFuture<Set<F>>>
         > adapter = new QuasarSyncCfAdapter(quasarScheduler)::adapt;
 
-        return flatMapSync(mapper, adapter);
+        return doFlatMapSync(mapper, adapter);
     }
 
     public <F> Csf<F> flatMapCs(
         Function<E, CompletionStage<Set<F>>> mapper,
         FiberScheduler quasarScheduler
     ) {
-        return flatMapCs(mapper, new QuasarCsCfAdapter(quasarScheduler)::adapt);
+        return doFlatMapCs(mapper, new QuasarCsCfAdapter(quasarScheduler)::adapt);
     }
 
     public <F> Csf<F> flatMapCallback(
         BiConsumer<E, Callback<Set<F>>> mapper,
         FiberScheduler quasarScheduler
     ) {
-        return flatMapCallback(mapper, new QuasarCallbackCfAdapter(quasarScheduler)::adapt);
+        return doFlatMapCallback(mapper, new QuasarCallbackCfAdapter(quasarScheduler)::adapt);
     }
 
     public <F> Csf<F> flatMapPromise(
         Function<E, Promise<Set<F>>> mapper,
         FiberScheduler quasarScheduler
     ) {
-        return flatMapPromise(mapper, new QuasarPromiseCfAdapter(quasarScheduler)::adapt);
+        return doFlatMapPromise(mapper, new QuasarPromiseCfAdapter(quasarScheduler)::adapt);
     }
 
 }
