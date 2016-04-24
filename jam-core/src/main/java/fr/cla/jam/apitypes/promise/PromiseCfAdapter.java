@@ -6,9 +6,6 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
-import static fr.cla.jam.util.collectors.FlatteningSetCollector.flattening;
-import static java.util.stream.Collectors.toSet;
-
 public class PromiseCfAdapter {
 
     private final SetCfAdapter apiTypeAgnosticAdapter = new SetCfAdapter();

@@ -1,7 +1,9 @@
 package fr.cla.jam.apitypes.promise.exampledomain;
 
 import fr.cla.jam.Csf;
-import fr.cla.jam.exampledomain.*;
+import fr.cla.jam.exampledomain.AbstractJenkinsPlugin;
+import fr.cla.jam.exampledomain.CsfJenkinsPlugin;
+import fr.cla.jam.exampledomain.JiraComponent;
 
 public class PromiseCfJenkinsPlugin2 extends AbstractJenkinsPlugin implements CsfJenkinsPlugin {
 

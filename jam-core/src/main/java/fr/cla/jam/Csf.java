@@ -77,30 +77,34 @@ public class Csf<E>{
     public <F> Csf<F> flatMap(
         Function<E, Csf<F>> mapper
     ) {
-        CompletableFuture<Set<F>> result = wrapped.thenCompose(
+        CompletableFuture<Set<F>> newWrapped = wrapped.thenCompose(
             inputs -> collectionResultAdapter.flatMapAdapt(
                 inputs, mapper.andThen(Csf::getWrapped), Collections::emptySet, Sets::union
             )
         );
-        return new Csf<>(result);
+        return new Csf<>(newWrapped);
     }
 
     public <F> Csf<F> flatMapCf(
         Function<E, CompletableFuture<Set<F>>> mapper
     ) {
-        CompletableFuture<Set<F>> xxx = wrapped.thenCompose(inputs -> collectionResultAdapter.flatMapAdapt(
-            inputs, mapper, Collections::emptySet, Sets::union
-        ));
-        return new Csf<>(xxx);
+        CompletableFuture<Set<F>> newWrapped = wrapped.thenCompose(
+            inputs -> collectionResultAdapter.flatMapAdapt(
+                inputs, mapper, Collections::emptySet, Sets::union
+            )
+        );
+        return new Csf<>(newWrapped);
     }
 
     public <F> Csf<F> flatMapCs(
         Function<E, CompletionStage<Set<F>>> mapper
     ) {
-        CompletableFuture<Set<F>> xxx = wrapped.thenCompose(inputs -> csCfAdapter.flatMapAdapt(
-            inputs, mapper
-        ));
-        return new Csf<>(xxx);
+        CompletableFuture<Set<F>> newWrapped = wrapped.thenCompose(
+            inputs -> csCfAdapter.flatMapAdapt(
+                inputs, mapper
+            )
+        );
+        return new Csf<>(newWrapped);
     }
 
     public <F> Csf<F> flatMapSync(
@@ -116,10 +120,12 @@ public class Csf<E>{
             Function<E, CompletableFuture<Set<F>>>
         > adapter
     ) {
-        CompletableFuture<Set<F>> xxx = wrapped.thenCompose(inputs -> apiTypeAgnosticAdapter.flatMapAdapt(
-            inputs, adapter.apply(mapper)
-        ));
-        return new Csf<>(xxx);
+        CompletableFuture<Set<F>> newWrapped = wrapped.thenCompose(
+            inputs -> apiTypeAgnosticAdapter.flatMapAdapt(
+                inputs, adapter.apply(mapper)
+            )
+        );
+        return new Csf<>(newWrapped);
     }
     public <F> Csf<F> flatMapCallback(
         BiConsumer<E, Callback<Set<F>>> mapper
@@ -134,10 +140,12 @@ public class Csf<E>{
             Function<E, CompletableFuture<Set<F>>>
         > adapter
     ) {
-        CompletableFuture<Set<F>> xxx = wrapped.thenCompose(inputs -> apiTypeAgnosticAdapter.flatMapAdapt(
-            inputs, adapter.apply(mapper))
+        CompletableFuture<Set<F>> newWrapped = wrapped.thenCompose(
+            inputs -> apiTypeAgnosticAdapter.flatMapAdapt(
+                inputs, adapter.apply(mapper)
+            )
         );
-        return new Csf<>(xxx);
+        return new Csf<>(newWrapped);
     }
     public <F> Csf<F> flatMapPromise(
         Function<E, Promise<Set<F>>> mapper
