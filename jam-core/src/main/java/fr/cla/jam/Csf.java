@@ -45,31 +45,31 @@ public class Csf<E>{
 
     public static <I, E> Csf<E> ofSync(
         I input,
-        Function<I, Set<E>> adaptee,
+        Function<I, Set<E>> syncFunction,
         Executor pool
     ) {
-        return new Csf<>(new PoolSingleResultSyncCfAdapter(pool).adapt(adaptee).apply(input));
+        return new Csf<>(new PoolSingleResultSyncCfAdapter(pool).adapt(syncFunction).apply(input));
     }
 
     public static <I, E> Csf<E> ofCs(
         I input,
-        Function<I, CompletionStage<Set<E>>> adaptee
+        Function<I, CompletionStage<Set<E>>> csFunction
     ) {
-        return new Csf<>(csCfAdapter.adapt(adaptee).apply(input));
+        return new Csf<>(csCfAdapter.adapt(csFunction).apply(input));
     }
 
     public static <I, E> Csf<E> ofCallback(
         I input,
-        BiConsumer<I, Callback<Set<E>>> adaptee
+        BiConsumer<I, Callback<Set<E>>> callbackFunction
     ) {
-        return new Csf<>(callbackCfAdapter.adapt(adaptee).apply(input));
+        return new Csf<>(callbackCfAdapter.adapt(callbackFunction).apply(input));
     }
 
     public static <I, E> Csf<E> ofPromise(
         I input,
-        Function<I, Promise<Set<E>>> adaptee
+        Function<I, Promise<Set<E>>> promiseFunction
     ) {
-        return new Csf<>(promiseCfAdapter.adapt(adaptee).apply(input));
+        return new Csf<>(promiseCfAdapter.adapt(promiseFunction).apply(input));
     }
 
     //Monad flatmaps
