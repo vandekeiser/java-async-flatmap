@@ -24,19 +24,24 @@ public class Csf<E>{
     private static final PromiseCfAdapter promiseCfAdapter = new PromiseCfAdapter();
 
     private final CompletableFuture<Set<E>> cf;
-    public Csf(CompletableFuture<Set<E>> cf) { this.cf = cf; }
-    public Csf(Set<E> r) { this.cf = completedFuture(r); }
-    public Csf(Throwable x) { this.cf = new CompletableFuture<>(); cf.completeExceptionally(x); }
+    private Csf(CompletableFuture<Set<E>> cf) { this.cf = cf; }
+    private CompletableFuture<Set<E>> getCf() { return cf; }
+    private Csf(Set<E> r) { this.cf = completedFuture(r); }
+    private Csf(Throwable x) { this.cf = new CompletableFuture<>(); cf.completeExceptionally(x); }
+    public static <T> Csf<T> of(CompletableFuture<Set<T>> cf) { return new Csf<>(cf);}
+    public static <T> Csf<T> succeeded(Set<T> r) { return new Csf<>(r);}
+    public static <T> Csf<T> failed(Throwable x) { return new Csf<>(x);}
+
     public Set<E> join() { return this.cf.join(); }
 
-//    public <F> Csf<F> flatMap(
-//        Function<E, Csf<F>> mapper
-//    ) {
-//        CompletableFuture<Set<F>> xxx = cf.thenCompose(inputs -> collectionResultAdapter.flatMapAdapt(
-//            inputs, mapper, Collections::emptySet, Sets::union
-//        ));
-//        return new Csf<>(xxx);
-//    }
+    public <F> Csf<F> flatMap(
+        Function<E, Csf<F>> mapper
+    ) {
+        CompletableFuture<Set<F>> xxx = cf.thenCompose(inputs -> collectionResultAdapter.flatMapAdapt(
+            inputs, mapper.andThen(Csf::getCf), Collections::emptySet, Sets::union
+        ));
+        return new Csf<>(xxx);
+    }
 
     public <F> Csf<F> flatMapCf(
         Function<E, CompletableFuture<Set<F>>> mapper
@@ -66,14 +71,14 @@ public class Csf<E>{
     }
 
     public <F> Csf<F> flatMapPromise(
-        Function<E, Promise<Set<F>>> adaptee,
+        Function<E, Promise<Set<F>>> mapper,
         Function<
             Function<E, Promise<Set<F>>>,
             Function<E, CompletableFuture<Set<F>>>
         > adapter
     ) {
         CompletableFuture<Set<F>> xxx = cf.thenCompose(inputs -> apiTypeAgnosticAdapter.flatMapAdapt(
-            inputs, adapter.apply(adaptee))
+            inputs, adapter.apply(mapper))
         );
         return new Csf<>(xxx);
     }
