@@ -1,9 +1,7 @@
 package fr.cla.jam.apitypes.sync;
 
 import fr.cla.jam.apitypes.SetCfAdapter;
-import fr.cla.jam.util.containers.Sets;
 
-import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
