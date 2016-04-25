@@ -14,19 +14,19 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @FixMethodOrder(NAME_ASCENDING)
-public class PromiseCfAdapterJenkinsPluginTest extends AbstractJenkinsPluginTest {
+public class PromiseCfAdapterJenkinsPluginTest extends AbstractJenkinsPluginTest2 {
 
     @Override
-    protected CfJenkinsPlugin defectiveSut() {
+    protected CsfJenkinsPlugin defectiveSut() {
         PromiseJiraApi jira = mock(PromiseJiraApi.class);
         when(jira.findBundlesByName(any())).thenReturn(
             (onSuccess, onFailure) -> onFailure.accept(new JiraApiException())
         );
-        return PromiseCfJenkinsPlugin.using(jira);
+        return new PromiseCfJenkinsPlugin2(jira);
     }
 
     @Override
-    protected CfJenkinsPlugin halfDefectiveSut() {
+    protected CsfJenkinsPlugin halfDefectiveSut() {
         PromiseJiraApi jira = mock(PromiseJiraApi.class);
         when(jira.findBundlesByName(any())).thenReturn(
             (onSuccess, onFailure) -> onSuccess.accept(singleton(new JiraBundle("the bundle")))
@@ -34,12 +34,12 @@ public class PromiseCfAdapterJenkinsPluginTest extends AbstractJenkinsPluginTest
         when(jira.findComponentsByBundle(any())).thenReturn(
             (onSuccess, onFailure) -> onFailure.accept(new JiraApiException())
         );
-        return PromiseCfJenkinsPlugin.using(jira);
+        return new PromiseCfJenkinsPlugin2(jira);
     }
 
     @Override
-    protected CfJenkinsPlugin latentSut() {
-        return PromiseCfJenkinsPlugin.using(
+    protected CsfJenkinsPlugin latentSut() {
+        return new PromiseCfJenkinsPlugin2(
             new BlockingLatentPromiseJiraApi(new FakePromiseJiraApi())
         );
     }

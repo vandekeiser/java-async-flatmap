@@ -9,7 +9,7 @@ public class CsCfJenkinsPlugin2 extends AbstractJenkinsPlugin implements CsfJenk
 
     private final CsJiraApi srv;
 
-    private CsCfJenkinsPlugin2(CsJiraApi srv) {
+    public CsCfJenkinsPlugin2(CsJiraApi srv) {
         super(srv);
         this.srv = srv;
     }

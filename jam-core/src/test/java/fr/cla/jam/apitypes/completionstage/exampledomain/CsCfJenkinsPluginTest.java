@@ -19,28 +19,28 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @FixMethodOrder(NAME_ASCENDING)
-public class CsCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
+public class CsCfJenkinsPluginTest extends AbstractJenkinsPluginTest2 {
 
     @Override
-    protected CfJenkinsPlugin defectiveSut() {
+    protected CsfJenkinsPlugin defectiveSut() {
         CsJiraApi jira = mock(CsJiraApi.class);
         when(jira.findBundlesByName(any())).thenThrow(new JiraApiException());
-        return CsCfJenkinsPlugin.using(jira);
+        return new CsCfJenkinsPlugin2(jira);
     }
 
     @Override
-    protected CfJenkinsPlugin halfDefectiveSut() {
+    protected CsfJenkinsPlugin halfDefectiveSut() {
         CsJiraApi jira = mock(CsJiraApi.class);
         when(jira.findBundlesByName(any())).thenReturn(
             CompletableFuture.completedFuture(singleton(new JiraBundle("the bundle")))
         );
         when(jira.findComponentsByBundle(any())).thenThrow(new JiraApiException());
-        return CsCfJenkinsPlugin.using(jira);
+        return new CsCfJenkinsPlugin2(jira);
     }
 
     @Override
-    protected CfJenkinsPlugin latentSut() {
-        return CsCfJenkinsPlugin.using(
+    protected CsfJenkinsPlugin latentSut() {
+        return new CsCfJenkinsPlugin2(
             new LatentCsJiraApi(new FakeCsJiraApi())
         );
     }

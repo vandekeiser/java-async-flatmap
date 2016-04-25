@@ -9,7 +9,7 @@ public class PromiseCfJenkinsPlugin2 extends AbstractJenkinsPlugin implements Cs
 
     private final PromiseJiraApi srv;
 
-    private PromiseCfJenkinsPlugin2(PromiseJiraApi srv) {
+    public PromiseCfJenkinsPlugin2(PromiseJiraApi srv) {
         super(srv);
         this.srv = srv;
     }

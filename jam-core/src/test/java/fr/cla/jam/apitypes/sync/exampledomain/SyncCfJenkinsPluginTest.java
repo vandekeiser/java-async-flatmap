@@ -15,26 +15,26 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @FixMethodOrder(NAME_ASCENDING)
-public class SyncCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
+public class SyncCfJenkinsPluginTest extends AbstractJenkinsPluginTest2 {
 
     @Override
-    protected CfJenkinsPlugin defectiveSut() {
+    protected CsfJenkinsPlugin defectiveSut() {
         SyncJiraApi jira = mock(SyncJiraApi.class);
         when(jira.findBundlesByName(any())).thenThrow(new JiraApiException());
-        return SyncCfJenkinsPlugin.using(jira, newCachedThreadPool());
+        return new SyncCfJenkinsPlugin2(jira, newCachedThreadPool());
     }
 
     @Override
-    protected CfJenkinsPlugin halfDefectiveSut() {
+    protected CsfJenkinsPlugin halfDefectiveSut() {
         SyncJiraApi jira = mock(SyncJiraApi.class);
         when(jira.findBundlesByName(any())).thenReturn(singleton(new JiraBundle("the bundle")));
         when(jira.findComponentsByBundle(any())).thenThrow(new JiraApiException());
-        return SyncCfJenkinsPlugin.using(jira, newCachedThreadPool());
+        return new SyncCfJenkinsPlugin2(jira, newCachedThreadPool());
     }
 
     @Override
-    protected CfJenkinsPlugin latentSut() {
-        return SyncCfJenkinsPlugin.using(
+    protected CsfJenkinsPlugin latentSut() {
+        return new SyncCfJenkinsPlugin2(
             new LatentSyncJiraApi(new FakeSyncJiraApi()),
             newCachedThreadPool()
         );
@@ -69,7 +69,6 @@ public class SyncCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
             SyncCfJenkinsPlugin.using(syncApi, scalabilityMeasurementPool)
         );
     }
-
 
     @Override
     protected List<JenkinsPlugin> allPlugins(ExecutorService measurementPool) {

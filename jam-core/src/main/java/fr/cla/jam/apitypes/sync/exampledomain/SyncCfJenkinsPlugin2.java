@@ -12,7 +12,7 @@ public class SyncCfJenkinsPlugin2 extends AbstractJenkinsPlugin implements CsfJe
     private final SyncJiraApi srv;
     private final Executor pool;
 
-    private SyncCfJenkinsPlugin2(SyncJiraApi srv, Executor pool) {
+    public SyncCfJenkinsPlugin2(SyncJiraApi srv, Executor pool) {
         super(srv);
         this.srv = srv;
         this.pool = pool;
