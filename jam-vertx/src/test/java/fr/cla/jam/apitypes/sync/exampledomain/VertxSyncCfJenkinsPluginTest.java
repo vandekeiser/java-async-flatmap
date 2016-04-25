@@ -44,7 +44,7 @@ public class VertxSyncCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
         SyncJiraApi api = new LatentSyncJiraApi(new FakeSyncJiraApi());
 
         return Arrays.asList(
-            SyncCfJenkinsPlugin.using(api, measurementPool),
+            new SyncCfJenkinsPlugin2(api, measurementPool),
             new VertxSyncCfJenkinsPlugin2(api, vertx)
         );
     }

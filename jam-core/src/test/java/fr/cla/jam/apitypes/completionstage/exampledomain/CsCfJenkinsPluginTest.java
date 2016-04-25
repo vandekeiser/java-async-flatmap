@@ -2,7 +2,7 @@ package fr.cla.jam.apitypes.completionstage.exampledomain;
 
 import fr.cla.jam.apitypes.sync.exampledomain.FakeSyncJiraApi;
 import fr.cla.jam.apitypes.sync.exampledomain.LatentSyncJiraApi;
-import fr.cla.jam.apitypes.sync.exampledomain.SyncCfJenkinsPlugin;
+import fr.cla.jam.apitypes.sync.exampledomain.SyncCfJenkinsPlugin2;
 import fr.cla.jam.apitypes.sync.exampledomain.SyncJiraApi;
 import fr.cla.jam.exampledomain.*;
 import org.junit.FixMethodOrder;
@@ -61,8 +61,8 @@ public class CsCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
         CsJiraApi csApi = new LatentCsJiraApi(new FakeCsJiraApi());
 
         return Arrays.asList(
-            SyncCfJenkinsPlugin.using(syncApi, measurementPool),
-            CsCfJenkinsPlugin.using(csApi)
+            new SyncCfJenkinsPlugin2(syncApi, measurementPool),
+            new CsCfJenkinsPlugin2(csApi)
         );
     }
 

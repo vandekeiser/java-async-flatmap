@@ -54,7 +54,7 @@ public class CallbackCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
         CallbackJiraApi callbackApi = new BlockingLatentCallbackJiraApi(new FakeCallbackJiraApi());
 
         return Arrays.asList(
-            CallbackCfJenkinsPlugin.using(callbackApi)
+            new CallbackCfJenkinsPlugin2(callbackApi)
         );
     }
 

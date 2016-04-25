@@ -62,7 +62,7 @@ public class QuasarPromiseCfAdapterJenkinsPluginTest extends AbstractQuasarJenki
         PromiseJiraApi promiseApi = new NonBlockingLatentPromiseJiraApi(new FakePromiseJiraApi());
 
         return Arrays.asList(
-            QuasarPromiseCfJenkinsPlugin.usingScheduler(promiseApi, dedicatedScheduler(measurementPool))
+            new QuasarPromiseCfJenkinsPlugin2(promiseApi, dedicatedScheduler(measurementPool))
         );
     }
 

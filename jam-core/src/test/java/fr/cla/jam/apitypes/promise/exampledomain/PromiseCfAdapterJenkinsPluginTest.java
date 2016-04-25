@@ -59,7 +59,7 @@ public class PromiseCfAdapterJenkinsPluginTest extends AbstractJenkinsPluginTest
         PromiseJiraApi promiseApi = new BlockingLatentPromiseJiraApi(new FakePromiseJiraApi());
 
         return Arrays.asList(
-            PromiseCfJenkinsPlugin.using(promiseApi)
+            new PromiseCfJenkinsPlugin2(promiseApi)
         );
     }
 

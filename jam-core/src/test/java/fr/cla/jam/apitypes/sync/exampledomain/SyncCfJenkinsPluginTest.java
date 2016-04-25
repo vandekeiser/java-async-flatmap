@@ -57,7 +57,7 @@ public class SyncCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
         return Arrays.asList(
             new SeqStreamJenkinsPlugin(syncApi),
             new ParStreamJenkinsPlugin(syncApi),
-            SyncCfJenkinsPlugin.using(syncApi, latencyMeasurementPool)
+            new SyncCfJenkinsPlugin2(syncApi, latencyMeasurementPool)
         );
     }
 
@@ -66,7 +66,7 @@ public class SyncCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
         SyncJiraApi syncApi = new LatentSyncJiraApi(new FakeSyncJiraApi());
 
         return Arrays.asList(
-            SyncCfJenkinsPlugin.using(syncApi, scalabilityMeasurementPool)
+            new SyncCfJenkinsPlugin2(syncApi, scalabilityMeasurementPool)
         );
     }
 
