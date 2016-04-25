@@ -3,14 +3,13 @@ package fr.cla.jam.apitypes;
 import co.paralleluniverse.common.monitoring.MonitorType;
 import co.paralleluniverse.fibers.FiberExecutorScheduler;
 import fr.cla.jam.exampledomain.AbstractJenkinsPluginTest;
-import fr.cla.jam.exampledomain.AbstractJenkinsPluginTest2;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.String.format;
 
-public abstract class AbstractQuasarJenkinsPluginTest extends AbstractJenkinsPluginTest2 {
+public abstract class AbstractQuasarJenkinsPluginTest extends AbstractJenkinsPluginTest {
 
     private final static AtomicInteger callInFiberSchedulerCounter = new AtomicInteger(0);
 

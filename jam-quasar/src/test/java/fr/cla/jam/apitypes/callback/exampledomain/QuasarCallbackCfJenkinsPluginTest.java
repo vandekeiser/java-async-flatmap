@@ -2,8 +2,6 @@ package fr.cla.jam.apitypes.callback.exampledomain;
 
 import fr.cla.jam.apitypes.AbstractQuasarJenkinsPluginTest;
 import fr.cla.jam.apitypes.callback.NonBlockingLatentCallbackJiraApi;
-import fr.cla.jam.exampledomain.AbstractJenkinsPluginTest2;
-import fr.cla.jam.exampledomain.CfJenkinsPlugin;
 import fr.cla.jam.exampledomain.CsfJenkinsPlugin;
 import fr.cla.jam.exampledomain.JenkinsPlugin;
 

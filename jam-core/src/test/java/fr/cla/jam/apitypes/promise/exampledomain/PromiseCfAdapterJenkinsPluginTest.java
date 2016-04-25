@@ -14,7 +14,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @FixMethodOrder(NAME_ASCENDING)
-public class PromiseCfAdapterJenkinsPluginTest extends AbstractJenkinsPluginTest2 {
+public class PromiseCfAdapterJenkinsPluginTest extends AbstractJenkinsPluginTest {
 
     @Override
     protected CsfJenkinsPlugin defectiveSut() {

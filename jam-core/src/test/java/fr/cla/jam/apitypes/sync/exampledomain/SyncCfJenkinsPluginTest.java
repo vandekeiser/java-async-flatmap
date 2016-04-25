@@ -15,7 +15,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @FixMethodOrder(NAME_ASCENDING)
-public class SyncCfJenkinsPluginTest extends AbstractJenkinsPluginTest2 {
+public class SyncCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
 
     @Override
     protected CsfJenkinsPlugin defectiveSut() {

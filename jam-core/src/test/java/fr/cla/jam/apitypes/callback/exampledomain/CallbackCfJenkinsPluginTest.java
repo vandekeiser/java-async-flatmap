@@ -1,7 +1,6 @@
 package fr.cla.jam.apitypes.callback.exampledomain;
 
-import fr.cla.jam.exampledomain.AbstractJenkinsPluginTest2;
-import fr.cla.jam.exampledomain.CfJenkinsPlugin;
+import fr.cla.jam.exampledomain.AbstractJenkinsPluginTest;
 import fr.cla.jam.exampledomain.CsfJenkinsPlugin;
 import fr.cla.jam.exampledomain.JenkinsPlugin;
 import org.junit.FixMethodOrder;
@@ -19,7 +18,7 @@ import static org.junit.runners.MethodSorters.NAME_ASCENDING;
 // -factor nb de resultats
 // -separer modules fwk et domain
 @FixMethodOrder(NAME_ASCENDING)
-public class CallbackCfJenkinsPluginTest extends AbstractJenkinsPluginTest2 {
+public class CallbackCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
 
     @Override
     protected CsfJenkinsPlugin defectiveSut() {
