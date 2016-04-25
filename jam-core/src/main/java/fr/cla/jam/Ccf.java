@@ -18,21 +18,20 @@ import java.util.function.BinaryOperator;
 import java.util.function.Function;
 
 public class Ccf<E, Es extends Collection<E>> {
-    
-    private static final CollectionCfAdapter collectionResultAdapter = new CollectionCfAdapter();
-    private static final CsCfAdapter csCfAdapter = new CsCfAdapter();
-    private static final CallbackCfAdapter callbackCfAdapter = new CallbackCfAdapter();
-    private static final PromiseCfAdapter promiseCfAdapter = new PromiseCfAdapter();
 
-    //The wrapped CF
-    protected final CompletableFuture<Es> wrapped;
-    public CompletableFuture<Es> asCf() { return wrapped; }
+    private static final CollectionCfAdapter collectionResultAdapter = new CollectionCfAdapter();
+    protected static final CsCfAdapter csCfAdapter = new CsCfAdapter();
+    protected static final CallbackCfAdapter callbackCfAdapter = new CallbackCfAdapter();
+    protected static final PromiseCfAdapter promiseCfAdapter = new PromiseCfAdapter();
+
+    private final CompletableFuture<Es> underlyingCf;
+    public CompletableFuture<Es> asCf() { return underlyingCf; }
 
     //CompletableFuture functionnality
-    public Es join() { return this.wrapped.join(); }
+    public Es join() { return underlyingCf.join(); }
 
     //Monad Constructors
-    protected Ccf(CompletableFuture<Es> wrapped) { this.wrapped = wrapped; }
+    protected Ccf(CompletableFuture<Es> underlyingCf) { this.underlyingCf = underlyingCf; }
 
     public static <I, E, Es extends Collection<E>> Ccf<E, Es> ccfOfSync(
         I input,
@@ -76,9 +75,8 @@ public class Ccf<E, Es extends Collection<E>> {
         CollectionSupplier<F, Fs> collectionSupplier,
         BinaryOperator<Fs> collectionUnion
     ) { 
-        return wrapped.thenCompose(
+        return underlyingCf.thenCompose(
             inputs -> collectionResultAdapter.flatMapAdapt(
-                //inputs, mapper.andThen(Ccf::asCf), collectionSupplier, collectionUnion
                 inputs, i -> mapper.apply(i).asCf(), collectionSupplier, collectionUnion
             )
         );
@@ -96,7 +94,7 @@ public class Ccf<E, Es extends Collection<E>> {
         CollectionSupplier<F, Fs> collectionSupplier,
         BinaryOperator<Fs> collectionUnion
     ) {
-        return wrapped.thenCompose(
+        return underlyingCf.thenCompose(
             inputs -> collectionResultAdapter.flatMapAdapt(
                 inputs, mapper, collectionSupplier, collectionUnion
             )
@@ -144,7 +142,7 @@ public class Ccf<E, Es extends Collection<E>> {
         CollectionSupplier<F, Fs> collectionSupplier,
         BinaryOperator<Fs> collectionUnion
     ) {
-        return wrapped.thenCompose(
+        return underlyingCf.thenCompose(
             inputs -> csCfAdapter.flatMapAdapt(
                 inputs, mapper, adapter, collectionSupplier, collectionUnion
             )
@@ -167,7 +165,7 @@ public class Ccf<E, Es extends Collection<E>> {
         CollectionSupplier<F, Fs> collectionSupplier,
         BinaryOperator<Fs> collectionUnion
     ) {
-        return wrapped.thenCompose(
+        return underlyingCf.thenCompose(
             inputs -> callbackCfAdapter.flatMapAdapt(
                 inputs, mapper, adapter, collectionSupplier, collectionUnion
             )
@@ -190,7 +188,7 @@ public class Ccf<E, Es extends Collection<E>> {
         CollectionSupplier<F, Fs> collectionSupplier,
         BinaryOperator<Fs> collectionUnion
     ) {
-        return wrapped.thenCompose(
+        return underlyingCf.thenCompose(
             inputs -> promiseCfAdapter.flatMapAdapt(
                 inputs, mapper, adapter, collectionSupplier, collectionUnion
             )

@@ -18,10 +18,6 @@ import java.util.function.Function;
 
 public class Csf<E> extends Ccf<E, Set<E>>{
 
-    private static final CsCfAdapter csCfAdapter = new CsCfAdapter();
-    private static final CallbackCfAdapter callbackCfAdapter = new CallbackCfAdapter();
-    private static final PromiseCfAdapter promiseCfAdapter = new PromiseCfAdapter();
-
     //Monad Constructors
     public Csf(CompletableFuture<Set<E>> wrapped) { super(wrapped); }
 
