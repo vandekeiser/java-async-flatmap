@@ -74,3 +74,9 @@ turn sleeps.computeIfAbsent(
 -----------------------------CORES=4, FJP SIZE=3, DEDICATED POOL SIZE=1, CONCURRENCY=10000------------------------------
 DONE measuring apitypes.callback.exampledomain.QuasarCollectCallbackApiIntoCfJenkinsPlugin:               PT2M52.086S 
 donc c'est pas le sleep        
+
+
+
+*******************TODOS post ajout Ccf****************
+-suppr les adapters inutiles dans Csf et ses fils
+-inliner ce qu'on peut

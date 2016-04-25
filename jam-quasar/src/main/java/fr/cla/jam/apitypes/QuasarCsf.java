@@ -8,7 +8,9 @@ import fr.cla.jam.apitypes.completionstage.QuasarCsCfAdapter;
 import fr.cla.jam.apitypes.promise.Promise;
 import fr.cla.jam.apitypes.promise.QuasarPromiseCfAdapter;
 import fr.cla.jam.apitypes.sync.QuasarSyncCfAdapter;
+import fr.cla.jam.util.containers.Sets;
 
+import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -25,7 +27,9 @@ public class QuasarCsf<E> extends Csf<E> {
         Function<I, Set<E>> syncFunction,
         FiberScheduler quasarScheduler
     ) {
-        return new QuasarCsf<>(new QuasarSyncCfAdapter(quasarScheduler).adapt(syncFunction).apply(input));
+        return new QuasarCsf<>(
+            new QuasarSyncCfAdapter(quasarScheduler).adapt(syncFunction).apply(input)
+        );
     }
 
     public static <I, E> QuasarCsf<E> ofCs(
@@ -68,28 +72,37 @@ public class QuasarCsf<E> extends Csf<E> {
             Function<E, CompletableFuture<Set<F>>>
         > adapter = new QuasarSyncCfAdapter(quasarScheduler)::adapt;
 
-        return doFlatMapSync(mapper, adapter);
+        return new QuasarCsf<>(doFlatMapSync(mapper, adapter));
     }
 
     public <F> Csf<F> flatMapCs(
         Function<E, CompletionStage<Set<F>>> mapper,
         FiberScheduler quasarScheduler
     ) {
-        return doFlatMapCs(mapper, new QuasarCsCfAdapter(quasarScheduler)::adapt);
+        return new QuasarCsf<>(doFlatMapCs(
+            mapper, 
+            new QuasarCsCfAdapter(quasarScheduler)::adapt
+        ));
     }
 
     public <F> Csf<F> flatMapCallback(
         BiConsumer<E, Callback<Set<F>>> mapper,
         FiberScheduler quasarScheduler
     ) {
-        return doFlatMapCallback(mapper, new QuasarCallbackCfAdapter(quasarScheduler)::adapt);
+        return new QuasarCsf<>(doFlatMapCallback(
+            mapper, 
+            new QuasarCallbackCfAdapter(quasarScheduler)::adapt
+        ));
     }
 
     public <F> Csf<F> flatMapPromise(
         Function<E, Promise<Set<F>>> mapper,
         FiberScheduler quasarScheduler
     ) {
-        return doFlatMapPromise(mapper, new QuasarPromiseCfAdapter(quasarScheduler)::adapt);
+        return new QuasarCsf<>(doFlatMapPromise(
+            mapper, 
+            new QuasarPromiseCfAdapter(quasarScheduler)::adapt
+        ));
     }
 
 }

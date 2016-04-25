@@ -1,15 +1,17 @@
 package fr.cla.jam.apitypes.callback;
 
-import fr.cla.jam.apitypes.SetCfAdapter;
+import fr.cla.jam.apitypes.CollectionCfAdapter;
+import fr.cla.jam.util.containers.CollectionSupplier;
 
-import java.util.Set;
+import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 
 public class CallbackCfAdapter {
 
-    private final SetCfAdapter apiTypeAgnosticAdapter = new SetCfAdapter();
+    private final CollectionCfAdapter apiTypeAgnosticAdapter = new CollectionCfAdapter();
 
     public <T, U> Function<T, CompletableFuture<U>> adapt(
         BiConsumer<T, Callback<U>> adaptee
@@ -24,22 +26,26 @@ public class CallbackCfAdapter {
         };
     }
 
-    public <E, F> CompletableFuture<Set<F>> flatMapAdapt(
-        Set<E> inputs,
-        BiConsumer<E, Callback<Set<F>>> adaptee,
+    public <E, Es extends Collection<E>, F, Fs extends Collection<F>> CompletableFuture<Fs> flatMapAdapt(
+        Es inputs,
+        BiConsumer<E, Callback<Fs>> adaptee,
         Function<
-            BiConsumer<E, Callback<Set<F>>>,
-            Function<E, CompletableFuture<Set<F>>>
-        > adapter
+            BiConsumer<E, Callback<Fs>>,
+            Function<E, CompletableFuture<Fs>>
+        > adapter,
+        CollectionSupplier<F, Fs> collectionSupplier,
+        BinaryOperator<Fs> collectionUnion
     ) {
-        return apiTypeAgnosticAdapter.flatMapAdapt(inputs, adapter.apply(adaptee));
+        return apiTypeAgnosticAdapter.flatMapAdapt(inputs, adapter.apply(adaptee), collectionSupplier, collectionUnion);
     }
 
-    public <E, F> CompletableFuture<Set<F>> flatMapAdapt(
-        Set<E> inputs,
-        BiConsumer<E, Callback<Set<F>>> adaptee
+    public <E, Es extends Collection<E>, F, Fs extends Collection<F>> CompletableFuture<Fs> flatMapAdapt(
+        Es inputs,
+        BiConsumer<E, Callback<Fs>> adaptee,
+        CollectionSupplier<F, Fs> collectionSupplier,
+        BinaryOperator<Fs> collectionUnion
     ) {
-        return flatMapAdapt(inputs, adaptee, this::adapt);
+        return flatMapAdapt(inputs, adaptee, this::adapt, collectionSupplier, collectionUnion);
     }
     
 }

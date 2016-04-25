@@ -1,14 +1,15 @@
 package fr.cla.jam.apitypes.sync;
 
-import fr.cla.jam.apitypes.SetCfAdapter;
+import fr.cla.jam.util.containers.Sets;
 
+import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 public final class SetSyncCfAdapter {
 
-    private final SetCfAdapter apiTypeAgnosticAdapter = new SetCfAdapter();
+    private final CollectionSyncCfAdapter apiTypeAgnosticAdapter = new CollectionSyncCfAdapter();
 
     public <E, F> CompletableFuture<Set<F>> flatMapAdapt(
         Set<E> inputs,
@@ -19,7 +20,7 @@ public final class SetSyncCfAdapter {
         > adapter
     ) {
         return apiTypeAgnosticAdapter.flatMapAdapt(
-            inputs, adapter.apply(adaptee)
+            inputs, adaptee, adapter, Collections::emptySet, Sets::union
         );
     }
 

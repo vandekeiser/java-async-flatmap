@@ -2,8 +2,10 @@ package fr.cla.jam.apitypes;
 
 import fr.cla.jam.Csf;
 import fr.cla.jam.apitypes.sync.VertxSyncCfAdapter;
+import fr.cla.jam.util.containers.Sets;
 import io.vertx.core.Vertx;
 
+import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
@@ -31,7 +33,7 @@ public class VertxCsf<E> extends Csf<E> {
             Function<E, CompletableFuture<Set<F>>>
         > adapter = new VertxSyncCfAdapter(quasarScheduler)::adapt;
 
-        return doFlatMapSync(mapper, adapter);
+        return new VertxCsf<>(doFlatMapSync(mapper, adapter));
     }
 
 }

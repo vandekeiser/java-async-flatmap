@@ -1,16 +1,19 @@
 package fr.cla.jam.apitypes.completionstage;
 
-import fr.cla.jam.apitypes.SetCfAdapter;
+import fr.cla.jam.apitypes.CollectionCfAdapter;
+import fr.cla.jam.util.containers.CollectionSupplier;
 
+import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 
 public class CsCfAdapter {
 
-    private final SetCfAdapter apiTypeAgnosticAdapter = new SetCfAdapter();
-
+    private final CollectionCfAdapter apiTypeAgnosticAdapter = new CollectionCfAdapter();
+    
     public <S, T> Function<S, CompletableFuture<T>> adapt(
         Function<S, CompletionStage<T>> mapper
     ) {
@@ -26,22 +29,31 @@ public class CsCfAdapter {
         };
     }
 
-    public <E, F> CompletableFuture<Set<F>> flatMapAdapt(
-        Set<E> inputs,
-        Function<E, CompletionStage<Set<F>>> mapper
+    public <E, Es extends Collection<E>, F, Fs extends Collection<F>> CompletableFuture<Fs> flatMapAdapt(
+        Es inputs,
+        Function<E, CompletionStage<Fs>> mapper,
+        CollectionSupplier<F, Fs> collectionSupplier,
+        BinaryOperator<Fs> collectionUnion
     ) {
-        return flatMapAdapt(inputs, mapper, this::adapt);
+        return flatMapAdapt(inputs, mapper, this::adapt, collectionSupplier, collectionUnion);
     }
 
-    public <E, F> CompletableFuture<Set<F>> flatMapAdapt(
-        Set<E> inputs,
-        Function<E, CompletionStage<Set<F>>> adaptee,
+    public <E, Es extends Collection<E>, F, Fs extends Collection<F>> CompletableFuture<Fs> flatMapAdapt(
+        Es inputs,
+        Function<E, CompletionStage<Fs>> adaptee,
         Function<
-            Function<E, CompletionStage<Set<F>>>,
-            Function<E, CompletableFuture<Set<F>>>
-        > adapter
+            Function<E, CompletionStage<Fs>>,
+            Function<E, CompletableFuture<Fs>>
+        > adapter,
+        CollectionSupplier<F, Fs> collectionSupplier,
+        BinaryOperator<Fs> collectionUnion
     ) {
-        return apiTypeAgnosticAdapter.flatMapAdapt(inputs, adapter.apply(adaptee));
+        return apiTypeAgnosticAdapter.flatMapAdapt(
+            inputs, 
+            adapter.apply(adaptee),
+            collectionSupplier,
+            collectionUnion
+        );
     }
 
 }

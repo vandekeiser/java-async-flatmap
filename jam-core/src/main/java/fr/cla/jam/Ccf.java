@@ -1,7 +1,6 @@
 package fr.cla.jam;
 
 import fr.cla.jam.apitypes.CollectionCfAdapter;
-import fr.cla.jam.apitypes.SetCfAdapter;
 import fr.cla.jam.apitypes.callback.Callback;
 import fr.cla.jam.apitypes.callback.CallbackCfAdapter;
 import fr.cla.jam.apitypes.completionstage.CsCfAdapter;
@@ -9,11 +8,8 @@ import fr.cla.jam.apitypes.promise.Promise;
 import fr.cla.jam.apitypes.promise.PromiseCfAdapter;
 import fr.cla.jam.apitypes.sync.PoolSingleResultSyncCfAdapter;
 import fr.cla.jam.util.containers.CollectionSupplier;
-import fr.cla.jam.util.containers.Sets;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
@@ -38,7 +34,7 @@ public class Ccf<E, Es extends Collection<E>> {
     //Monad Constructors
     protected Ccf(CompletableFuture<Es> wrapped) { this.wrapped = wrapped; }
 
-    public static <I, E, Es extends Collection<E>> Ccf<E, Es> ofSync(
+    public static <I, E, Es extends Collection<E>> Ccf<E, Es> ccfOfSync(
         I input,
         Function<I, Es> syncFunction,
         Executor pool
@@ -46,21 +42,21 @@ public class Ccf<E, Es extends Collection<E>> {
         return new Ccf<>(new PoolSingleResultSyncCfAdapter(pool).adapt(syncFunction).apply(input));
     }
 
-    public static <I, E, Es extends Collection<E>> Ccf<E, Es> ofCs(
+    public static <I, E, Es extends Collection<E>> Ccf<E, Es> ccfOfCs(
         I input,
         Function<I, CompletionStage<Es>> csFunction
     ) {
         return new Ccf<>(csCfAdapter.adapt(csFunction).apply(input));
     }
 
-    public static <I, E, Es extends Collection<E>> Ccf<E, Es> ofCallback(
+    public static <I, E, Es extends Collection<E>> Ccf<E, Es> ccfOfCallback(
         I input,
         BiConsumer<I, Callback<Es>> callbackFunction
     ) {
         return new Ccf<>(callbackCfAdapter.adapt(callbackFunction).apply(input));
     }
 
-    public static <I, E, Es extends Collection<E>> Ccf<E, Es> ofPromise(
+    public static <I, E, Es extends Collection<E>> Ccf<E, Es> ccfOfPromise(
         I input,
         Function<I, Promise<Es>> promiseFunction
     ) {
@@ -73,12 +69,19 @@ public class Ccf<E, Es extends Collection<E>> {
         CollectionSupplier<F, Fs> collectionSupplier,
         BinaryOperator<Fs> collectionUnion
     ) {
-        CompletableFuture<Fs> newWrapped = wrapped.thenCompose(
+        return new Ccf<>(doFlatMap(mapper, collectionSupplier, collectionUnion));
+    }
+    protected final <F, Fs extends Collection<F>> CompletableFuture<Fs> doFlatMap(
+        Function<E, ? extends Ccf<F, Fs>> mapper,
+        CollectionSupplier<F, Fs> collectionSupplier,
+        BinaryOperator<Fs> collectionUnion
+    ) { 
+        return wrapped.thenCompose(
             inputs -> collectionResultAdapter.flatMapAdapt(
-                inputs, mapper.andThen(Ccf::asCf), collectionSupplier, collectionUnion
+                //inputs, mapper.andThen(Ccf::asCf), collectionSupplier, collectionUnion
+                inputs, i -> mapper.apply(i).asCf(), collectionSupplier, collectionUnion
             )
         );
-        return new Ccf<>(newWrapped);
     }
 
     public <F, Fs extends Collection<F>> Ccf<F, Fs> flatMapCf(
@@ -86,12 +89,18 @@ public class Ccf<E, Es extends Collection<E>> {
         CollectionSupplier<F, Fs> collectionSupplier,
         BinaryOperator<Fs> collectionUnion
     ) {
-        CompletableFuture<Fs> newWrapped = wrapped.thenCompose(
+        return new Ccf<>(doFlatMapCf(mapper, collectionSupplier, collectionUnion));
+    }
+    protected final <F, Fs extends Collection<F>> CompletableFuture<Fs> doFlatMapCf(
+        Function<E, CompletableFuture<Fs>> mapper,
+        CollectionSupplier<F, Fs> collectionSupplier,
+        BinaryOperator<Fs> collectionUnion
+    ) {
+        return wrapped.thenCompose(
             inputs -> collectionResultAdapter.flatMapAdapt(
                 inputs, mapper, collectionSupplier, collectionUnion
             )
         );
-        return new Ccf<>(newWrapped);
     }
 
     public <F, Fs extends Collection<F>> Ccf<F, Fs> flatMapSync(
@@ -105,9 +114,9 @@ public class Ccf<E, Es extends Collection<E>> {
             Function<E, CompletableFuture<Fs>>
         > adapter = new PoolSingleResultSyncCfAdapter(pool)::adapt;
 
-        return doFlatMapSync(mapper, adapter, collectionSupplier, collectionUnion);
+        return new Ccf<>(doFlatMapSync(mapper, adapter, collectionSupplier, collectionUnion));
     }
-    protected final <F, Fs extends Collection<F>> Ccf<F, Fs> doFlatMapSync(
+    protected final <F, Fs extends Collection<F>> CompletableFuture<Fs> doFlatMapSync(
         Function<E, Fs> mapper,
         Function<
             Function<E, Fs>,
@@ -116,12 +125,76 @@ public class Ccf<E, Es extends Collection<E>> {
         CollectionSupplier<F, Fs> collectionSupplier,
         BinaryOperator<Fs> collectionUnion
     ) {
-        return flatMapCf(adapter.apply(mapper), collectionSupplier, collectionUnion);
+        return doFlatMapCf(adapter.apply(mapper), collectionSupplier, collectionUnion);
     }
 
-    //TODO: generaliser aux collections:
-//    flatMapCs
-//    flatMapCallback
-//    flatMapPromise
+    public <F, Fs extends Collection<F>> Ccf<F, Fs> flatMapCs(
+        Function<E, CompletionStage<Fs>> mapper,
+        CollectionSupplier<F, Fs> collectionSupplier,
+        BinaryOperator<Fs> collectionUnion
+    ) {
+        return new Ccf<>(doFlatMapCs(mapper, csCfAdapter::adapt, collectionSupplier, collectionUnion));
+    }
+    protected final <F, Fs extends Collection<F>> CompletableFuture<Fs> doFlatMapCs(
+        Function<E, CompletionStage<Fs>> mapper,
+        Function<
+            Function<E, CompletionStage<Fs>>,
+            Function<E, CompletableFuture<Fs>>
+        > adapter,
+        CollectionSupplier<F, Fs> collectionSupplier,
+        BinaryOperator<Fs> collectionUnion
+    ) {
+        return wrapped.thenCompose(
+            inputs -> csCfAdapter.flatMapAdapt(
+                inputs, mapper, adapter, collectionSupplier, collectionUnion
+            )
+        );
+    }
+
+    public <F, Fs extends Collection<F>> Ccf<F, Fs> flatMapCallback(
+        BiConsumer<E, Callback<Fs>> mapper,
+        CollectionSupplier<F, Fs> collectionSupplier,
+        BinaryOperator<Fs> collectionUnion
+    ) {
+        return new Ccf<>(doFlatMapCallback(mapper, callbackCfAdapter::adapt, collectionSupplier, collectionUnion));
+    }
+    protected final <F, Fs extends Collection<F>> CompletableFuture<Fs> doFlatMapCallback(
+        BiConsumer<E, Callback<Fs>> mapper,
+        Function<
+            BiConsumer<E, Callback<Fs>>,
+            Function<E, CompletableFuture<Fs>>
+        > adapter,
+        CollectionSupplier<F, Fs> collectionSupplier,
+        BinaryOperator<Fs> collectionUnion
+    ) {
+        return wrapped.thenCompose(
+            inputs -> callbackCfAdapter.flatMapAdapt(
+                inputs, mapper, adapter, collectionSupplier, collectionUnion
+            )
+        );
+    }
+
+    public <F, Fs extends Collection<F>> Ccf<F, Fs> flatMapPromise(
+        Function<E, Promise<Fs>> mapper,
+        CollectionSupplier<F, Fs> collectionSupplier,
+        BinaryOperator<Fs> collectionUnion
+    ) {
+        return new Ccf<>(doFlatMapPromise(mapper, promiseCfAdapter::adapt, collectionSupplier, collectionUnion));
+    }
+    protected final <F, Fs extends Collection<F>> CompletableFuture<Fs> doFlatMapPromise(
+        Function<E, Promise<Fs>> mapper,
+        Function<
+            Function<E, Promise<Fs>>,
+            Function<E, CompletableFuture<Fs>>
+        > adapter,
+        CollectionSupplier<F, Fs> collectionSupplier,
+        BinaryOperator<Fs> collectionUnion
+    ) {
+        return wrapped.thenCompose(
+            inputs -> promiseCfAdapter.flatMapAdapt(
+                inputs, mapper, adapter, collectionSupplier, collectionUnion
+            )
+        );
+    }
 
 }
