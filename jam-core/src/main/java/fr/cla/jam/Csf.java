@@ -28,7 +28,7 @@ public class Csf<E>{
 
     //The wrapped CF
     private final CompletableFuture<Set<E>> wrapped;
-    private CompletableFuture<Set<E>> getWrapped() { return wrapped; }
+    public CompletableFuture<Set<E>> asCf() { return wrapped; }
 
     //CompletableFuture functionnality
     public Set<E> join() { return this.wrapped.join(); }
@@ -76,7 +76,7 @@ public class Csf<E>{
     ) {
         CompletableFuture<Set<F>> newWrapped = wrapped.thenCompose(
             inputs -> collectionResultAdapter.flatMapAdapt(
-                inputs, mapper.andThen(Csf::getWrapped), Collections::emptySet, Sets::union
+                inputs, mapper.andThen(Csf::asCf), Collections::emptySet, Sets::union
             )
         );
         return new Csf<>(newWrapped);

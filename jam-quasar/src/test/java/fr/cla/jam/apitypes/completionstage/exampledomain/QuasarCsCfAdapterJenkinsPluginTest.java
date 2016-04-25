@@ -1,10 +1,7 @@
 package fr.cla.jam.apitypes.completionstage.exampledomain;
 
 import fr.cla.jam.apitypes.AbstractQuasarJenkinsPluginTest;
-import fr.cla.jam.exampledomain.CfJenkinsPlugin;
-import fr.cla.jam.exampledomain.JenkinsPlugin;
-import fr.cla.jam.exampledomain.JiraApiException;
-import fr.cla.jam.exampledomain.JiraBundle;
+import fr.cla.jam.exampledomain.*;
 import org.junit.FixMethodOrder;
 import org.junit.Ignore;
 
@@ -29,25 +26,25 @@ import static org.mockito.Mockito.when;
 public class QuasarCsCfAdapterJenkinsPluginTest extends AbstractQuasarJenkinsPluginTest {
 
     @Override
-    protected CfJenkinsPlugin defectiveSut() {
+    protected CsfJenkinsPlugin defectiveSut() {
         CsJiraApi jira = mock(CsJiraApi.class);
         when(jira.findBundlesByName(any())).thenReturn(failure());
-        return QuasarCsCfJenkinsPlugin.usingScheduler(jira, dedicatedScheduler(latencyMeasurementPool));
+        return new QuasarCsCfJenkinsPlugin2(jira, dedicatedScheduler(latencyMeasurementPool));
     }
 
     @Override
-    protected CfJenkinsPlugin halfDefectiveSut() {
+    protected CsfJenkinsPlugin halfDefectiveSut() {
         CsJiraApi jira = mock(CsJiraApi.class);
         when(jira.findBundlesByName(any())).thenReturn(
             completedFuture(singleton(new JiraBundle("the bundle")))
         );
         when(jira.findComponentsByBundle(any())).thenReturn(failure());
-        return QuasarCsCfJenkinsPlugin.usingScheduler(jira, dedicatedScheduler(latencyMeasurementPool));
+        return new QuasarCsCfJenkinsPlugin2(jira, dedicatedScheduler(latencyMeasurementPool));
     }
 
     @Override
-    protected CfJenkinsPlugin latentSut() {
-        return QuasarCsCfJenkinsPlugin.usingScheduler(
+    protected CsfJenkinsPlugin latentSut() {
+        return new QuasarCsCfJenkinsPlugin2(
             new LatentCsJiraApi(new FakeCsJiraApi()),
             dedicatedScheduler(latencyMeasurementPool)
         );

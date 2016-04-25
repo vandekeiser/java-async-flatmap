@@ -2,10 +2,7 @@ package fr.cla.jam.apitypes.promise.exampledomain;
 
 import fr.cla.jam.apitypes.AbstractQuasarJenkinsPluginTest;
 import fr.cla.jam.apitypes.promise.NonBlockingLatentPromiseJiraApi;
-import fr.cla.jam.exampledomain.CfJenkinsPlugin;
-import fr.cla.jam.exampledomain.JenkinsPlugin;
-import fr.cla.jam.exampledomain.JiraApiException;
-import fr.cla.jam.exampledomain.JiraBundle;
+import fr.cla.jam.exampledomain.*;
 import org.junit.FixMethodOrder;
 
 import java.util.Arrays;
@@ -22,16 +19,16 @@ import static org.mockito.Mockito.when;
 public class QuasarPromiseCfAdapterJenkinsPluginTest extends AbstractQuasarJenkinsPluginTest {
 
     @Override
-    protected CfJenkinsPlugin defectiveSut() {
+    protected CsfJenkinsPlugin defectiveSut() {
         PromiseJiraApi jira = mock(PromiseJiraApi.class);
         when(jira.findBundlesByName(any())).thenReturn(
             (onSuccess, onFailure) -> onFailure.accept(new JiraApiException())
         );
-        return QuasarPromiseCfJenkinsPlugin.usingScheduler(jira, dedicatedScheduler(latencyMeasurementPool));
+        return new QuasarPromiseCfJenkinsPlugin2(jira, dedicatedScheduler(latencyMeasurementPool));
     }
 
     @Override
-    protected CfJenkinsPlugin halfDefectiveSut() {
+    protected CsfJenkinsPlugin halfDefectiveSut() {
         PromiseJiraApi jira = mock(PromiseJiraApi.class);
         when(jira.findBundlesByName(any())).thenReturn(
             (onSuccess, onFailure) -> onSuccess.accept(singleton(new JiraBundle("the bundle")))
@@ -39,12 +36,12 @@ public class QuasarPromiseCfAdapterJenkinsPluginTest extends AbstractQuasarJenki
         when(jira.findComponentsByBundle(any())).thenReturn(
             (onSuccess, onFailure) -> onFailure.accept(new JiraApiException())
         );
-        return QuasarPromiseCfJenkinsPlugin.usingScheduler(jira, dedicatedScheduler(latencyMeasurementPool));
+        return new QuasarPromiseCfJenkinsPlugin2(jira, dedicatedScheduler(latencyMeasurementPool));
     }
 
     @Override
-    protected CfJenkinsPlugin latentSut() {
-        return QuasarPromiseCfJenkinsPlugin.usingScheduler(
+    protected CsfJenkinsPlugin latentSut() {
+        return new QuasarPromiseCfJenkinsPlugin2(
             new NonBlockingLatentPromiseJiraApi(new FakePromiseJiraApi()),
             dedicatedScheduler(latencyMeasurementPool)
         );

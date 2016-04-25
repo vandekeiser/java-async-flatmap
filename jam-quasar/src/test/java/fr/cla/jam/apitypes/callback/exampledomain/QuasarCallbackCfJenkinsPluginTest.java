@@ -2,7 +2,9 @@ package fr.cla.jam.apitypes.callback.exampledomain;
 
 import fr.cla.jam.apitypes.AbstractQuasarJenkinsPluginTest;
 import fr.cla.jam.apitypes.callback.NonBlockingLatentCallbackJiraApi;
+import fr.cla.jam.exampledomain.AbstractJenkinsPluginTest2;
 import fr.cla.jam.exampledomain.CfJenkinsPlugin;
+import fr.cla.jam.exampledomain.CsfJenkinsPlugin;
 import fr.cla.jam.exampledomain.JenkinsPlugin;
 
 import java.util.Arrays;
@@ -22,18 +24,18 @@ import java.util.concurrent.ExecutorService;
 public class QuasarCallbackCfJenkinsPluginTest extends AbstractQuasarJenkinsPluginTest {
 
     @Override
-    protected CfJenkinsPlugin defectiveSut() {
-        return QuasarCallbackCfJenkinsPlugin.usingScheduler(new DefectiveCallbackJiraApi(), dedicatedScheduler(latencyMeasurementPool));
+    protected CsfJenkinsPlugin defectiveSut() {
+        return new QuasarCallbackCfJenkinsPlugin2(new DefectiveCallbackJiraApi(), dedicatedScheduler(latencyMeasurementPool));
     }
 
     @Override
-    protected CfJenkinsPlugin halfDefectiveSut() {
-        return QuasarCallbackCfJenkinsPlugin.usingScheduler(new HalfDefectiveCallbackJiraApi(), dedicatedScheduler(latencyMeasurementPool));
+    protected CsfJenkinsPlugin halfDefectiveSut() {
+        return new QuasarCallbackCfJenkinsPlugin2(new HalfDefectiveCallbackJiraApi(), dedicatedScheduler(latencyMeasurementPool));
     }
 
     @Override
-    protected CfJenkinsPlugin latentSut() {
-        return QuasarCallbackCfJenkinsPlugin.usingScheduler(
+    protected CsfJenkinsPlugin latentSut() {
+        return new QuasarCallbackCfJenkinsPlugin2(
             new NonBlockingLatentCallbackJiraApi(new FakeCallbackJiraApi()),
             dedicatedScheduler(latencyMeasurementPool)
         );

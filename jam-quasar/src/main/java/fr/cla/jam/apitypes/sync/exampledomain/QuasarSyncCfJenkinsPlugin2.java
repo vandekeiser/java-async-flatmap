@@ -12,7 +12,7 @@ public class QuasarSyncCfJenkinsPlugin2 extends AbstractJenkinsPlugin implements
     private final SyncJiraApi srv;
     private final FiberScheduler dedicatedScheduler;
 
-    private QuasarSyncCfJenkinsPlugin2(SyncJiraApi srv, FiberScheduler dedicatedScheduler) {
+    public QuasarSyncCfJenkinsPlugin2(SyncJiraApi srv, FiberScheduler dedicatedScheduler) {
         super(srv);
         this.srv = srv;
         this.dedicatedScheduler = dedicatedScheduler;

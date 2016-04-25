@@ -1,0 +1,76 @@
+char[]       20%
+String       19.8% 
+HashMap$Node 18.2%
+JiraBundle   16.5% ()
+
+ex d'objs:
+fiber-delay scheduler-10042870
+BUNDLE-toto59360
+
+JiraBundle tenus par NonBlockingLatentCallbackJiraApi
+	-->
+	//        return sleeps.computeIfAbsent(
+	//            request,
+	//            k -> ThreadLocalRandom.current().nextLong(MIN_SLEEP, MAX_SLEEP)
+	//        );
+	        return ThreadLocalRandom.current().nextLong(MIN_SLEEP, MAX_SLEEP);
+	    }
+
+maintenant ils sont sont tenus par des Fiber... 	    
+	idem mm au niveau char[]
+
+1 String = 100bytes	
+1 JiraBundle = 1 name
+10 000 * 100 = 10^6 bundles
+donc au minumum 100Mo
+
+**********
+co.paralleluniverse:name=MonitoringServices
+co.paralleluniverse.common.monitoring.MonitoringServicesMXBean
+
+************
+ObjectName=
+co.paralleluniverse:type=Fibers,name=QuasarCollectCallbackApiIntoCfJenkinsPlugin scheduler-1
+
+ClassName
+co.paralleluniverse.fibers.JMXFibersMonitor
+
+AllFiberIds
+MeanTimedWakeupLatency 0
+NumActiveFibers    400_000
+NumRunnableFibers  400_000
+NumWaitingFibers   0
+RunawayFibers      
+TimedQueueLength   0
+
+
+*****************
+avec les chgts suivants:
+	-return ThreadLocalRandom.current().nextLong(MIN_SLEEP, MAX_SLEEP);
+	-//blackHole.addAll(answers);
+	- QuasarCollectCallbackApiIntoCfJenkinsPlugin::new, nonblocking
+ET les flags VM: 
+	-XX:+HeapDumpOnOutOfMemoryError -javaagent:"C:\Users\Claisse\.m2\repository\co\paralleluniverse\quasar-core\0.7.4\quasar-core-0.7.4-jdk8.jar" -Dco.paralleluniverse.fibers.verifyInstrumentation=false
+--> CA PASSE!
+-----------------------------CORES=4, FJP SIZE=3, DEDICATED POOL SIZE=1, CONCURRENCY=10000------------------------------
+DONE measuring apitypes.callback.exampledomain.QuasarCollectCallbackApiIntoCfJenkinsPlugin:               
+	PT8M10.89S
+mais les infviduels sont lents
+	apitypes.callback.exampledomain.QuasarCollectCallbackApiIntoCfJenkinsPlugin:               
+		took PT7M28.262S  (found 300)
+
+si je change rien sauf enlever l'agent:			
+-XX:+HeapDumpOnOutOfMemoryError  -Dco.paralleluniverse.fibers.verifyInstrumentation=false 
+-----------------------------CORES=4, FJP SIZE=3, DEDICATED POOL SIZE=1, CONCURRENCY=10000------------------------------
+DONE measuring apitypes.callback.exampledomain.QuasarCollectCallbackApiIntoCfJenkinsPlugin:               PT2M39.427S 
+ca va mm plus vite!!!!!!
+
+je remet l'agent pour voir ce qui fixait l'OOME:
+turn sleeps.computeIfAbsent(
+            request,
+            k -> ThreadLocalRandom.current().nextLong(MIN_SLEEP, MAX_SLEEP)
+        );
+
+-----------------------------CORES=4, FJP SIZE=3, DEDICATED POOL SIZE=1, CONCURRENCY=10000------------------------------
+DONE measuring apitypes.callback.exampledomain.QuasarCollectCallbackApiIntoCfJenkinsPlugin:               PT2M52.086S 
+donc c'est pas le sleep        

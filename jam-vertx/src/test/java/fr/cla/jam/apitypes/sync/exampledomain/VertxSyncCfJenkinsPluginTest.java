@@ -12,28 +12,28 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class VertxSyncCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
+public class VertxSyncCfJenkinsPluginTest extends AbstractJenkinsPluginTest2 {
 
     private static final Vertx vertx =  Vertx.vertx();
 
     @Override
-    protected CfJenkinsPlugin defectiveSut() {
+    protected CsfJenkinsPlugin defectiveSut() {
         SyncJiraApi jira = mock(SyncJiraApi.class);
         when(jira.findBundlesByName(any())).thenThrow(new JiraApiException());
-        return VertxSyncCfJenkinsPlugin.using(jira, vertx);
+        return new VertxSyncCfJenkinsPlugin2(jira, vertx);
     }
 
     @Override
-    protected CfJenkinsPlugin halfDefectiveSut() {
+    protected CsfJenkinsPlugin halfDefectiveSut() {
         SyncJiraApi jira = mock(SyncJiraApi.class);
         when(jira.findBundlesByName(any())).thenReturn(singleton(new JiraBundle("the bundle")));
         when(jira.findComponentsByBundle(any())).thenThrow(new JiraApiException());
-        return VertxSyncCfJenkinsPlugin.using(jira, vertx);
+        return new VertxSyncCfJenkinsPlugin2(jira, vertx);
     }
 
     @Override
-    protected CfJenkinsPlugin latentSut() {
-        return VertxSyncCfJenkinsPlugin.using(
+    protected CsfJenkinsPlugin latentSut() {
+        return new VertxSyncCfJenkinsPlugin2(
             new LatentSyncJiraApi(new FakeSyncJiraApi()),
             vertx
         );
@@ -45,7 +45,7 @@ public class VertxSyncCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
 
         return Arrays.asList(
             SyncCfJenkinsPlugin.using(api, measurementPool),
-            VertxSyncCfJenkinsPlugin.using(api, vertx)
+            new VertxSyncCfJenkinsPlugin2(api, vertx)
         );
     }
 
