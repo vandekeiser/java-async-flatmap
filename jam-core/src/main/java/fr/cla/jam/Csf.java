@@ -19,7 +19,7 @@ import java.util.function.Function;
 public class Csf<E> extends Ccf<E, Set<E>>{
 
     //Monad Constructors
-    public Csf(CompletableFuture<Set<E>> wrapped) { super(wrapped); }
+    public Csf(CompletableFuture<Set<E>> underlyingCf) { super(underlyingCf); }
 
     public static <I, E> Csf<E> ofSync(
         I input,
@@ -58,7 +58,7 @@ public class Csf<E> extends Ccf<E, Set<E>>{
     }
     protected final <F> CompletableFuture<Set<F>> doFlatMap(
         Function<E, ? extends Ccf<F, Set<F>>> mapper
-    ) { 
+    ) {
         return doFlatMap(mapper, Collections::emptySet, Sets::union);
     }
 

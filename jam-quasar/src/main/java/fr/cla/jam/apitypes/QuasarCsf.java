@@ -20,7 +20,7 @@ import java.util.function.Function;
 public class QuasarCsf<E> extends Csf<E> {
 
     //Monad Constructors
-    private QuasarCsf(CompletableFuture<Set<E>> wrapped) { super(wrapped); }
+    private QuasarCsf(CompletableFuture<Set<E>> underlyingCf) { super(underlyingCf); }
 
     public static <I, E> QuasarCsf<E> ofSync(
         I input,
