@@ -21,7 +21,7 @@ public class SyncCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
     protected CsfJenkinsPlugin defectiveSut() {
         SyncJiraApi jira = mock(SyncJiraApi.class);
         when(jira.findBundlesByName(any())).thenThrow(new JiraApiException());
-        return new SyncCfJenkinsPlugin2(jira, newCachedThreadPool());
+        return new SyncCfJenkinsPlugin(jira, newCachedThreadPool());
     }
 
     @Override
@@ -29,12 +29,12 @@ public class SyncCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
         SyncJiraApi jira = mock(SyncJiraApi.class);
         when(jira.findBundlesByName(any())).thenReturn(singleton(new JiraBundle("the bundle")));
         when(jira.findComponentsByBundle(any())).thenThrow(new JiraApiException());
-        return new SyncCfJenkinsPlugin2(jira, newCachedThreadPool());
+        return new SyncCfJenkinsPlugin(jira, newCachedThreadPool());
     }
 
     @Override
     protected CsfJenkinsPlugin latentSut() {
-        return new SyncCfJenkinsPlugin2(
+        return new SyncCfJenkinsPlugin(
             new LatentSyncJiraApi(new FakeSyncJiraApi()),
             newCachedThreadPool()
         );
@@ -57,7 +57,7 @@ public class SyncCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
         return Arrays.asList(
             new SeqStreamJenkinsPlugin(syncApi),
             new ParStreamJenkinsPlugin(syncApi),
-            new SyncCfJenkinsPlugin2(syncApi, latencyMeasurementPool)
+            new SyncCfJenkinsPlugin(syncApi, latencyMeasurementPool)
         );
     }
 
@@ -66,7 +66,7 @@ public class SyncCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
         SyncJiraApi syncApi = new LatentSyncJiraApi(new FakeSyncJiraApi());
 
         return Arrays.asList(
-            new SyncCfJenkinsPlugin2(syncApi, scalabilityMeasurementPool)
+            new SyncCfJenkinsPlugin(syncApi, scalabilityMeasurementPool)
         );
     }
 

@@ -5,11 +5,11 @@ import fr.cla.jam.exampledomain.AbstractJenkinsPlugin;
 import fr.cla.jam.exampledomain.CsfJenkinsPlugin;
 import fr.cla.jam.exampledomain.JiraComponent;
 
-public class CallbackCfJenkinsPlugin2 extends AbstractJenkinsPlugin implements CsfJenkinsPlugin {
+public class CallbackCfJenkinsPlugin extends AbstractJenkinsPlugin implements CsfJenkinsPlugin {
 
     private final CallbackJiraApi srv;
 
-    public CallbackCfJenkinsPlugin2(CallbackJiraApi srv) {
+    public CallbackCfJenkinsPlugin(CallbackJiraApi srv) {
         super(srv);
         this.srv = srv;
     }

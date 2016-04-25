@@ -23,18 +23,18 @@ public class CallbackCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
     @Override
     protected CsfJenkinsPlugin defectiveSut() {
         CallbackJiraApi jira = new DefectiveCallbackJiraApi();
-        return new CallbackCfJenkinsPlugin2(jira);
+        return new CallbackCfJenkinsPlugin(jira);
     }
 
     @Override
     protected CsfJenkinsPlugin halfDefectiveSut() {
         CallbackJiraApi jira = new HalfDefectiveCallbackJiraApi();
-        return new CallbackCfJenkinsPlugin2(jira);
+        return new CallbackCfJenkinsPlugin(jira);
     }
 
     @Override
     protected CsfJenkinsPlugin latentSut() {
-        return new CallbackCfJenkinsPlugin2(
+        return new CallbackCfJenkinsPlugin(
             new BlockingLatentCallbackJiraApi(new FakeCallbackJiraApi())
         );
     }
@@ -54,7 +54,7 @@ public class CallbackCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
         CallbackJiraApi callbackApi = new BlockingLatentCallbackJiraApi(new FakeCallbackJiraApi());
 
         return Arrays.asList(
-            new CallbackCfJenkinsPlugin2(callbackApi)
+            new CallbackCfJenkinsPlugin(callbackApi)
         );
     }
 

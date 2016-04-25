@@ -23,7 +23,7 @@ public class QuasarSyncCfJenkinsPluginTest extends AbstractQuasarJenkinsPluginTe
     protected CsfJenkinsPlugin defectiveSut() {
         SyncJiraApi jira = mock(SyncJiraApi.class);
         when(jira.findBundlesByName(any())).thenThrow(new JiraApiException());
-        return new QuasarSyncCfJenkinsPlugin2(jira, dedicatedScheduler(latencyMeasurementPool));
+        return new QuasarSyncCfJenkinsPlugin(jira, dedicatedScheduler(latencyMeasurementPool));
     }
 
     @Override
@@ -31,12 +31,12 @@ public class QuasarSyncCfJenkinsPluginTest extends AbstractQuasarJenkinsPluginTe
         SyncJiraApi jira = mock(SyncJiraApi.class);
         when(jira.findBundlesByName(any())).thenReturn(singleton(new JiraBundle("the bundle")));
         when(jira.findComponentsByBundle(any())).thenThrow(new JiraApiException());
-        return new QuasarSyncCfJenkinsPlugin2(jira, dedicatedScheduler(latencyMeasurementPool));
+        return new QuasarSyncCfJenkinsPlugin(jira, dedicatedScheduler(latencyMeasurementPool));
     }
 
     @Override
     protected CsfJenkinsPlugin latentSut() {
-        return new QuasarSyncCfJenkinsPlugin2(
+        return new QuasarSyncCfJenkinsPlugin(
             new LatentSyncJiraApi(new FakeSyncJiraApi()),
             dedicatedScheduler(latencyMeasurementPool)
         );
@@ -57,12 +57,12 @@ public class QuasarSyncCfJenkinsPluginTest extends AbstractQuasarJenkinsPluginTe
         SyncJiraApi syncApi = new LatentSyncJiraApi(new FakeSyncJiraApi());
         List<JenkinsPlugin> all = new ArrayList<>();
 
-        all.add(new SyncCfJenkinsPlugin2(syncApi, measurementPool));
-        all.add(new QuasarSyncCfJenkinsPlugin2(syncApi, dedicatedScheduler(measurementPool)));
+        all.add(new SyncCfJenkinsPlugin(syncApi, measurementPool));
+        all.add(new QuasarSyncCfJenkinsPlugin(syncApi, dedicatedScheduler(measurementPool)));
 
         if(useRealServer()) {
             SyncJiraApi realServerSyncApi = new RealServerLatencySyncApi(new FakeSyncJiraApi(), getRealServer());
-            all.add(new SyncCfJenkinsPlugin2(realServerSyncApi, dedicatedScheduler(measurementPool)));
+            all.add(new SyncCfJenkinsPlugin(realServerSyncApi, dedicatedScheduler(measurementPool)));
         }
 
         return all;

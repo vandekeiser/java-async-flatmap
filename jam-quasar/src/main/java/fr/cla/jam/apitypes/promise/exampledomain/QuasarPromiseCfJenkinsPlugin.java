@@ -7,12 +7,12 @@ import fr.cla.jam.exampledomain.AbstractJenkinsPlugin;
 import fr.cla.jam.exampledomain.CsfJenkinsPlugin;
 import fr.cla.jam.exampledomain.JiraComponent;
 
-public class QuasarPromiseCfJenkinsPlugin2 extends AbstractJenkinsPlugin implements CsfJenkinsPlugin {
+public class QuasarPromiseCfJenkinsPlugin extends AbstractJenkinsPlugin implements CsfJenkinsPlugin {
 
     private final PromiseJiraApi srv;
     private final FiberScheduler dedicatedScheduler;
 
-    public QuasarPromiseCfJenkinsPlugin2(PromiseJiraApi srv, FiberScheduler dedicatedScheduler) {
+    public QuasarPromiseCfJenkinsPlugin(PromiseJiraApi srv, FiberScheduler dedicatedScheduler) {
         super(srv);
         this.srv = srv;
         this.dedicatedScheduler = dedicatedScheduler;

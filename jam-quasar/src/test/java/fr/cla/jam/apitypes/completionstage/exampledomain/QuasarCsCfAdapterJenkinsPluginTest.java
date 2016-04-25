@@ -29,7 +29,7 @@ public class QuasarCsCfAdapterJenkinsPluginTest extends AbstractQuasarJenkinsPlu
     protected CsfJenkinsPlugin defectiveSut() {
         CsJiraApi jira = mock(CsJiraApi.class);
         when(jira.findBundlesByName(any())).thenReturn(failure());
-        return new QuasarCsCfJenkinsPlugin2(jira, dedicatedScheduler(latencyMeasurementPool));
+        return new QuasarCsCfJenkinsPlugin(jira, dedicatedScheduler(latencyMeasurementPool));
     }
 
     @Override
@@ -39,12 +39,12 @@ public class QuasarCsCfAdapterJenkinsPluginTest extends AbstractQuasarJenkinsPlu
             completedFuture(singleton(new JiraBundle("the bundle")))
         );
         when(jira.findComponentsByBundle(any())).thenReturn(failure());
-        return new QuasarCsCfJenkinsPlugin2(jira, dedicatedScheduler(latencyMeasurementPool));
+        return new QuasarCsCfJenkinsPlugin(jira, dedicatedScheduler(latencyMeasurementPool));
     }
 
     @Override
     protected CsfJenkinsPlugin latentSut() {
-        return new QuasarCsCfJenkinsPlugin2(
+        return new QuasarCsCfJenkinsPlugin(
             new LatentCsJiraApi(new FakeCsJiraApi()),
             dedicatedScheduler(latencyMeasurementPool)
         );
@@ -65,8 +65,8 @@ public class QuasarCsCfAdapterJenkinsPluginTest extends AbstractQuasarJenkinsPlu
         CsJiraApi csApi = new LatentCsJiraApi(new FakeCsJiraApi());
 
         return Arrays.asList(
-            new CsCfJenkinsPlugin2(csApi),
-            new QuasarCsCfJenkinsPlugin2(csApi, dedicatedScheduler(measurementPool))
+            new CsCfJenkinsPlugin(csApi),
+            new QuasarCsCfJenkinsPlugin(csApi, dedicatedScheduler(measurementPool))
         );
     }
 

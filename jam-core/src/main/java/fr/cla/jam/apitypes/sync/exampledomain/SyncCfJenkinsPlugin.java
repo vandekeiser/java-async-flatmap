@@ -7,12 +7,12 @@ import fr.cla.jam.exampledomain.JiraComponent;
 
 import java.util.concurrent.Executor;
 
-public class SyncCfJenkinsPlugin2 extends AbstractJenkinsPlugin implements CsfJenkinsPlugin {
+public class SyncCfJenkinsPlugin extends AbstractJenkinsPlugin implements CsfJenkinsPlugin {
 
     private final SyncJiraApi srv;
     private final Executor pool;
 
-    public SyncCfJenkinsPlugin2(SyncJiraApi srv, Executor pool) {
+    public SyncCfJenkinsPlugin(SyncJiraApi srv, Executor pool) {
         super(srv);
         this.srv = srv;
         this.pool = pool;

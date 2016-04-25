@@ -2,7 +2,7 @@ package fr.cla.jam.apitypes.completionstage.exampledomain;
 
 import fr.cla.jam.apitypes.sync.exampledomain.FakeSyncJiraApi;
 import fr.cla.jam.apitypes.sync.exampledomain.LatentSyncJiraApi;
-import fr.cla.jam.apitypes.sync.exampledomain.SyncCfJenkinsPlugin2;
+import fr.cla.jam.apitypes.sync.exampledomain.SyncCfJenkinsPlugin;
 import fr.cla.jam.apitypes.sync.exampledomain.SyncJiraApi;
 import fr.cla.jam.exampledomain.*;
 import org.junit.FixMethodOrder;
@@ -25,7 +25,7 @@ public class CsCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
     protected CsfJenkinsPlugin defectiveSut() {
         CsJiraApi jira = mock(CsJiraApi.class);
         when(jira.findBundlesByName(any())).thenThrow(new JiraApiException());
-        return new CsCfJenkinsPlugin2(jira);
+        return new CsCfJenkinsPlugin(jira);
     }
 
     @Override
@@ -35,12 +35,12 @@ public class CsCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
             CompletableFuture.completedFuture(singleton(new JiraBundle("the bundle")))
         );
         when(jira.findComponentsByBundle(any())).thenThrow(new JiraApiException());
-        return new CsCfJenkinsPlugin2(jira);
+        return new CsCfJenkinsPlugin(jira);
     }
 
     @Override
     protected CsfJenkinsPlugin latentSut() {
-        return new CsCfJenkinsPlugin2(
+        return new CsCfJenkinsPlugin(
             new LatentCsJiraApi(new FakeCsJiraApi())
         );
     }
@@ -61,8 +61,8 @@ public class CsCfJenkinsPluginTest extends AbstractJenkinsPluginTest {
         CsJiraApi csApi = new LatentCsJiraApi(new FakeCsJiraApi());
 
         return Arrays.asList(
-            new SyncCfJenkinsPlugin2(syncApi, measurementPool),
-            new CsCfJenkinsPlugin2(csApi)
+            new SyncCfJenkinsPlugin(syncApi, measurementPool),
+            new CsCfJenkinsPlugin(csApi)
         );
     }
 
