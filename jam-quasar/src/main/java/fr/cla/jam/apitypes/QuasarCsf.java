@@ -63,7 +63,7 @@ public class QuasarCsf<E> extends Csf<E> {
     }
 
     //Monad flatmaps
-    public <F> Csf<F> flatMapSync(
+    public <F> QuasarCsf<F> flatMapSync(
         Function<E, Set<F>> mapper,
         FiberScheduler quasarScheduler
     ) {
@@ -75,7 +75,7 @@ public class QuasarCsf<E> extends Csf<E> {
         return new QuasarCsf<>(doFlatMapSync(mapper, adapter));
     }
 
-    public <F> Csf<F> flatMapCs(
+    public <F> QuasarCsf<F> flatMapCs(
         Function<E, CompletionStage<Set<F>>> mapper,
         FiberScheduler quasarScheduler
     ) {
@@ -85,7 +85,7 @@ public class QuasarCsf<E> extends Csf<E> {
         ));
     }
 
-    public <F> Csf<F> flatMapCallback(
+    public <F> QuasarCsf<F> flatMapCallback(
         BiConsumer<E, Callback<Set<F>>> mapper,
         FiberScheduler quasarScheduler
     ) {
@@ -95,7 +95,7 @@ public class QuasarCsf<E> extends Csf<E> {
         ));
     }
 
-    public <F> Csf<F> flatMapPromise(
+    public <F> QuasarCsf<F> flatMapPromise(
         Function<E, Promise<Set<F>>> mapper,
         FiberScheduler quasarScheduler
     ) {
