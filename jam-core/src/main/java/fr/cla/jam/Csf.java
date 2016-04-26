@@ -6,17 +6,32 @@ import fr.cla.jam.apitypes.sync.PoolSingleResultSyncCfAdapter;
 import fr.cla.jam.util.containers.Sets;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.stream.Stream;
+
+import static java.util.Collections.checkedSet;
+import static java.util.concurrent.CompletableFuture.completedFuture;
 
 public class Csf<E> extends Ccf<E, Set<E>>{
 
     //Monad Constructors
     public Csf(CompletableFuture<Set<E>> underlyingCf) { super(underlyingCf); }
+    
+    @SuppressWarnings("unchecked") //We use a checked collection so no pb
+    public static <E> Csf<E> ofSuccess(Class<E> type, E... values) {
+        Set<E> _values = checkedSet(new HashSet<E>(), type);
+        Stream.of(values).forEach(v -> _values.add(v));
+        return ofSuccess(_values);
+    }
+    public static <E> Csf<E> ofSuccess(Set<E> values) {
+        return new Csf<>(completedFuture(values));
+    }
 
     public static <I, E> Csf<E> ofSync(
         I input,
