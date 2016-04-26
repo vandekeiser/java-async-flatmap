@@ -4,7 +4,6 @@ import fr.cla.jam.apitypes.CollectionCfAdapter;
 import fr.cla.jam.util.containers.CollectionSupplier;
 
 import java.util.Collection;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.function.BinaryOperator;

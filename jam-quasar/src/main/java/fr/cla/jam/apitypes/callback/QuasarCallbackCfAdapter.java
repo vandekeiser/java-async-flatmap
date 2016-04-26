@@ -5,7 +5,6 @@ import co.paralleluniverse.fibers.FiberScheduler;
 import fr.cla.jam.util.containers.CollectionSupplier;
 
 import java.util.Collection;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.BinaryOperator;

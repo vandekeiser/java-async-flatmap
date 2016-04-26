@@ -1,10 +1,7 @@
 package fr.cla.jam;
 
 import fr.cla.jam.apitypes.callback.Callback;
-import fr.cla.jam.apitypes.callback.CallbackCfAdapter;
-import fr.cla.jam.apitypes.completionstage.CsCfAdapter;
 import fr.cla.jam.apitypes.promise.Promise;
-import fr.cla.jam.apitypes.promise.PromiseCfAdapter;
 import fr.cla.jam.apitypes.sync.PoolSingleResultSyncCfAdapter;
 import fr.cla.jam.util.containers.Sets;
 

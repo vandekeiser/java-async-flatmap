@@ -2,6 +2,7 @@ package fr.cla.jam.exampledomain;
 
 import com.jasongoodwin.monads.Try;
 import fr.cla.jam.util.ConsolePlusFile;
+import fr.cla.jam.util.FakeApi;
 import fr.cla.jam.util.MeasuringTest;
 import org.junit.After;
 import org.junit.Before;
@@ -19,8 +20,6 @@ import java.util.Set;
 import java.util.concurrent.*;
 import java.util.stream.IntStream;
 
-import static fr.cla.jam.util.FakeApi.NB_OF_BUNDLES_PER_NAME;
-import static fr.cla.jam.util.FakeApi.NB_OF_COMPONENTS_PER_BUNDLE;
 import static java.lang.System.out;
 import static java.util.Collections.emptySet;
 import static java.util.concurrent.Executors.newCachedThreadPool;
@@ -167,7 +166,7 @@ public abstract class AbstractJenkinsPluginTest extends MeasuringTest {
             out.println("i: " + i);
             assertThat(
                 sut.findComponentsByBundleName("toto59")
-            ).hasSize(NB_OF_BUNDLES_PER_NAME * NB_OF_COMPONENTS_PER_BUNDLE);
+            ).hasSize(FakeApi.NB_OF_BUNDLES_PER_NAME * FakeApi.NB_OF_COMPONENTS_PER_BUNDLE);
         });
     }
 
