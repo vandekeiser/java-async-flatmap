@@ -1,5 +1,6 @@
 package fr.cla.jam;
 
+import fr.cla.jam.util.containers.Sets;
 import org.junit.Test;
 
 import java.util.Set;
@@ -12,8 +13,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class CsfTest {
 
-    private static final String[] NAMES = {"toto", "tata", "titi"};
-    private static final Csf<String> FUTURE_NAMES = stringCsf(NAMES);
+    private static final String[] 
+        NAMES = {"toto", "tata", "titi"},
+        MORE_NAMES = {"alpha", "bravo", "charlie"};
+    private static final Csf<String> 
+        FUTURE_NAMES = stringCsf(NAMES),
+        MORE_FUTURE_NAMES = stringCsf(MORE_NAMES);
 
     @Test public void should_flatmap() {
         Csf<String> futureBisNames = FUTURE_NAMES.flatMap(name -> stringCsf(
@@ -52,13 +57,21 @@ public class CsfTest {
     }
     
     @Test public void should_map() {
-        Csf<String> futureNamesContainingA = FUTURE_NAMES.map(
+        Csf<String> futureNamesPlus2 = FUTURE_NAMES.map(
             name -> name + "2"
         );
         
-        Set<String> namesContainingA = futureNamesContainingA.join();
+        Set<String> namesContainingA = futureNamesPlus2.join();
         
         assertThat(namesContainingA).containsOnly("toto2", "tata2", "titi2");
+    }
+    
+    @Test public void should_concat() {
+        Csf<String> futureAllNames = FUTURE_NAMES.concat(MORE_FUTURE_NAMES);
+        
+        Set<String> allNames = futureAllNames.join();
+        
+        assertThat(allNames).hasSize(NAMES.length + MORE_NAMES.length);
     }
     
     private static Csf<String> stringCsf(String... values) {

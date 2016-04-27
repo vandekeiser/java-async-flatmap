@@ -169,4 +169,8 @@ public class Csf<E> extends Ccf<E, Set<E>>{
             contents.stream().map(mapper).collect(toSet()) 
         ));
     }
+
+    public Csf<E> concat(Csf<E> that) {
+        return new Csf<>(asCf().thenCombine(that.asCf(), Sets::union));
+    }
 }
