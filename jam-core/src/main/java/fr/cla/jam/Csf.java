@@ -14,12 +14,11 @@ import java.util.concurrent.Executor;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Collections.checkedSet;
 import static java.util.concurrent.CompletableFuture.completedFuture;
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toSet;
 
 public class Csf<E> extends Ccf<E, Set<E>>{
 
@@ -27,13 +26,18 @@ public class Csf<E> extends Ccf<E, Set<E>>{
     public Csf(CompletableFuture<Set<E>> underlyingCf) { super(underlyingCf); }
     
     @SuppressWarnings("unchecked") //We use a checked collection so no pb
-    public static <E> Csf<E> ofSuccess(Class<E> type, E... values) {
+    public static <E> Csf<E> of(Class<E> type, E... values) {
         Set<E> _values = checkedSet(new HashSet<E>(), type);
         Stream.of(values).forEach(v -> _values.add(v));
-        return ofSuccess(_values);
+        return of(_values);
     }
-    public static <E> Csf<E> ofSuccess(Set<E> values) {
-        return new Csf<>(completedFuture(values));
+    public static <E> Csf<E> of(Set<E> success) {
+        return new Csf<>(completedFuture(success));
+    }
+    public static <E> Csf<E> of(Throwable failure) {
+        CompletableFuture<Set<E>> underlyingFailure = new CompletableFuture<>();
+        underlyingFailure.completeExceptionally(failure);
+        return new Csf<>(underlyingFailure);
     }
 
     public static <I, E> Csf<E> ofSync(

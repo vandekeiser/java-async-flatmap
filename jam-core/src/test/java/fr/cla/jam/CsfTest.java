@@ -62,7 +62,7 @@ public class CsfTest {
     }
     
     private static Csf<String> stringCsf(String... values) {
-        return Csf.ofSuccess(String.class, values);
+        return Csf.of(String.class, values);
     }
     
 }
