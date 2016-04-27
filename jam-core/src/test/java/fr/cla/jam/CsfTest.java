@@ -43,12 +43,22 @@ public class CsfTest {
 
     @Test public void should_filter() {
         Csf<String> futureNamesContainingA = FUTURE_NAMES.filter(
-            name -> name.contains("a")
+                name -> name.contains("a")
         );
         
         Set<String> namesContainingA = futureNamesContainingA.join();
         
         assertThat(namesContainingA).containsOnly("tata");
+    }
+    
+    @Test public void should_map() {
+        Csf<String> futureNamesContainingA = FUTURE_NAMES.map(
+            name -> name + "2"
+        );
+        
+        Set<String> namesContainingA = futureNamesContainingA.join();
+        
+        assertThat(namesContainingA).containsOnly("toto2", "tata2", "titi2");
     }
     
     private static Csf<String> stringCsf(String... values) {
