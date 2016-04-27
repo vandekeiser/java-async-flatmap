@@ -13,10 +13,13 @@ import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Collections.checkedSet;
 import static java.util.concurrent.CompletableFuture.completedFuture;
+import static java.util.stream.Collectors.*;
 
 public class Csf<E> extends Ccf<E, Set<E>>{
 
@@ -151,4 +154,9 @@ public class Csf<E> extends Ccf<E, Set<E>>{
         return doFlatMapPromise(mapper, adapter, Collections::emptySet, Sets::union);
     }
 
+    public Csf<E> filter(Predicate<? super E> criterion) {
+        return new Csf<>(asCf().thenApply(contents -> 
+            contents.stream().filter(criterion).collect(toSet()) 
+        ));
+    }
 }
