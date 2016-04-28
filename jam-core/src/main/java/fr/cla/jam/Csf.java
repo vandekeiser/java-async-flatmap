@@ -163,14 +163,15 @@ public class Csf<E> extends Ccf<E, Set<E>>{
             contents.stream().filter(criterion).collect(toSet()) 
         ));
     }
-
+    
     public <F> Csf<F> map(Function<? super E, ? extends F> mapper) {
         return new Csf<>(asCf().thenApply(contents -> 
             contents.stream().map(mapper).collect(toSet()) 
         ));
     }
 
-    public Csf<E> concat(Csf<E> that) {
+    public Csf<E> concat(Csf<? extends E> that) {
         return new Csf<>(asCf().thenCombine(that.asCf(), Sets::union));
     }
+    
 }

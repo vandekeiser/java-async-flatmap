@@ -52,7 +52,7 @@ public class QuasarPromiseCfAdapterJenkinsPluginTest extends AbstractQuasarJenki
 
     @Override
     protected int scalabilityTestConcurrency() {
-        return 100;
+        return 10;
     }
 
     @Override
