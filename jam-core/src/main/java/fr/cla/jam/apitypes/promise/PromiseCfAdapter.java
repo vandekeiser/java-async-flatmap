@@ -5,7 +5,7 @@ import java.util.function.Function;
 
 public class PromiseCfAdapter {
 
-    public <T, U> Function<T, CompletableFuture<U>> adapt(
+    public <T, U> Function<T, CompletableFuture<U>> toCompletableFuture(
         Function<T, Promise<U>> adaptee
     ) {
         return input -> {

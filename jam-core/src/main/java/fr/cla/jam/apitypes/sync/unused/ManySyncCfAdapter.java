@@ -46,7 +46,7 @@ public final class ManySyncCfAdapter {
             //Can do this because Streamable defines stream()
             .stream()
             //Call the 1->N operation asynchronously    
-            .map(singleResultAdapter.adapt(adaptee))
+            .map(singleResultAdapter.toCompletableFuture(adaptee))
             //This Stream terminal operation ensures that 
             // the 1->N mapping operation is launched before returning 
             // (this is required since Stream intermediate operations are lazy)

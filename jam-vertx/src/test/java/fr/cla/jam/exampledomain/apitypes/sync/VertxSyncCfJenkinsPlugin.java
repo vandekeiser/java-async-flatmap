@@ -1,6 +1,6 @@
 package fr.cla.jam.exampledomain.apitypes.sync;
 
-import fr.cla.jam.Csf;
+import fr.cla.jam.CfOfSet;
 import fr.cla.jam.VertxCsf;
 import fr.cla.jam.exampledomain.AbstractJenkinsPlugin;
 import fr.cla.jam.exampledomain.CsfJenkinsPlugin;
@@ -19,7 +19,7 @@ class VertxSyncCfJenkinsPlugin extends AbstractJenkinsPlugin implements CsfJenki
     }
 
     @Override
-    public Csf<JiraComponent> findComponentsByBundleNameAsync(String bundleName) {
+    public CfOfSet<JiraComponent> findComponentsByBundleNameAsync(String bundleName) {
         return VertxCsf
             .ofSync(bundleName, srv::findBundlesByName, vertx)
             .flatMapSync(srv::findComponentsByBundle, vertx);

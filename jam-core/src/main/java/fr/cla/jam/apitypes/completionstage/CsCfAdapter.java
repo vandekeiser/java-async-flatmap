@@ -6,7 +6,7 @@ import java.util.function.Function;
 
 public class CsCfAdapter {
 
-    public <S, T> Function<S, CompletableFuture<T>> adapt(
+    public <S, T> Function<S, CompletableFuture<T>> toCompletableFuture(
         Function<S, CompletionStage<T>> mapper
     ) {
         return e -> {

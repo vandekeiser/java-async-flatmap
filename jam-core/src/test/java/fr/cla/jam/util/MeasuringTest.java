@@ -14,21 +14,21 @@ import static java.util.concurrent.ForkJoinPool.commonPool;
 
 public abstract class MeasuringTest {
 
-    protected void printEnv(PrintStream out, Executor dedicatedPool) {
+    protected void printEnv(PrintStream out, Executor pool) {
         out.printf(
             "----------------------------------CORES=%d, FJP SIZE=%d, DEDICATED POOL SIZE=%d-----------------------------------%n",
             getRuntime().availableProcessors(),
             commonPool().getParallelism(),
-            dedicatedPoolSize(dedicatedPool)
+            size(pool)
         );
     }
 
-    protected void printEnv(PrintStream oout, Executor dedicatedPool, int concurrency) {
+    protected void printEnv(PrintStream oout, Executor pool, int concurrency) {
         oout.printf(
                 "-----------------------------CORES=%d, FJP SIZE=%d, DEDICATED POOL SIZE=%d, CONCURRENCY=%d------------------------------%n",
                 getRuntime().availableProcessors(),
                 commonPool().getParallelism(),
-                dedicatedPoolSize(dedicatedPool),
+                size(pool),
                 concurrency
         );
     }
@@ -42,7 +42,7 @@ public abstract class MeasuringTest {
         );
     }
 
-    private int dedicatedPoolSize(Executor pool) {
+    private int size(Executor pool) {
         return ((ThreadPoolExecutor) pool).getMaximumPoolSize();
     }
 

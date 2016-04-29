@@ -1,6 +1,6 @@
 package fr.cla.jam.exampledomain.apitypes.completionstage;
 
-import fr.cla.jam.Csf;
+import fr.cla.jam.CfOfSet;
 import fr.cla.jam.exampledomain.AbstractJenkinsPlugin;
 import fr.cla.jam.exampledomain.CsfJenkinsPlugin;
 import fr.cla.jam.exampledomain.JiraComponent;
@@ -15,8 +15,8 @@ public class CsCfJenkinsPlugin extends AbstractJenkinsPlugin implements CsfJenki
     }
 
     @Override
-    public Csf<JiraComponent> findComponentsByBundleNameAsync(String bundleName) {
-        return Csf
+    public CfOfSet<JiraComponent> findComponentsByBundleNameAsync(String bundleName) {
+        return CfOfSet
             .ofCs(bundleName, srv::findBundlesByName)
             .flatMapCs(srv::findComponentsByBundle);
     }

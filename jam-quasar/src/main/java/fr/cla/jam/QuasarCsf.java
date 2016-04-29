@@ -14,7 +14,7 @@ import java.util.concurrent.CompletionStage;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-public class QuasarCsf<E> extends Csf<E> {
+public class QuasarCsf<E> extends CfOfSet<E> {
 
     //Monad Constructors
     private QuasarCsf(CompletableFuture<Set<E>> underlyingCf) { super(underlyingCf); }
@@ -22,83 +22,83 @@ public class QuasarCsf<E> extends Csf<E> {
     public static <I, E> QuasarCsf<E> ofSync(
         I input,
         Function<I, Set<E>> syncFunction,
-        FiberScheduler quasarScheduler
+        FiberScheduler quasar
     ) {
         return new QuasarCsf<>(
-            new QuasarSyncCfAdapter(quasarScheduler).adapt(syncFunction).apply(input)
+            new QuasarSyncCfAdapter(quasar).toCompletableFuture(syncFunction).apply(input)
         );
     }
 
     public static <I, E> QuasarCsf<E> ofCs(
         I input,
         Function<I, CompletionStage<Set<E>>> csFunction,
-        FiberScheduler quasarScheduler
+        FiberScheduler quasar
     ) {
         return new QuasarCsf<>(
-            new QuasarCsCfAdapter(quasarScheduler).adapt(csFunction).apply(input)
+            new QuasarCsCfAdapter(quasar).toCompletableFuture(csFunction).apply(input)
         );
     }
 
     public static <I, E> QuasarCsf<E> ofCallback(
         I input,
         BiConsumer<I, Callback<Set<E>>> callbackFunction,
-        FiberScheduler quasarScheduler
+        FiberScheduler quasar
     ) {
         return new QuasarCsf<>(
-            new QuasarCallbackCfAdapter(quasarScheduler).adapt(callbackFunction).apply(input)
+            new QuasarCallbackCfAdapter(quasar).toCompletableFuture(callbackFunction).apply(input)
         );
     }
 
     public static <I, E> QuasarCsf<E> ofPromise(
         I input,
         Function<I, Promise<Set<E>>> promiseFunction,
-        FiberScheduler quasarScheduler
+        FiberScheduler quasar
     ) {
         return new QuasarCsf<>(
-            new QuasarPromiseCfAdapter(quasarScheduler).adapt(promiseFunction).apply(input)
+            new QuasarPromiseCfAdapter(quasar).toCompletableFuture(promiseFunction).apply(input)
         );
     }
 
     //Monad flatmaps
     public <F> QuasarCsf<F> flatMapSync(
         Function<E, Set<F>> mapper,
-        FiberScheduler quasarScheduler
+        FiberScheduler quasar
     ) {
         Function<
             Function<E, Set<F>>,
             Function<E, CompletableFuture<Set<F>>>
-        > adapter = new QuasarSyncCfAdapter(quasarScheduler)::adapt;
+        > adapter = new QuasarSyncCfAdapter(quasar)::toCompletableFuture;
 
         return new QuasarCsf<>(doFlatMapSync(mapper, adapter));
     }
 
     public <F> QuasarCsf<F> flatMapCs(
         Function<E, CompletionStage<Set<F>>> mapper,
-        FiberScheduler quasarScheduler
+        FiberScheduler quasar
     ) {
         return new QuasarCsf<>(doFlatMapCs(
             mapper, 
-            new QuasarCsCfAdapter(quasarScheduler)::adapt
+            new QuasarCsCfAdapter(quasar)::toCompletableFuture
         ));
     }
 
     public <F> QuasarCsf<F> flatMapCallback(
         BiConsumer<E, Callback<Set<F>>> mapper,
-        FiberScheduler quasarScheduler
+        FiberScheduler quasar
     ) {
         return new QuasarCsf<>(doFlatMapCallback(
             mapper, 
-            new QuasarCallbackCfAdapter(quasarScheduler)::adapt
+            new QuasarCallbackCfAdapter(quasar)::toCompletableFuture
         ));
     }
 
     public <F> QuasarCsf<F> flatMapPromise(
         Function<E, Promise<Set<F>>> mapper,
-        FiberScheduler quasarScheduler
+        FiberScheduler quasar
     ) {
         return new QuasarCsf<>(doFlatMapPromise(
             mapper, 
-            new QuasarPromiseCfAdapter(quasarScheduler)::adapt
+            new QuasarPromiseCfAdapter(quasar)::toCompletableFuture
         ));
     }
 

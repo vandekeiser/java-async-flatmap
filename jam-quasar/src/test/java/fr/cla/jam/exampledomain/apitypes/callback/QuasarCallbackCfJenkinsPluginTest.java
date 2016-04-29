@@ -22,19 +22,19 @@ public class QuasarCallbackCfJenkinsPluginTest extends AbstractQuasarJenkinsPlug
 
     @Override
     protected CsfJenkinsPlugin defectiveSut() {
-        return new QuasarCallbackCfJenkinsPlugin(new DefectiveCallbackJiraApi(), dedicatedScheduler(latencyMeasurementPool));
+        return new QuasarCallbackCfJenkinsPlugin(new DefectiveCallbackJiraApi(), toQuasar(latencyMeasurementPool));
     }
 
     @Override
     protected CsfJenkinsPlugin halfDefectiveSut() {
-        return new QuasarCallbackCfJenkinsPlugin(new HalfDefectiveCallbackJiraApi(), dedicatedScheduler(latencyMeasurementPool));
+        return new QuasarCallbackCfJenkinsPlugin(new HalfDefectiveCallbackJiraApi(), toQuasar(latencyMeasurementPool));
     }
 
     @Override
     protected CsfJenkinsPlugin latentSut() {
         return new QuasarCallbackCfJenkinsPlugin(
             new NonBlockingLatentCallbackJiraApi(new FakeCallbackJiraApi()),
-            dedicatedScheduler(latencyMeasurementPool)
+            toQuasar(latencyMeasurementPool)
         );
     }
 
@@ -59,7 +59,7 @@ public class QuasarCallbackCfJenkinsPluginTest extends AbstractQuasarJenkinsPlug
 
         return Arrays.asList(
             new CallbackCfJenkinsPlugin(nonBlockingCallbackApi),
-            new QuasarCallbackCfJenkinsPlugin(nonBlockingCallbackApi, dedicatedScheduler(measurementPool))
+            new QuasarCallbackCfJenkinsPlugin(nonBlockingCallbackApi, toQuasar(measurementPool))
         );
     }
 

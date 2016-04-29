@@ -12,8 +12,8 @@ public abstract class AbstractQuasarJenkinsPluginTest extends AbstractJenkinsPlu
 
     private final static AtomicInteger callInFiberSchedulerCounter = new AtomicInteger(0);
 
-    protected final FiberExecutorScheduler dedicatedScheduler(Executor dedicatedPool) {
-        return new FiberExecutorScheduler(getSchedulerName(), dedicatedPool, MonitorType.JMX, true);
+    protected final FiberExecutorScheduler toQuasar(Executor pool) {
+        return new FiberExecutorScheduler(getSchedulerName(), pool, MonitorType.JMX, true);
     }
 
     private String getSchedulerName() {

@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
-public class VertxCsf<E> extends Csf<E> {
+public class VertxCsf<E> extends CfOfSet<E> {
 
     //Monad Constructors
     private VertxCsf(CompletableFuture<Set<E>> wrapped) { super(wrapped); }
@@ -15,20 +15,20 @@ public class VertxCsf<E> extends Csf<E> {
     public static <I, E> VertxCsf<E> ofSync(
         I input,
         Function<I, Set<E>> syncFunction,
-        Vertx quasarScheduler
+        Vertx vertx
     ) {
-        return new VertxCsf<>(new VertxSyncCfAdapter(quasarScheduler).adapt(syncFunction).apply(input));
+        return new VertxCsf<>(new VertxSyncCfAdapter(vertx).adapt(syncFunction).apply(input));
     }
 
     //Monad flatmaps
-    public <F> Csf<F> flatMapSync(
+    public <F> CfOfSet<F> flatMapSync(
         Function<E, Set<F>> mapper,
-        Vertx quasarScheduler
+        Vertx vertx
     ) {
         Function<
             Function<E, Set<F>>,
             Function<E, CompletableFuture<Set<F>>>
-        > adapter = new VertxSyncCfAdapter(quasarScheduler)::adapt;
+        > adapter = new VertxSyncCfAdapter(vertx)::adapt;
 
         return new VertxCsf<>(doFlatMapSync(mapper, adapter));
     }

@@ -3,7 +3,6 @@ package fr.cla.jam.apitypes.sync;
 import co.paralleluniverse.fibers.Fiber;
 import co.paralleluniverse.fibers.FiberScheduler;
 
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
@@ -32,18 +31,18 @@ import java.util.function.Function;
  */
 public class QuasarSyncCfAdapter {
 
-    private final FiberScheduler dedicatedScheduler;
+    private final FiberScheduler quasar;
 
-    public QuasarSyncCfAdapter(FiberScheduler dedicatedScheduler) {
-        this.dedicatedScheduler = dedicatedScheduler;
+    public QuasarSyncCfAdapter(FiberScheduler quasar) {
+        this.quasar = quasar;
     }
 
-    public <S, T> Function<S, CompletableFuture<T>> adapt(
+    public <S, T> Function<S, CompletableFuture<T>> toCompletableFuture(
         Function<S, T> adaptee
     ) {
         return s -> {
             CompletableFuture<T> cf = new CompletableFuture<>();
-            new Fiber<>(dedicatedScheduler, () -> {
+            new Fiber<>(quasar, () -> {
                 try {
                     T success = adaptee.apply(s);
                     cf.complete(success);

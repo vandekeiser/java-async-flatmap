@@ -1,6 +1,6 @@
 package fr.cla.jam.exampledomain.apitypes.promise;
 
-import fr.cla.jam.Csf;
+import fr.cla.jam.CfOfSet;
 import fr.cla.jam.exampledomain.AbstractJenkinsPlugin;
 import fr.cla.jam.exampledomain.CsfJenkinsPlugin;
 import fr.cla.jam.exampledomain.JiraComponent;
@@ -15,8 +15,8 @@ public class PromiseCfJenkinsPlugin extends AbstractJenkinsPlugin implements Csf
     }
 
     @Override
-    public Csf<JiraComponent> findComponentsByBundleNameAsync(String bundleName) {
-        return Csf
+    public CfOfSet<JiraComponent> findComponentsByBundleNameAsync(String bundleName) {
+        return CfOfSet
             .ofPromise(bundleName, srv::findBundlesByName)
             .flatMapPromise(srv::findComponentsByBundle);
     }

@@ -6,7 +6,7 @@ import java.util.function.Function;
 
 public class CallbackCfAdapter {
 
-    public <T, U> Function<T, CompletableFuture<U>> adapt(
+    public <T, U> Function<T, CompletableFuture<U>> toCompletableFuture(
         BiConsumer<T, Callback<U>> adaptee
     ) {
         return input -> {

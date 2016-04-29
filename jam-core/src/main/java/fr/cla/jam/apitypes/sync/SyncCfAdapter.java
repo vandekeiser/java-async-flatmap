@@ -12,7 +12,7 @@ public final class SyncCfAdapter {
         this.pool = pool;
     }
 
-    public <T, U> Function<T, CompletableFuture<U>> adapt(
+    public <T, U> Function<T, CompletableFuture<U>> toCompletableFuture(
         Function<T, U> adaptee
     ) {
         return input -> CompletableFuture.supplyAsync(

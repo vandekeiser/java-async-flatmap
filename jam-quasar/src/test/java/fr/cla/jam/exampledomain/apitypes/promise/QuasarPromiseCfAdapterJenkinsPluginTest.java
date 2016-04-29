@@ -22,7 +22,7 @@ public class QuasarPromiseCfAdapterJenkinsPluginTest extends AbstractQuasarJenki
         when(jira.findBundlesByName(any())).thenReturn(
             (onSuccess, onFailure) -> onFailure.accept(new JiraApiException())
         );
-        return new QuasarPromiseCfJenkinsPlugin(jira, dedicatedScheduler(latencyMeasurementPool));
+        return new QuasarPromiseCfJenkinsPlugin(jira, toQuasar(latencyMeasurementPool));
     }
 
     @Override
@@ -34,14 +34,14 @@ public class QuasarPromiseCfAdapterJenkinsPluginTest extends AbstractQuasarJenki
         when(jira.findComponentsByBundle(any())).thenReturn(
             (onSuccess, onFailure) -> onFailure.accept(new JiraApiException())
         );
-        return new QuasarPromiseCfJenkinsPlugin(jira, dedicatedScheduler(latencyMeasurementPool));
+        return new QuasarPromiseCfJenkinsPlugin(jira, toQuasar(latencyMeasurementPool));
     }
 
     @Override
     protected CsfJenkinsPlugin latentSut() {
         return new QuasarPromiseCfJenkinsPlugin(
             new NonBlockingLatentPromiseJiraApi(new FakePromiseJiraApi()),
-            dedicatedScheduler(latencyMeasurementPool)
+            toQuasar(latencyMeasurementPool)
         );
     }
 
@@ -60,7 +60,7 @@ public class QuasarPromiseCfAdapterJenkinsPluginTest extends AbstractQuasarJenki
         PromiseJiraApi promiseApi = new NonBlockingLatentPromiseJiraApi(new FakePromiseJiraApi());
 
         return Arrays.asList(
-            new QuasarPromiseCfJenkinsPlugin(promiseApi, dedicatedScheduler(measurementPool))
+            new QuasarPromiseCfJenkinsPlugin(promiseApi, toQuasar(measurementPool))
         );
     }
 

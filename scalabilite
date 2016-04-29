@@ -83,4 +83,12 @@ donc c'est pas le sleep
 
 TROP de passe-plat et de confusion entre les monades/adapters, et entre adapters/adapters:
 -splitter en 2 les adapters: X pour l'adaptation d'une methode simple, Y pour un flatMapAdapt
--supprimer les Y si on peut 
+-supprimer les Y si on peut  
+
+
+dedicatedPool
+dedicatedScheduler
+
+callbackFunction
+csFunction
+...

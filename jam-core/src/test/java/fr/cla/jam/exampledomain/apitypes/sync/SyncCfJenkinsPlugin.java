@@ -1,6 +1,6 @@
 package fr.cla.jam.exampledomain.apitypes.sync;
 
-import fr.cla.jam.Csf;
+import fr.cla.jam.CfOfSet;
 import fr.cla.jam.exampledomain.AbstractJenkinsPlugin;
 import fr.cla.jam.exampledomain.CsfJenkinsPlugin;
 import fr.cla.jam.exampledomain.JiraComponent;
@@ -19,8 +19,8 @@ public class SyncCfJenkinsPlugin extends AbstractJenkinsPlugin implements CsfJen
     }
 
     @Override
-    public Csf<JiraComponent> findComponentsByBundleNameAsync(String bundleName) {
-        return Csf
+    public CfOfSet<JiraComponent> findComponentsByBundleNameAsync(String bundleName) {
+        return CfOfSet
             .ofSync(bundleName, srv::findBundlesByName, pool)
             .flatMapSync(srv::findComponentsByBundle, pool);
     }

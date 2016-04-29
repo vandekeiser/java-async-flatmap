@@ -9,19 +9,19 @@ import java.util.function.Function;
 
 public class QuasarPromiseCfAdapter extends PromiseCfAdapter{
 
-    private final FiberScheduler dedicatedScheduler;
+    private final FiberScheduler quasar;
 
-    public QuasarPromiseCfAdapter(FiberScheduler dedicatedScheduler) {
-        this.dedicatedScheduler = Objects.requireNonNull(dedicatedScheduler);
+    public QuasarPromiseCfAdapter(FiberScheduler quasar) {
+        this.quasar = Objects.requireNonNull(quasar);
     }
 
-    public <T, U> Function<T, CompletableFuture<U>> adapt(
+    public <T, U> Function<T, CompletableFuture<U>> toCompletableFuture(
         Function<T, Promise<U>> adaptee
     ) {
         return input -> {
             CompletableFuture<U> fiberCf = new CompletableFuture<>();
 
-            new Fiber<>(dedicatedScheduler, () -> adaptee.apply(input).whenComplete(
+            new Fiber<>(quasar, () -> adaptee.apply(input).whenComplete(
                 res -> fiberCf.complete(res),
                 x -> fiberCf.completeExceptionally(x)
             )).start();

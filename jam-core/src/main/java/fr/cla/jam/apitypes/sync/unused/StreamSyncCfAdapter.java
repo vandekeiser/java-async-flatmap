@@ -23,7 +23,7 @@ public final class StreamSyncCfAdapter {
         Function<E, Stream<F>> adaptee
     ) {
         return inputs
-            .map(singleResultAdapter.adapt(adaptee))
+            .map(singleResultAdapter.toCompletableFuture(adaptee))
             .collect(toSet())
             .stream()
             .collect(flattening(Stream::empty, Stream::concat));

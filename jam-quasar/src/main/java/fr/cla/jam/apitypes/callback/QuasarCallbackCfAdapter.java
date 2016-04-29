@@ -2,29 +2,26 @@ package fr.cla.jam.apitypes.callback;
 
 import co.paralleluniverse.fibers.Fiber;
 import co.paralleluniverse.fibers.FiberScheduler;
-import fr.cla.jam.util.containers.CollectionSupplier;
 
-import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
-import java.util.function.BinaryOperator;
 import java.util.function.Function;
 
 public class QuasarCallbackCfAdapter extends CallbackCfAdapter {
 
-    private final FiberScheduler dedicatedScheduler;
+    private final FiberScheduler quasar;
 
-    public QuasarCallbackCfAdapter(FiberScheduler dedicatedScheduler) {
-        this.dedicatedScheduler = dedicatedScheduler;
+    public QuasarCallbackCfAdapter(FiberScheduler quasar) {
+        this.quasar = quasar;
     }
 
-    public <T, U> Function<T, CompletableFuture<U>> adapt(
+    public <T, U> Function<T, CompletableFuture<U>> toCompletableFuture(
         BiConsumer<T, Callback<U>> adaptee
     ) {
         return input -> {
             CompletableFuture<U> cf = new CompletableFuture<>();
 
-            new Fiber<>(dedicatedScheduler, () -> {
+            new Fiber<>(quasar, () -> {
                 adaptee.accept(input, Callback.either(
                     s -> cf.complete(s),
                     f -> cf.completeExceptionally(f)

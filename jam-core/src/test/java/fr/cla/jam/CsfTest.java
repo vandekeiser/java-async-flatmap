@@ -13,12 +13,12 @@ public class CsfTest {
     private static final String[] 
         NAMES = {"toto", "tata", "titi"},
         MORE_NAMES = {"alpha", "bravo", "charlie"};
-    private static final Csf<String> 
+    private static final CfOfSet<String> 
         FUTURE_NAMES = stringCsf(NAMES),
         MORE_FUTURE_NAMES = stringCsf(MORE_NAMES);
 
     @Test public void should_flatmap() {
-        Csf<String> futureBisNames = FUTURE_NAMES.flatMap(name -> stringCsf(
+        CfOfSet<String> futureBisNames = FUTURE_NAMES.flatMap(name -> stringCsf(
             name, name + "bis"
         ));
         
@@ -27,7 +27,7 @@ public class CsfTest {
     }
     
     @Test public void should_flatmap_twice() {
-        Csf<String> futureBisNames = FUTURE_NAMES
+        CfOfSet<String> futureBisNames = FUTURE_NAMES
             .flatMap(name -> stringCsf(
                 name, name + "bis"
             ))
@@ -40,7 +40,7 @@ public class CsfTest {
     }
 
     @Test public void should_filter() {
-        Csf<String> futureNamesContainingA = FUTURE_NAMES.filter(
+        CfOfSet<String> futureNamesContainingA = FUTURE_NAMES.filter(
             name -> name.contains("a")
         );
         
@@ -50,7 +50,7 @@ public class CsfTest {
     }
     
     @Test public void should_map() {
-        Csf<String> futureNamesPlus2 = FUTURE_NAMES.map(
+        CfOfSet<String> futureNamesPlus2 = FUTURE_NAMES.map(
             name -> name + "2"
         );
         
@@ -60,15 +60,15 @@ public class CsfTest {
     }
     
     @Test public void should_concat() {
-        Csf<String> futureAllNames = FUTURE_NAMES.concat(MORE_FUTURE_NAMES);
+        CfOfSet<String> futureAllNames = FUTURE_NAMES.concat(MORE_FUTURE_NAMES);
         
         Set<String> allNames = futureAllNames.join();
         
         assertThat(allNames).hasSize(NAMES.length + MORE_NAMES.length);
     }
     
-    private static Csf<String> stringCsf(String... values) {
-        return Csf.of(String.class, values);
+    private static CfOfSet<String> stringCsf(String... values) {
+        return CfOfSet.of(String.class, values);
     }
     
 }

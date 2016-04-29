@@ -176,26 +176,26 @@ public abstract class AbstractJenkinsPluginTest extends MeasuringTest {
      
         Set<JiraComponent> componentsOrEmpty = sut
             .findComponentsByBundleNameAsync("toto59")
-            .asCf()    
+            .asCompletableFuture()    
             .exceptionally(t -> emptySet())
             .join();
         
         Optional<Set<JiraComponent>> maybeComponents = sut
             .findComponentsByBundleNameAsync("toto59")
-            .asCf()    
+            .asCompletableFuture()    
             .thenApply(Optional::of).exceptionally(t -> Optional.empty())
             .join();
         
         Try<Set<JiraComponent>> tryComponents = sut
             .findComponentsByBundleNameAsync("toto59")
-            .asCf()    
+            .asCompletableFuture()    
             .thenApply(Try::successful).exceptionally(Try::failure)
             .join();
 
         try {
             Set<JiraComponent> componentOrTimeout = sut
                 .findComponentsByBundleNameAsync("toto59")
-                .asCf()    
+                .asCompletableFuture()    
                 .get(1, TimeUnit.SECONDS);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             e.printStackTrace();

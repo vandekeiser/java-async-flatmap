@@ -22,7 +22,7 @@ public class QuasarSyncCfJenkinsPluginTest extends AbstractQuasarJenkinsPluginTe
     protected CsfJenkinsPlugin defectiveSut() {
         SyncJiraApi jira = mock(SyncJiraApi.class);
         when(jira.findBundlesByName(any())).thenThrow(new JiraApiException());
-        return new QuasarSyncCfJenkinsPlugin(jira, dedicatedScheduler(latencyMeasurementPool));
+        return new QuasarSyncCfJenkinsPlugin(jira, toQuasar(latencyMeasurementPool));
     }
 
     @Override
@@ -30,14 +30,14 @@ public class QuasarSyncCfJenkinsPluginTest extends AbstractQuasarJenkinsPluginTe
         SyncJiraApi jira = mock(SyncJiraApi.class);
         when(jira.findBundlesByName(any())).thenReturn(singleton(new JiraBundle("the bundle")));
         when(jira.findComponentsByBundle(any())).thenThrow(new JiraApiException());
-        return new QuasarSyncCfJenkinsPlugin(jira, dedicatedScheduler(latencyMeasurementPool));
+        return new QuasarSyncCfJenkinsPlugin(jira, toQuasar(latencyMeasurementPool));
     }
 
     @Override
     protected CsfJenkinsPlugin latentSut() {
         return new QuasarSyncCfJenkinsPlugin(
             new LatentSyncJiraApi(new FakeSyncJiraApi()),
-            dedicatedScheduler(latencyMeasurementPool)
+            toQuasar(latencyMeasurementPool)
         );
     }
 
@@ -57,11 +57,11 @@ public class QuasarSyncCfJenkinsPluginTest extends AbstractQuasarJenkinsPluginTe
         List<JenkinsPlugin> all = new ArrayList<>();
 
         all.add(new SyncCfJenkinsPlugin(syncApi, measurementPool));
-        all.add(new QuasarSyncCfJenkinsPlugin(syncApi, dedicatedScheduler(measurementPool)));
+        all.add(new QuasarSyncCfJenkinsPlugin(syncApi, toQuasar(measurementPool)));
 
         if(useRealServer()) {
             SyncJiraApi realServerSyncApi = new RealServerLatencySyncApi(new FakeSyncJiraApi(), getRealServer());
-            all.add(new SyncCfJenkinsPlugin(realServerSyncApi, dedicatedScheduler(measurementPool)));
+            all.add(new SyncCfJenkinsPlugin(realServerSyncApi, toQuasar(measurementPool)));
         }
 
         return all;
