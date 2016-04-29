@@ -4,11 +4,11 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 
-public final class PoolSingleResultSyncCfAdapter {
+public final class SyncCfAdapter {
 
     private final Executor pool;
 
-    public PoolSingleResultSyncCfAdapter(Executor pool) {
+    public SyncCfAdapter(Executor pool) {
         this.pool = pool;
     }
 

@@ -2,7 +2,7 @@ package fr.cla.jam;
 
 import fr.cla.jam.apitypes.callback.Callback;
 import fr.cla.jam.apitypes.promise.Promise;
-import fr.cla.jam.apitypes.sync.PoolSingleResultSyncCfAdapter;
+import fr.cla.jam.apitypes.sync.SyncCfAdapter;
 import fr.cla.jam.util.containers.Sets;
 
 import java.util.Collections;
@@ -45,7 +45,7 @@ public class Csf<E> extends Ccf<E, Set<E>>{
         Function<I, Set<E>> syncFunction,
         Executor pool
     ) {
-        return new Csf<>(new PoolSingleResultSyncCfAdapter(pool).adapt(syncFunction).apply(input));
+        return new Csf<>(new SyncCfAdapter(pool).adapt(syncFunction).apply(input));
     }
 
     public static <I, E> Csf<E> ofCs(
@@ -99,7 +99,7 @@ public class Csf<E> extends Ccf<E, Set<E>>{
         Function<
             Function<E, Set<F>>,
             Function<E, CompletableFuture<Set<F>>>
-        > adapter = new PoolSingleResultSyncCfAdapter(pool)::adapt;
+        > adapter = new SyncCfAdapter(pool)::adapt;
 
         return new Csf<>(doFlatMapSync(mapper, adapter));
     }

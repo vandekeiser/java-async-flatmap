@@ -6,7 +6,7 @@ import fr.cla.jam.apitypes.callback.CallbackCfAdapter;
 import fr.cla.jam.apitypes.completionstage.CsCfAdapter;
 import fr.cla.jam.apitypes.promise.Promise;
 import fr.cla.jam.apitypes.promise.PromiseCfAdapter;
-import fr.cla.jam.apitypes.sync.PoolSingleResultSyncCfAdapter;
+import fr.cla.jam.apitypes.sync.SyncCfAdapter;
 import fr.cla.jam.util.containers.CollectionSupplier;
 
 import java.util.Collection;
@@ -16,7 +16,6 @@ import java.util.concurrent.Executor;
 import java.util.function.*;
 
 import static java.util.stream.Collectors.toCollection;
-import static java.util.stream.Collectors.toSet;
 
 public class Ccf<E, Es extends Collection<E>> {
 
@@ -39,7 +38,7 @@ public class Ccf<E, Es extends Collection<E>> {
         Function<I, Es> syncFunction,
         Executor pool
     ) {
-        return new Ccf<>(new PoolSingleResultSyncCfAdapter(pool).adapt(syncFunction).apply(input));
+        return new Ccf<>(new SyncCfAdapter(pool).adapt(syncFunction).apply(input));
     }
 
     public static <I, E, Es extends Collection<E>> Ccf<E, Es> ccfOfCs(
@@ -111,7 +110,7 @@ public class Ccf<E, Es extends Collection<E>> {
         Function<
             Function<E, Fs>,
             Function<E, CompletableFuture<Fs>>
-        > adapter = new PoolSingleResultSyncCfAdapter(pool)::adapt;
+        > adapter = new SyncCfAdapter(pool)::adapt;
 
         return new Ccf<>(doFlatMapSync(mapper, adapter, collectionSupplier, collectionUnion));
     }
