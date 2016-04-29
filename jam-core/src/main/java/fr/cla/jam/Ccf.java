@@ -75,11 +75,9 @@ public class Ccf<E, Es extends Collection<E>> {
         CollectionSupplier<F, Fs> collectionSupplier,
         BinaryOperator<Fs> collectionUnion
     ) { 
-        return underlyingCf.thenCompose(
-            inputs -> flatMap(
-                    inputs, i -> mapper.apply(i).asCf(), collectionSupplier, collectionUnion
-            )
-        );
+        return underlyingCf.thenCompose(inputs -> flatMap(
+            inputs, i -> mapper.apply(i).asCf(), collectionSupplier, collectionUnion
+        ));
     }
 
     public <F, Fs extends Collection<F>> Ccf<F, Fs> flatMapCf(
@@ -94,11 +92,9 @@ public class Ccf<E, Es extends Collection<E>> {
         CollectionSupplier<F, Fs> collectionSupplier,
         BinaryOperator<Fs> collectionUnion
     ) {
-        return underlyingCf.thenCompose(
-            inputs -> flatMap(
-                    inputs, mapper, collectionSupplier, collectionUnion
-            )
-        );
+        return underlyingCf.thenCompose(inputs -> flatMap(
+            inputs, mapper, collectionSupplier, collectionUnion
+        ));
     }
 
     public <F, Fs extends Collection<F>> Ccf<F, Fs> flatMapSync(
@@ -142,11 +138,9 @@ public class Ccf<E, Es extends Collection<E>> {
         CollectionSupplier<F, Fs> collectionSupplier,
         BinaryOperator<Fs> collectionUnion
     ) {
-        return underlyingCf.thenCompose(
-            inputs -> flatMap(
-                    inputs, adapter.apply(mapper), collectionSupplier, collectionUnion
-            )
-        );
+        return underlyingCf.thenCompose(inputs -> flatMap(
+            inputs, adapter.apply(mapper), collectionSupplier, collectionUnion
+        ));
     }
 
     public <F, Fs extends Collection<F>> Ccf<F, Fs> flatMapCallback(
@@ -165,11 +159,9 @@ public class Ccf<E, Es extends Collection<E>> {
         CollectionSupplier<F, Fs> collectionSupplier,
         BinaryOperator<Fs> collectionUnion
     ) {
-        return underlyingCf.thenCompose(
-            inputs -> flatMap(
-                    inputs, adapter.apply(mapper), collectionSupplier, collectionUnion
-            )
-        );
+        return underlyingCf.thenCompose(inputs -> flatMap(
+            inputs, adapter.apply(mapper), collectionSupplier, collectionUnion
+        ));
     }
 
     public <F, Fs extends Collection<F>> Ccf<F, Fs> flatMapPromise(
@@ -188,13 +180,13 @@ public class Ccf<E, Es extends Collection<E>> {
         CollectionSupplier<F, Fs> collectionSupplier,
         BinaryOperator<Fs> collectionUnion
     ) {
-        return underlyingCf.thenCompose(
-            inputs -> flatMap(
-                    inputs, adapter.apply(mapper), collectionSupplier, collectionUnion
-            )
-        );
+        return underlyingCf.thenCompose(inputs -> flatMap(
+            inputs, adapter.apply(mapper), collectionSupplier, collectionUnion
+        ));
     }
 
+    
+    
     public Ccf<E, Es> filter(
         Predicate<? super E> criterion, 
         CollectionSupplier<E, Es> collectionSupplier
@@ -204,8 +196,6 @@ public class Ccf<E, Es extends Collection<E>> {
         ));
     }
 
-    
-    
     private <E, Es extends Collection<E>, F, Fs extends Collection<F>>
     CompletableFuture<Fs> flatMap(
         Es inputs,
