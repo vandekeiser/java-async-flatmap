@@ -35,13 +35,4 @@ public class QuasarCallbackCfAdapter extends CallbackCfAdapter {
         };
     }
 
-    public <E, Es extends Collection<E>, F, Fs extends Collection<F>> CompletableFuture<Fs> flatMapAdapt(
-        Es inputs,
-        BiConsumer<E, Callback<Fs>> adaptee,
-        CollectionSupplier<F, Fs> collectionSupplier,
-        BinaryOperator<Fs> collectionUnion
-    ) {
-        return flatMapAdapt(inputs, adaptee, this::adapt, collectionSupplier, collectionUnion);
-    }
-
 }

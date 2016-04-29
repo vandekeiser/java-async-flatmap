@@ -12,7 +12,6 @@ import java.util.function.Function;
  */
 public class VertxSyncCfAdapter {
 
-    private final SetSyncCfAdapter notVertxed = new SetSyncCfAdapter();
     private final Vertx vertx;
 
     public VertxSyncCfAdapter(Vertx vertx) {
@@ -41,13 +40,6 @@ public class VertxSyncCfAdapter {
             );
             return cf;
         };
-    }
-
-    public <E, F> CompletableFuture<Set<F>> flatMapAdapt(
-        Set<E> inputs,
-        Function<E, Set<F>> mapper
-    ) {
-        return notVertxed.flatMapAdapt(inputs, mapper, this::adapt);
     }
 
 }

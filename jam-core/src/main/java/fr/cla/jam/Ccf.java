@@ -144,8 +144,8 @@ public class Ccf<E, Es extends Collection<E>> {
         BinaryOperator<Fs> collectionUnion
     ) {
         return underlyingCf.thenCompose(
-            inputs -> csCfAdapter.flatMapAdapt(
-                inputs, mapper, adapter, collectionSupplier, collectionUnion
+            inputs -> collectionResultAdapter.flatMapAdapt(
+                inputs, adapter.apply(mapper), collectionSupplier, collectionUnion
             )
         );
     }
@@ -167,8 +167,8 @@ public class Ccf<E, Es extends Collection<E>> {
         BinaryOperator<Fs> collectionUnion
     ) {
         return underlyingCf.thenCompose(
-            inputs -> callbackCfAdapter.flatMapAdapt(
-                inputs, mapper, adapter, collectionSupplier, collectionUnion
+            inputs -> collectionResultAdapter.flatMapAdapt(
+                inputs, adapter.apply(mapper), collectionSupplier, collectionUnion
             )
         );
     }
@@ -190,8 +190,8 @@ public class Ccf<E, Es extends Collection<E>> {
         BinaryOperator<Fs> collectionUnion
     ) {
         return underlyingCf.thenCompose(
-            inputs -> promiseCfAdapter.flatMapAdapt(
-                inputs, mapper, adapter, collectionSupplier, collectionUnion
+            inputs -> collectionResultAdapter.flatMapAdapt(
+                inputs, adapter.apply(mapper), collectionSupplier, collectionUnion
             )
         );
     }

@@ -80,3 +80,7 @@ donc c'est pas le sleep
 *******************TODOS post ajout Ccf****************
 -suppr les adapters inutiles dans Csf et ses fils
 -inliner ce qu'on peut
+
+TROP de passe-plat et de confusion entre les monades/adapters, et entre adapters/adapters:
+-splitter en 2 les adapters: X pour l'adaptation d'une methode simple, Y pour un flatMapAdapt
+-supprimer les Y si on peut 

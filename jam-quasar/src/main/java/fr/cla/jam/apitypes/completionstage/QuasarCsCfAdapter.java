@@ -35,13 +35,4 @@ public class QuasarCsCfAdapter extends CsCfAdapter {
         };
     }
 
-    public <E, Es extends Collection<E>, F, Fs extends Collection<F>> CompletableFuture<Fs> flatMapAdapt(
-         Es inputs,
-        Function<E, CompletionStage<Fs>> mapper,
-        CollectionSupplier<F, Fs> collectionSupplier,
-        BinaryOperator<Fs> collectionUnion
-    ) {
-        return flatMapAdapt(inputs, mapper, this::adapt, collectionSupplier, collectionUnion);
-    }
-
 }

@@ -32,7 +32,6 @@ import java.util.function.Function;
  */
 public class QuasarSyncCfAdapter {
 
-    private final SetSyncCfAdapter notQuasarified = new SetSyncCfAdapter();
     private final FiberScheduler dedicatedScheduler;
 
     public QuasarSyncCfAdapter(FiberScheduler dedicatedScheduler) {
@@ -54,13 +53,6 @@ public class QuasarSyncCfAdapter {
             }).start();
             return cf;
         };
-    }
-
-    public <E, F> CompletableFuture<Set<F>> flatMapAdapt(
-        Set<E> inputs,
-        Function<E, Set<F>> adaptee
-    ) {
-        return notQuasarified.flatMapAdapt(inputs, adaptee, this::adapt);
     }
 
 }
