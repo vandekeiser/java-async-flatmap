@@ -1,12 +1,9 @@
 package fr.cla.jam;
 
-import fr.cla.jam.util.containers.Sets;
 import org.junit.Test;
 
 import java.util.Set;
 
-import static java.util.concurrent.Executors.newCachedThreadPool;
-import static java.util.concurrent.Executors.newFixedThreadPool;
 import static org.assertj.core.api.Assertions.assertThat;
 
 //deepneural4j
@@ -22,8 +19,7 @@ public class CsfTest {
 
     @Test public void should_flatmap() {
         Csf<String> futureBisNames = FUTURE_NAMES.flatMap(name -> stringCsf(
-            name,
-            name + "bis"
+            name, name + "bis"
         ));
         
         Set<String> bisNames = futureBisNames.join();
@@ -33,13 +29,10 @@ public class CsfTest {
     @Test public void should_flatmap_twice() {
         Csf<String> futureBisNames = FUTURE_NAMES
             .flatMap(name -> stringCsf(
-                name,
-                name + "bis"
+                name, name + "bis"
             ))
             .flatMap(name -> stringCsf(
-                    name + "1",
-                    name + "2",
-                    name + "3"
+                name + "1", name + "2", name + "3"
             ));
         
         Set<String> bisNames = futureBisNames.join();
@@ -48,7 +41,7 @@ public class CsfTest {
 
     @Test public void should_filter() {
         Csf<String> futureNamesContainingA = FUTURE_NAMES.filter(
-                name -> name.contains("a")
+            name -> name.contains("a")
         );
         
         Set<String> namesContainingA = futureNamesContainingA.join();
