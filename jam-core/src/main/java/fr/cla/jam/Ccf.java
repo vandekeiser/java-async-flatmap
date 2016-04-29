@@ -13,9 +13,10 @@ import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
-import java.util.function.BiConsumer;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
+import java.util.function.*;
+
+import static java.util.stream.Collectors.toCollection;
+import static java.util.stream.Collectors.toSet;
 
 public class Ccf<E, Es extends Collection<E>> {
 
@@ -195,4 +196,13 @@ public class Ccf<E, Es extends Collection<E>> {
         );
     }
 
+    public Ccf<E, Es> filter(
+        Predicate<? super E> criterion, 
+        CollectionSupplier<E, Es> collectionSupplier
+    ) {
+        return new Ccf<>(asCf().thenApply(contents -> 
+            contents.stream().filter(criterion).collect(toCollection(collectionSupplier)) 
+        ));
+    }
+    
 }
