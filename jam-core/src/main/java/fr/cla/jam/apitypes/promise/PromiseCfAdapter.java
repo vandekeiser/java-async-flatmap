@@ -10,9 +10,9 @@ public class PromiseCfAdapter {
     ) {
         return input -> {
             CompletableFuture<U> cf = new CompletableFuture<>();
-            adaptee.apply(input).whenComplete(
-                res -> cf.complete(res),
-                x -> cf.completeExceptionally(x)
+            adaptee.apply(input).then(
+                success -> cf.complete(success),
+                failure -> cf.completeExceptionally(failure)
             );
             return cf;
         };

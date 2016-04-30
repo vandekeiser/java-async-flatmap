@@ -20,14 +20,10 @@ public class QuasarCallbackCfAdapter extends CallbackCfAdapter {
     ) {
         return input -> {
             CompletableFuture<U> cf = new CompletableFuture<>();
-
-            new Fiber<>(quasar, () -> {
-                adaptee.accept(input, Callback.either(
-                    s -> cf.complete(s),
-                    f -> cf.completeExceptionally(f)
-                ));
-            }).start();
-
+            new Fiber<>(quasar, () -> adaptee.accept(input, Callback.either(
+                success -> cf.complete(success),
+                failure -> cf.completeExceptionally(failure)
+            ))).start();
             return cf;
         };
     }

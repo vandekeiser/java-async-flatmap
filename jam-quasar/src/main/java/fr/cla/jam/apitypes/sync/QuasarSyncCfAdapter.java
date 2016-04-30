@@ -40,14 +40,14 @@ public class QuasarSyncCfAdapter {
     public <S, T> Function<S, CompletableFuture<T>> toCompletableFuture(
         Function<S, T> adaptee
     ) {
-        return s -> {
+        return input -> {
             CompletableFuture<T> cf = new CompletableFuture<>();
             new Fiber<>(quasar, () -> {
                 try {
-                    T success = adaptee.apply(s);
+                    T success = adaptee.apply(input);
                     cf.complete(success);
-                } catch (Throwable t) {
-                    cf.completeExceptionally(t);
+                } catch (Throwable failure) {
+                    cf.completeExceptionally(failure);
                 }
             }).start();
             return cf;

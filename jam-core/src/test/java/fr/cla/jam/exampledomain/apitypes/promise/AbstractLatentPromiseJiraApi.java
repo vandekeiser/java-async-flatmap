@@ -43,7 +43,7 @@ public abstract class AbstractLatentPromiseJiraApi implements PromiseJiraApi {
         return i -> {
             CompletablePromise<O> delayed = CompletablePromise.basic();
 
-            instant.apply(i).whenComplete(
+            instant.apply(i).then(
                     res -> sleepThenPropagateSuccess(i, res, delayed),
 
                     x -> delayed.completeExceptionnally(x)

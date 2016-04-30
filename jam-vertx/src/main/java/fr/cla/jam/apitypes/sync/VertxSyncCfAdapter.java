@@ -21,12 +21,12 @@ public class VertxSyncCfAdapter {
     public <T, U> Function<T, CompletableFuture<U>> adapt(
         Function<T, U> adaptee
     ) {
-        return t -> {
+        return input -> {
             CompletableFuture<U> cf = new CompletableFuture<>();
             vertx.executeBlocking(
                 (io.vertx.core.Future<U> vertxFuture) -> {
                     try {
-                        U success = adaptee.apply(t);
+                        U success = adaptee.apply(input);
                         vertxFuture.complete(success);
                     } catch (Throwable failure) {
                         vertxFuture.fail(failure);

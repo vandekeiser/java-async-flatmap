@@ -12,8 +12,8 @@ public class CallbackCfAdapter {
         return input -> {
             CompletableFuture<U> cf = new CompletableFuture<>();
             adaptee.accept(input, Callback.either(
-                s -> cf.complete(s),
-                f -> cf.completeExceptionally(f)
+                success -> cf.complete(success),
+                failure -> cf.completeExceptionally(failure)
             ));
             return cf;
         };

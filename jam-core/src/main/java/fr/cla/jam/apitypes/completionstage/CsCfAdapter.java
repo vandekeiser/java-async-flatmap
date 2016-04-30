@@ -7,17 +7,15 @@ import java.util.function.Function;
 public class CsCfAdapter {
 
     public <S, T> Function<S, CompletableFuture<T>> toCompletableFuture(
-        Function<S, CompletionStage<T>> mapper
+        Function<S, CompletionStage<T>> adaptee
     ) {
-        return e -> {
-            CompletableFuture<T> result = new CompletableFuture<>();
-            mapper.apply(e).whenComplete(
-                (t, x) -> {
-                    if(x != null) result.completeExceptionally(x);
-                    else result.complete(t);
-                }
-            );
-            return result;
+        return input -> {
+            CompletableFuture<T> cf = new CompletableFuture<>();
+            adaptee.apply(input).whenComplete((success, failure) -> {
+                if(failure != null) cf.completeExceptionally(failure);
+                else cf.complete(success);
+            });
+            return cf;
         };
     }
 

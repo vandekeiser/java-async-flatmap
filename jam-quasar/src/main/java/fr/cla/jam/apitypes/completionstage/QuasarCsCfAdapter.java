@@ -19,16 +19,12 @@ public class QuasarCsCfAdapter extends CsCfAdapter {
         Function<T, CompletionStage<U>> adaptee
     ) {
         return input -> {
-            CompletableFuture<U> fiberCf = new CompletableFuture<>();
-
-            new Fiber<>(quasar, () -> {
-                adaptee.apply(input).whenComplete((res, x) -> {
-                    if (x != null) fiberCf.completeExceptionally(x);
-                    else fiberCf.complete(res);
-                });
-            }).start();
-
-            return fiberCf;
+            CompletableFuture<U> cf = new CompletableFuture<>();
+            new Fiber<>(quasar, () -> adaptee.apply(input).whenComplete((success, failure) -> {
+                if (failure != null) cf.completeExceptionally(failure);
+                else cf.complete(success);
+            })).start();
+            return cf;
         };
     }
 

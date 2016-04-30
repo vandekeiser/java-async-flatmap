@@ -40,8 +40,8 @@ public interface CompletablePromise<T> extends Promise<T> {
         }
 
         @Override
-        public synchronized void whenComplete(Consumer<T> onSuccess, Consumer<Throwable> onFailure) {
-            if (this.consumersReady) throw new IllegalStateException("cant call whenComplete twice");
+        public synchronized void then(Consumer<T> onSuccess, Consumer<Throwable> onFailure) {
+            if (this.consumersReady) throw new IllegalStateException("cant call then twice");
 
             if (this.succeeded) {
                 onSuccess.accept(success);

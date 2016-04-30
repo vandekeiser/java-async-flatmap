@@ -19,14 +19,12 @@ public class QuasarPromiseCfAdapter extends PromiseCfAdapter{
         Function<T, Promise<U>> adaptee
     ) {
         return input -> {
-            CompletableFuture<U> fiberCf = new CompletableFuture<>();
-
-            new Fiber<>(quasar, () -> adaptee.apply(input).whenComplete(
-                res -> fiberCf.complete(res),
-                x -> fiberCf.completeExceptionally(x)
+            CompletableFuture<U> cf = new CompletableFuture<>();
+            new Fiber<>(quasar, () -> adaptee.apply(input).then(
+                success -> cf.complete(success),
+                failure -> cf.completeExceptionally(failure)
             )).start();
-
-            return fiberCf;
+            return cf;
         };
     }
 
